@@ -39,11 +39,11 @@ namespace FourTentacles
 		private Camera camera = new Camera();
 		private List<Spline4D> splines = new List<Spline4D>();
 		private List<Spline4D> selectedSplines = new List<Spline4D>();
+		private Controller selectedController;
+		private Controller mouseOverController;
 
 		private SelectionRectangle selectionRectangle = null;
 		private Gizmo gizmo = new Gizmo();
-
-		private bool refresh = true;
 
 		public MainWindow()
 		{
@@ -58,10 +58,7 @@ namespace FourTentacles
 				new Vector4(0.0f, 600.0f, 800.0f, 200.0f));
 			splines.Add(spline);
 
-			Process prc = new Process();
-			prc.StartInfo.FileName = @"http://site.su";
-			prc.StartInfo.UseShellExecute = true;
-			prc.Start();
+			gizmo.ViewChanged += (o, args) => Render();
 		}
 
 		private void OnShown(object sender, EventArgs e)
@@ -91,37 +88,73 @@ namespace FourTentacles
 		int oldx, oldy;     //previous event mouse coordinates
 		private void OnMouseMove(object sender, MouseEventArgs e)
 		{
+			int deltaX = e.X - oldx;
+			int deltaY = e.Y - oldy;
+			oldx = e.X;
+			oldy = e.Y;
+
 			if (selectionRectangle != null)
 			{
 				selectionRectangle.EndLocaton = e.Location;
 				Render();
+				return;
 			}
 
 			if ((e.Button & MouseButtons.Middle) != 0)
 			{
-				if (GetAsyncKeyState(VK_MENU) != 0) camera.Rotate((oldx - e.X) / 100.0f, (oldy - e.Y) / 100.0f);
-				else camera.Move(new Vector3(e.X - oldx, e.Y - oldy, 0));
+				if (GetAsyncKeyState(VK_MENU) != 0) camera.Rotate((-deltaX) / 100.0f, (-deltaY) / 100.0f);
+				else camera.Move(new Vector3(deltaX, deltaY, 0));
 				Render();
+				return;
 			}
-			oldx = e.X;
-			oldy = e.Y;
+
+			if (selectedSplines.Count > 0)
+			{
+				Controller controller = GetControllerUnderCursor();
+				if (mouseOverController != null && controller != mouseOverController)
+				{
+					mouseOverController.OnMouseLeave();
+					mouseOverController = null;
+				}
+				if (controller != null)
+				{
+					mouseOverController = controller;
+					controller.OnMouseOver();
+				}
+			}
+		}
+
+		private Controller GetControllerUnderCursor()
+		{
+			var rect = new SelectionRectangle(MousePosition, glc.Size);
+			var controllers = gizmo.GetControllers().ToList();
+			rect.SelectObjects(controllers, camera);
+			if (rect.SelectedCount == 0) return null;
+			return controllers[rect.SelectedIndicies.First()];
 		}
 
 		private void OnMouseWheel(object sender, MouseEventArgs e)
 		{
-			camera.Roll(e.Delta > 0 ? 0.3f : -0.3f);
+			camera.Roll(e.Delta > 0 ? -0.3f : 0.3f);
 			Render();
 		}
 
 		private void OnMouseButtonPressed(object sender, MouseEventArgs e)
 		{
-			if ((e.Button & MouseButtons.Left) != 0)
-			{
-				selectionRectangle = new SelectionRectangle(e.Location, glc.Size);
-			}
-
 			oldx = e.X;
 			oldy = e.Y;
+
+			if (e.Button == MouseButtons.Left)
+			{
+				if (mouseOverController != null)
+				{
+					mouseOverController.OnMouseDown();
+					selectedController = mouseOverController;
+					return;
+				}
+
+				selectionRectangle = new SelectionRectangle(e.Location, glc.Size);
+			}
 		}
 
 		private void OnMouseButtonReleased(object sender, MouseEventArgs e)
@@ -137,43 +170,9 @@ namespace FourTentacles
 		private void SelectObjects()
 		{
 			selectedSplines.Clear();
-			
-			uint[] selectionBuffer = new uint[4 * splines.Count];
-			GL.SelectBuffer(selectionBuffer.Length, selectionBuffer);
-			GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-			camera.SetProjectionMatrix(glc.Size, selectionRectangle.GetSelectionMatrix());
-			GL.RenderMode(RenderingMode.Select);
-
-			GL.InitNames();
-			for (int i = 0; i < splines.Count; i++)
-			{
-				GL.PushName(i);
-				splines[i].Render(RenderMode.Solid);
-				GL.PopName();
-			}
-			GL.Finish();
-
-			int selectedCount = GL.RenderMode(RenderingMode.Render);
-
-			// если просто щелчок, то ищем один самый ближний объект
-			if (selectedCount > 0 && selectionRectangle.IsPoint)
-			{
-				for (int i = 0; i < selectedCount; i++)
-					if (selectionBuffer[4 * i + 1] < selectionBuffer[1])
-					{
-						selectionBuffer[1] = selectionBuffer[4 * i + 1];
-						selectionBuffer[3] = selectionBuffer[4 * i + 3];
-					}
-				selectedCount = 1;
-			}
-
-			for (int i = 0; i < selectedCount; i++)
-			{
-				int uname = (int)selectionBuffer[4 * i + 3];
-				var selected = splines[uname];
-				if(!selectedSplines.Contains(selected))
-					selectedSplines.Add(selected);
-			}
+			selectionRectangle.SelectObjects(splines, camera);
+			foreach (int i in selectionRectangle.SelectedIndicies)
+				selectedSplines.Add(splines[i]);
 		}
 
 		private void OnSizeChanged(object sender, EventArgs e)
@@ -182,20 +181,18 @@ namespace FourTentacles
 		}
 		
 		private bool rendering = false;
-		private bool sceneUpdated = false;
+
 		private void Render()
 		{
-			sceneUpdated = true;
 			if (rendering) return;
-
 			rendering = true;
-			while (camera.Moving || sceneUpdated)
+			do
 			{
 				Application.DoEvents();
-				sceneUpdated = false;
 				camera.Update();
 				RenderFrame();
-			}
+			} while (camera.Moving);
+
 			rendering = false;
 		}
 
@@ -273,7 +270,6 @@ namespace FourTentacles
 		{
 			lbRenderMode.Text = renderMode.ToString();
 		}
-
 
 	}
 }

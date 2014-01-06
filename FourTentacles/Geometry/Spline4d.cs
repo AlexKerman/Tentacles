@@ -8,7 +8,7 @@ using OpenTK.Graphics.OpenGL;
 
 namespace FourTentacles
 {
-	class Spline4D
+	class Spline4D : ISelectable
 	{
 		private readonly int roundSides;
 		private readonly int lenghtSides;
@@ -37,6 +37,12 @@ namespace FourTentacles
 		{
 			foreach (var segment in segments)
 				segment.Mesh.Render(renderMode);
+		}
+
+		public void DrawShape()
+		{
+			foreach (var segment in segments)
+				segment.Mesh.Render(RenderMode.SolidWireframe | RenderMode.Normals);
 		}
 
 		public int GetTrianglesCount()

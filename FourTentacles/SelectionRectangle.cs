@@ -9,6 +9,14 @@ using OpenTK.Graphics.OpenGL;
 
 namespace FourTentacles
 {
+	interface ISelectable
+	{
+		/// <summary>
+		/// Draw contour for selection
+		/// </summary>
+		void DrawShape();
+	}
+
 	class SelectionRectangle
 	{
 		private Point startLocation;
@@ -43,7 +51,57 @@ namespace FourTentacles
 			set { endLocaton = value; }
 		}
 
-		public Matrix4d GetSelectionMatrix()
+		public void SelectObjects(IEnumerable<ISelectable> selectable, Camera camera)
+		{
+			var objects = selectable.ToList();
+			selectionBuffer = new uint[4 * objects.Count];
+			GL.SelectBuffer(selectionBuffer.Length, selectionBuffer);
+			GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+			camera.SetProjectionMatrix(controlSize, GetSelectionMatrix());
+			GL.RenderMode(RenderingMode.Select);
+
+			GL.InitNames();
+			for (int i = 0; i < objects.Count; i++)
+			{
+				GL.PushName(i);
+				objects[i].DrawShape();
+				GL.PopName();
+			}
+			GL.Finish();
+
+			selectedCount = GL.RenderMode(RenderingMode.Render);
+
+			// если просто щелчок, то ищем один самый ближний объект
+			if (selectedCount > 0 && IsPoint)
+			{
+				for (int i = 0; i < selectedCount; i++)
+					if (selectionBuffer[4 * i + 1] < selectionBuffer[1])
+					{
+						selectionBuffer[1] = selectionBuffer[4 * i + 1];
+						selectionBuffer[3] = selectionBuffer[4 * i + 3];
+					}
+				selectedCount = 1;
+			}
+		}
+
+		private int selectedCount;
+		private uint[] selectionBuffer;
+
+		public int SelectedCount
+		{
+			get { return selectedCount; }
+		}
+
+		public IEnumerable<int> SelectedIndicies
+		{
+			get
+			{
+				for (int i = 0; i < selectedCount; i++)
+					yield return (int)selectionBuffer[4 * i + 3];
+			}
+		}
+
+		private Matrix4d GetSelectionMatrix()
 		{
 			double width = Width;
 			double height = Height;

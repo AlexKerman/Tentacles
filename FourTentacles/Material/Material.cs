@@ -42,6 +42,7 @@ namespace FourTentacles
 			GL.Disable(EnableCap.Lighting);
 			GL.Enable(EnableCap.LineSmooth);
 			GL.Color3(color);
+			GL.LineWidth(1.0f);
 			Shader.Simple.Use();
 		}
 	}

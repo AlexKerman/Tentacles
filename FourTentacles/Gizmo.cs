@@ -11,80 +11,176 @@ namespace FourTentacles
 {
 	class Gizmo
 	{
-		private const int GizmoSizePx = 64;
-		private const int ArrowSides = 6;
-		private const float ArrowSize = 0.3f;
-		private const float ArrowWidth = 0.05f;
-		private const float QuadSize = 0.3f;
-		private const float SignSize = 0.07f;
-		private readonly static Color SelectedColor = Color.Yellow;
+		[Flags]
+		enum Constraints
+		{
+			X = 1,
+			Y = 2,
+			Z = 4,
+		}
 
-		private SinCosTable sinCos;
-		private bool[] constraints = new[] {true, true, false};
+		class Axis
+		{
+			private const int ArrowSides = 6;
+			private const float ArrowSize = 0.3f;
+			private const float ArrowWidth = 0.05f;
+			public const float QuadSize = 0.3f;
+			private const float SignSize = 0.07f;
 
-		private static readonly Color[] AxisColors = new[] {Color.DarkRed, Color.DarkGreen, Color.DarkBlue};
-		private static readonly Vector3[] AxisVectors = new[] {Vector3.UnitX, Vector3.UnitY, Vector3.UnitZ};
+			private SinCosTable sinCos = new SinCosTable(ArrowSides);
+			private readonly Color color;
+			private readonly Vector3 axisVector;
+			private readonly Constraints constraint;
+			private readonly Vector2[] sign;
+			private readonly static Color SelectedColor = Color.Yellow;
 
-		private static readonly Vector2[][] AxisSigns = new[]
+			public ArrowController ArrowController { get; private set; }
+
+			public Axis(Color color, Vector3 axisVector, Constraints constraint, Vector2[] sign)
 			{
-				//X
-				new[] {new Vector2(0,0), new Vector2(0.6f,1), new Vector2(0.6f,0), new Vector2(0,1)},
-				//Y
-				new[] {new Vector2(0,0), new Vector2(0.6f,1), new Vector2(0,1), new Vector2(0.3f,0.5f)},
-				//Z
-				new[] {new Vector2(0,1), new Vector2(0.6f,1), new Vector2(0.6f,1), new Vector2(0,0), new Vector2(0,0), new Vector2(0.6f,0)}
-			};
+				this.color = color;
+				this.axisVector = axisVector;
+				this.constraint = constraint;
+				this.sign = sign;
+
+				ArrowController = new ArrowController(axisVector, constraint);
+			}
+
+			public void Draw(Axis axis1, Axis axis2, Constraints constraints, Camera camera)
+			{
+				Vector3 signAxisX = camera.Right * SignSize;
+				Vector3 signAxisY = camera.Top * SignSize;
+
+				GL.Begin(BeginMode.Lines);
+
+				foreach (var axis in new[] {axis1, axis2})
+				{
+					GL.Color3(constraints.HasFlag(constraint | axis.constraint) ? SelectedColor : color);
+					GL.Vertex3(QuadSize * axisVector);
+					GL.Vertex3(QuadSize * axisVector + QuadSize * axis.axisVector);
+				}
+
+				GL.Color3(constraints.HasFlag(constraint) ? SelectedColor : color);
+				GL.Vertex3(Vector3.Zero);
+				GL.Vertex3(axisVector);
+
+				foreach (Vector2 point in sign)
+					GL.Vertex3(axisVector + ((point.X + 1.0f) * signAxisX) + ((point.Y + 1.0f) * signAxisY));
+				GL.End();
+
+				GL.Color3(color);
+				GL.Begin(BeginMode.TriangleFan);
+				GL.Vertex3(axisVector);
+				for (int i = 0; i <= ArrowSides; i++)
+				{
+					Vector3 ringPoint = sinCos.RingPoint(axis1.axisVector, axis2.axisVector, i);
+					GL.Vertex3((1.0f - ArrowSize) * axisVector + ArrowWidth * ringPoint);
+				}
+				GL.End();
+			}
+		}
+
+		private const int GizmoSizePx = 64;
+		private Constraints fixedConstraints = Constraints.X | Constraints.Y;
+		private Constraints constraints = Constraints.X | Constraints.Y;
+
+		private Axis AxisX = new Axis(Color.DarkRed, Vector3.UnitX, Constraints.X, new[] {new Vector2(0,0), new Vector2(0.6f,1), new Vector2(0.6f,0), new Vector2(0,1)});
+		private Axis AxisY = new Axis(Color.DarkGreen, Vector3.UnitY, Constraints.Y, new[] {new Vector2(0,0), new Vector2(0.6f,1), new Vector2(0,1), new Vector2(0.3f,0.5f)});
+		private Axis AxisZ = new Axis(Color.DarkBlue, Vector3.UnitZ, Constraints.Z, new[] {new Vector2(0,1), new Vector2(0.6f,1), new Vector2(0.6f,1), new Vector2(0,0), new Vector2(0,0), new Vector2(0.6f,0)});
+
+		public event EventHandler ViewChanged;
 
 		public Gizmo()
 		{
-			sinCos = new SinCosTable(ArrowSides);
+			foreach (var axis in new[] {AxisX, AxisY, AxisZ})
+			{
+				axis.ArrowController.MouseDown += OnMouseDown;
+				axis.ArrowController.MouseLeave += OnMouseLeave;
+				axis.ArrowController.MouseOver += OnMouseOver;
+			}
+		}
+
+		private void OnMouseOver(object sender, EventArgs eventArgs)
+		{
+			ChangeConstraints((sender as ArrowController).Constraint);
+		}
+
+		private void ChangeConstraints(Constraints cons)
+		{
+			if (cons != constraints)
+			{
+				constraints = cons;
+				EventHandler handler = ViewChanged;
+				if (handler != null) handler(this, EventArgs.Empty);
+			}
+		}
+
+		private void OnMouseDown(object sender, EventArgs eventArgs)
+		{
+			constraints = fixedConstraints;
+		}
+
+		private void OnMouseLeave(object sender, EventArgs eventArgs)
+		{
+			ChangeConstraints(fixedConstraints);
+		}
+
+		public IEnumerable<Controller> GetControllers()
+		{
+			yield return AxisX.ArrowController;
+			yield return AxisY.ArrowController;
+			yield return AxisZ.ArrowController;
 		}
 
 		public void Draw(Vector3 gizmoPos, Camera camera, Size controlSize)
 		{
 			float scale = (float) camera.GetPerspectiveRatio(gizmoPos)*GizmoSizePx/controlSize.Height;
-
-			Vector3 signAxisX = camera.Right * SignSize;
-			Vector3 signAxisY = camera.Top * SignSize;
+			AxisX.ArrowController.AdjustPosition(scale, gizmoPos);
+			AxisY.ArrowController.AdjustPosition(scale, gizmoPos);
+			AxisZ.ArrowController.AdjustPosition(scale, gizmoPos);
 
 			GL.PushMatrix();
 			GL.Translate(gizmoPos);
 			GL.Scale(scale, scale, scale);
+			AxisX.Draw(AxisY, AxisZ, constraints, camera);
+			AxisY.Draw(AxisX, AxisZ, constraints, camera);
+			AxisZ.Draw(AxisX, AxisY, constraints, camera);
+			GL.PopMatrix();
+		}
 
-			for (int axis = 0; axis < 3; axis++)
+		class ArrowController : Controller
+		{
+			private readonly Vector3 axis;
+			private readonly Constraints constraint;
+
+			public ArrowController(Vector3 axis, Constraints constraint)
 			{
-				int axis2 = axis + 1;
-				if (axis2 > 2) axis2 -= 3;
-				int axis3 = axis + 2;
-				if (axis3 > 2) axis3 -= 3;
-
-				GL.Begin(BeginMode.Lines);
-				GL.Color3(constraints[axis] && constraints[axis2]? SelectedColor : AxisColors[axis]);
-				GL.Vertex3(QuadSize * AxisVectors[axis]);
-				GL.Vertex3(QuadSize * AxisVectors[axis] + QuadSize * AxisVectors[axis2]);
-				GL.Color3(constraints[axis] && constraints[axis3] ? SelectedColor : AxisColors[axis]);
-				GL.Vertex3(QuadSize * AxisVectors[axis]);
-				GL.Vertex3(QuadSize * AxisVectors[axis] + QuadSize * AxisVectors[axis3]);
-				GL.Color3(constraints[axis] ? SelectedColor : AxisColors[axis]);
-				GL.Vertex3(Vector3.Zero);
-				GL.Vertex3(AxisVectors[axis]);
-
-				foreach (Vector2 sign in AxisSigns[axis])
-					GL.Vertex3(AxisVectors[axis] + ((sign.X + 1.0f) * signAxisX) + ((sign.Y + 1.0f) * signAxisY));
-				GL.End();
-
-				GL.Color3(AxisColors[axis]);
-				GL.Begin(BeginMode.TriangleFan);
-				GL.Vertex3(AxisVectors[axis]);
-				for (int i = 0; i <= ArrowSides; i++)
-				{
-					Vector3 ringPoint = sinCos.RingPoint(AxisVectors[axis2], AxisVectors[axis3], i);
-					GL.Vertex3((1.0f - ArrowSize) * AxisVectors[axis] + ArrowWidth * ringPoint);
-				}
-				GL.End();
+				this.axis = axis;
+				this.constraint = constraint;
 			}
 
-			GL.PopMatrix();
+			private Vector3 pos;
+			private float scale;
+
+			public Constraints Constraint
+			{
+				get { return constraint; }
+			}
+
+			public void AdjustPosition(float scale, Vector3 pos)
+			{
+				this.scale = scale;
+				this.pos = pos;
+			}
+
+			public override void DrawShape()
+			{
+				GL.LineWidth(3.0f);
+				GL.Begin(BeginMode.Lines);
+				GL.Vertex3(pos + axis*scale*Axis.QuadSize);
+				GL.Vertex3(pos + axis*scale);
+				GL.End();
+			}
 		}
 	}
 }
