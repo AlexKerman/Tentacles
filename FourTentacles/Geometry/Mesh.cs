@@ -63,7 +63,7 @@ namespace FourTentacles
 			Material.SetMeshMaterial();
 			if (renderMode.HasFlag(RenderMode.Solid))
 				foreach (int[] indicies in triangleStripIndicies)
-					GL.DrawElements(BeginMode.TriangleStrip, indicies.Length, DrawElementsType.UnsignedInt, indicies);
+					GL.DrawElements(PrimitiveType.TriangleStrip, indicies.Length, DrawElementsType.UnsignedInt, indicies);
 
 			GL.Disable(EnableCap.NormalArray);
 			
@@ -71,15 +71,15 @@ namespace FourTentacles
 			if (renderMode.HasFlag(RenderMode.Wireframe))
 			{
 				foreach (int[] indicies in triangleStripIndicies)
-					GL.DrawElements(BeginMode.Lines, indicies.Length, DrawElementsType.UnsignedInt, indicies);
+					GL.DrawElements(PrimitiveType.Lines, indicies.Length, DrawElementsType.UnsignedInt, indicies);
 				foreach (int[] indicies in lineStripIndicies)
-					GL.DrawElements(BeginMode.LineStrip, indicies.Length, DrawElementsType.UnsignedInt, indicies);
+					GL.DrawElements(PrimitiveType.LineStrip, indicies.Length, DrawElementsType.UnsignedInt, indicies);
 			}
 
 			if (renderMode.HasFlag(RenderMode.Normals))
 			{
 				Material.SetLineMaterial(Color.Yellow);
-				GL.Begin(BeginMode.Lines);
+				GL.Begin(PrimitiveType.Lines);
 				for (int i = 0; i < pointsArray.Length; i++)
 				{
 					Vector3 point = pointsArray[i];

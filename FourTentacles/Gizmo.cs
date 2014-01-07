@@ -19,12 +19,12 @@ namespace FourTentacles
 			Z = 4,
 		}
 
-		class Axis
+		class Axis : Controller
 		{
 			private const int ArrowSides = 6;
 			private const float ArrowSize = 0.3f;
 			private const float ArrowWidth = 0.05f;
-			public const float QuadSize = 0.3f;
+			private const float QuadSize = 0.3f;
 			private const float SignSize = 0.07f;
 
 			private SinCosTable sinCos = new SinCosTable(ArrowSides);
@@ -34,7 +34,7 @@ namespace FourTentacles
 			private readonly Vector2[] sign;
 			private readonly static Color SelectedColor = Color.Yellow;
 
-			public ArrowController ArrowController { get; private set; }
+			public Constraints Constraint { get { return constraint; } }
 
 			public Axis(Color color, Vector3 axisVector, Constraints constraint, Vector2[] sign)
 			{
@@ -42,8 +42,23 @@ namespace FourTentacles
 				this.axisVector = axisVector;
 				this.constraint = constraint;
 				this.sign = sign;
+			}
 
-				ArrowController = new ArrowController(axisVector, constraint);
+			private Vector3 pos;
+			private float scale;
+
+			public void AdjustPosition(float scale, Vector3 pos)
+			{
+				this.scale = scale;
+				this.pos = pos;
+			}
+
+			public override void DrawShape()
+			{
+				GL.Begin(PrimitiveType.Lines);
+				GL.Vertex3(pos + axisVector * scale * QuadSize);
+				GL.Vertex3(pos + axisVector * scale);
+				GL.End();
 			}
 
 			public void Draw(Axis axis1, Axis axis2, Constraints constraints, Camera camera)
@@ -51,7 +66,7 @@ namespace FourTentacles
 				Vector3 signAxisX = camera.Right * SignSize;
 				Vector3 signAxisY = camera.Top * SignSize;
 
-				GL.Begin(BeginMode.Lines);
+				GL.Begin(PrimitiveType.Lines);
 
 				foreach (var axis in new[] {axis1, axis2})
 				{
@@ -69,7 +84,7 @@ namespace FourTentacles
 				GL.End();
 
 				GL.Color3(color);
-				GL.Begin(BeginMode.TriangleFan);
+				GL.Begin(PrimitiveType.TriangleFan);
 				GL.Vertex3(axisVector);
 				for (int i = 0; i <= ArrowSides; i++)
 				{
@@ -80,7 +95,7 @@ namespace FourTentacles
 			}
 		}
 
-		private const int GizmoSizePx = 64;
+		private const int GizmoSizePx = 96;
 		private Constraints fixedConstraints = Constraints.X | Constraints.Y;
 		private Constraints constraints = Constraints.X | Constraints.Y;
 
@@ -94,15 +109,15 @@ namespace FourTentacles
 		{
 			foreach (var axis in new[] {AxisX, AxisY, AxisZ})
 			{
-				axis.ArrowController.MouseDown += OnMouseDown;
-				axis.ArrowController.MouseLeave += OnMouseLeave;
-				axis.ArrowController.MouseOver += OnMouseOver;
+				axis.MouseDown += OnMouseDown;
+				axis.MouseLeave += OnMouseLeave;
+				axis.MouseOver += OnMouseOver;
 			}
 		}
 
 		private void OnMouseOver(object sender, EventArgs eventArgs)
 		{
-			ChangeConstraints((sender as ArrowController).Constraint);
+			ChangeConstraints((sender as Axis).Constraint);
 		}
 
 		private void ChangeConstraints(Constraints cons)
@@ -117,7 +132,7 @@ namespace FourTentacles
 
 		private void OnMouseDown(object sender, EventArgs eventArgs)
 		{
-			constraints = fixedConstraints;
+			fixedConstraints = constraints;
 		}
 
 		private void OnMouseLeave(object sender, EventArgs eventArgs)
@@ -127,17 +142,17 @@ namespace FourTentacles
 
 		public IEnumerable<Controller> GetControllers()
 		{
-			yield return AxisX.ArrowController;
-			yield return AxisY.ArrowController;
-			yield return AxisZ.ArrowController;
+			yield return AxisX;
+			yield return AxisY;
+			yield return AxisZ;
 		}
 
 		public void Draw(Vector3 gizmoPos, Camera camera, Size controlSize)
 		{
 			float scale = (float) camera.GetPerspectiveRatio(gizmoPos)*GizmoSizePx/controlSize.Height;
-			AxisX.ArrowController.AdjustPosition(scale, gizmoPos);
-			AxisY.ArrowController.AdjustPosition(scale, gizmoPos);
-			AxisZ.ArrowController.AdjustPosition(scale, gizmoPos);
+			AxisX.AdjustPosition(scale, gizmoPos);
+			AxisY.AdjustPosition(scale, gizmoPos);
+			AxisZ.AdjustPosition(scale, gizmoPos);
 
 			GL.PushMatrix();
 			GL.Translate(gizmoPos);
@@ -146,41 +161,6 @@ namespace FourTentacles
 			AxisY.Draw(AxisX, AxisZ, constraints, camera);
 			AxisZ.Draw(AxisX, AxisY, constraints, camera);
 			GL.PopMatrix();
-		}
-
-		class ArrowController : Controller
-		{
-			private readonly Vector3 axis;
-			private readonly Constraints constraint;
-
-			public ArrowController(Vector3 axis, Constraints constraint)
-			{
-				this.axis = axis;
-				this.constraint = constraint;
-			}
-
-			private Vector3 pos;
-			private float scale;
-
-			public Constraints Constraint
-			{
-				get { return constraint; }
-			}
-
-			public void AdjustPosition(float scale, Vector3 pos)
-			{
-				this.scale = scale;
-				this.pos = pos;
-			}
-
-			public override void DrawShape()
-			{
-				GL.LineWidth(3.0f);
-				GL.Begin(BeginMode.Lines);
-				GL.Vertex3(pos + axis*scale*Axis.QuadSize);
-				GL.Vertex3(pos + axis*scale);
-				GL.End();
-			}
 		}
 	}
 }

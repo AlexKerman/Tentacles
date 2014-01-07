@@ -110,7 +110,7 @@ namespace FourTentacles
 
 			if (selectedSplines.Count > 0)
 			{
-				Controller controller = GetControllerUnderCursor();
+				Controller controller = GetControllerUnderCursor(e.Location);
 				if (mouseOverController != null && controller != mouseOverController)
 				{
 					mouseOverController.OnMouseLeave();
@@ -124,9 +124,9 @@ namespace FourTentacles
 			}
 		}
 
-		private Controller GetControllerUnderCursor()
+		private Controller GetControllerUnderCursor(Point mousePosition)
 		{
-			var rect = new SelectionRectangle(MousePosition, glc.Size);
+			var rect = new SelectionRectangle(mousePosition, glc.Size);
 			var controllers = gizmo.GetControllers().ToList();
 			rect.SelectObjects(controllers, camera);
 			if (rect.SelectedCount == 0) return null;
@@ -236,7 +236,7 @@ namespace FourTentacles
 		{
 			Material.SetLineMaterial(Color.DarkGray);
 			float i;
-			GL.Begin(BeginMode.Lines);
+			GL.Begin(PrimitiveType.Lines);
 			GL.Color3(.5, .5, .5);
 			for (i = -3000; i <= 3000; i += 300)
 			{

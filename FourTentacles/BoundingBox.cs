@@ -62,7 +62,7 @@ namespace FourTentacles
 
 		private void DrawOneSide(Vector3 a, Vector3 b, Vector3 c)
 		{
-			GL.Begin(BeginMode.Lines);
+			GL.Begin(PrimitiveType.Lines);
 			foreach (Vector3 vec in new[]{a,b,a+b, Vector3.Zero})
 			{
 				GL.Vertex3(vec);

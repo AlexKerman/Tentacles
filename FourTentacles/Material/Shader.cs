@@ -52,13 +52,23 @@ namespace FourTentacles
 			loaded.Add(this);
 		}
 
+		private static string ShadersDirectory
+		{
+			get 
+			{
+				var di = new DirectoryInfo(Application.StartupPath);
+				di = di.Parent.Parent.CreateSubdirectory("Shaders");
+				return di.FullName + "\\";
+			}
+		}
+
 		private static int Load(string name, ShaderType shaderType)
 		{
 			int statusCode;
 			string info;
 
 			string extension = shaderType == ShaderType.VertexShader ? ".vert" : ".frag";
-			string filename = Application.StartupPath + "\\shaders\\" + name + extension;
+			string filename = ShadersDirectory + name + extension;
 
 			var sr = new StreamReader(filename);
 			string source = sr.ReadToEnd();

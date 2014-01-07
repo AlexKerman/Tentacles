@@ -105,7 +105,7 @@ namespace FourTentacles
 		{
 			double width = Width;
 			double height = Height;
-			if (IsPoint) width = height = 2.0;
+			if (IsPoint) width = height = 5.0;
 
 			return new Matrix4d(
 				new Vector4d(controlSize.Width / width, 0, 0, 0),
@@ -131,7 +131,7 @@ namespace FourTentacles
 			GL.LoadIdentity();
 
 			GL.Color4(1, 1, 1, 0.3f);
-			GL.Begin(BeginMode.Quads);
+			GL.Begin(PrimitiveType.Quads);
 			GL.Vertex2(x1, y1);
 			GL.Vertex2(x2, y1);
 			GL.Vertex2(x2, y2);
@@ -139,7 +139,7 @@ namespace FourTentacles
 			GL.End();
 
 			GL.Color4(1, 1, 1, 1.0f);
-			GL.Begin(BeginMode.LineLoop);
+			GL.Begin(PrimitiveType.LineLoop);
 			GL.Vertex2(x1, y1);
 			GL.Vertex2(x2, y1);
 			GL.Vertex2(x2, y2);

@@ -103,12 +103,13 @@ namespace FourTentacles
 			xaxis.Normalize();
 			Quaternion roty = Quaternion.FromAxisAngle(xaxis, y);
 			Quaternion rotx = Quaternion.FromAxisAngle(Vector3.UnitY, x);
+			var rotate = roty * rotx;
 
 			Vector3 vec = xyz - target;
-			vec = vec * roty * rotx;
+			vec = Vector3.Transform(vec, rotate);
 			xyz = vec + target;
 
-			top = top * roty * rotx;
+			top = Vector3.Transform(top, rotate);
 			AdjustTopVector();
 		}
 
