@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FourTentacles
 {
-	abstract class Controller : ISelectable
+	abstract class Controller : Node, ISelectable
 	{
 		public event EventHandler MouseOver;
 		public void OnMouseOver()

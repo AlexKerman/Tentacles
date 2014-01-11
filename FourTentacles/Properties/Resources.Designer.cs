@@ -63,9 +63,9 @@ namespace FourTentacles.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static byte[] nodeselect {
+        internal static byte[] Move {
             get {
-                object obj = ResourceManager.GetObject("nodeselect", resourceCulture);
+                object obj = ResourceManager.GetObject("Move", resourceCulture);
                 return ((byte[])(obj));
             }
         }
@@ -73,9 +73,9 @@ namespace FourTentacles.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static byte[] nodeselectminus {
+        internal static byte[] Select {
             get {
-                object obj = ResourceManager.GetObject("nodeselectminus", resourceCulture);
+                object obj = ResourceManager.GetObject("Select", resourceCulture);
                 return ((byte[])(obj));
             }
         }
@@ -83,9 +83,9 @@ namespace FourTentacles.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static byte[] nodeselectplus {
+        internal static byte[] SelectMinus {
             get {
-                object obj = ResourceManager.GetObject("nodeselectplus", resourceCulture);
+                object obj = ResourceManager.GetObject("SelectMinus", resourceCulture);
                 return ((byte[])(obj));
             }
         }
@@ -93,9 +93,19 @@ namespace FourTentacles.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static byte[] nodeselectplusminus {
+        internal static byte[] SelectPlus {
             get {
-                object obj = ResourceManager.GetObject("nodeselectplusminus", resourceCulture);
+                object obj = ResourceManager.GetObject("SelectPlus", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] SelectPlusMinus {
+            get {
+                object obj = ResourceManager.GetObject("SelectPlusMinus", resourceCulture);
                 return ((byte[])(obj));
             }
         }

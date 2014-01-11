@@ -8,7 +8,7 @@ using OpenTK.Graphics.OpenGL;
 
 namespace FourTentacles
 {
-	class Spline4D : ISelectable
+	class Spline4D : Node, ISelectable
 	{
 		private readonly int roundSides;
 		private readonly int lenghtSides;

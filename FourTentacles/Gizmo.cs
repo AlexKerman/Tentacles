@@ -4,12 +4,13 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 
 namespace FourTentacles
 {
-	class Gizmo
+	class Gizmo : Node
 	{
 		[Flags]
 		enum Constraints
@@ -27,22 +28,21 @@ namespace FourTentacles
 			private readonly Vector3 axis2;
 			private readonly Constraints constraint;
 
+			public Gizmo Gizmo;
+
 			public Constraints Constraint { get { return constraint; } }
+
+			public override Vector3 Pos
+			{
+				get { return Gizmo.Pos; }
+				set { }
+			}
 
 			public Plane(Vector3 axis1, Vector3 axis2, Constraints constraint)
 			{
 				this.axis1 = axis1;
 				this.axis2 = axis2;
 				this.constraint = constraint;
-			}
-
-			private Vector3 pos;
-			private float scale;
-
-			public void AdjustPosition(float scale, Vector3 pos)
-			{
-				this.scale = scale;
-				this.pos = pos;
 			}
 
 			public void Draw(Constraints constraint)
@@ -60,9 +60,9 @@ namespace FourTentacles
 			public override void DrawShape()
 			{
 				GL.Begin(PrimitiveType.Triangles);
-				GL.Vertex3(axis1 * QuadSize * scale + pos);
-				GL.Vertex3(axis2 * QuadSize * scale + pos);
-				GL.Vertex3((axis1 + axis2) * QuadSize * scale + pos);
+				GL.Vertex3(axis1 * QuadSize * Gizmo.Scale + Pos);
+				GL.Vertex3(axis2 * QuadSize * Gizmo.Scale + Pos);
+				GL.Vertex3((axis1 + axis2) * QuadSize * Gizmo.Scale + Pos);
 				GL.End();
 			}
 		}
@@ -76,6 +76,7 @@ namespace FourTentacles
 			private const float SignSize = 0.07f;
 
 			private SinCosTable sinCos = new SinCosTable(ArrowSides);
+			public Gizmo Gizmo;
 			private readonly Color color;
 			private readonly Vector3 axisVector;
 			private readonly Constraints constraint;
@@ -92,20 +93,17 @@ namespace FourTentacles
 				this.sign = sign;
 			}
 
-			private Vector3 pos;
-			private float scale;
-
-			public void AdjustPosition(float scale, Vector3 pos)
+			public override Vector3 Pos
 			{
-				this.scale = scale;
-				this.pos = pos;
+				get { return Gizmo.Pos; }
+				set { }
 			}
 
 			public override void DrawShape()
 			{
 				GL.Begin(PrimitiveType.Lines);
-				GL.Vertex3(pos + axisVector * scale * QuadSize);
-				GL.Vertex3(pos + axisVector * scale);
+				GL.Vertex3(Pos + axisVector * Gizmo.Scale * QuadSize);
+				GL.Vertex3(Pos + axisVector * Gizmo.Scale);
 				GL.End();
 			}
 
@@ -161,12 +159,14 @@ namespace FourTentacles
 		{
 			foreach (var axis in new[] {AxisX, AxisY, AxisZ})
 			{
+				axis.Gizmo = this;
 				axis.MouseDown += OnMouseDown;
 				axis.MouseLeave += OnMouseLeave;
 				axis.MouseOver += OnMouseOverAxis;
 			}
 			foreach (var plane in new[] {PlaneXY, PlaneYZ, PlaneZX})
 			{
+				plane.Gizmo = this;
 				plane.MouseDown += OnMouseDown;
 				plane.MouseLeave += OnMouseLeave;
 				plane.MouseOver += OnMouseOverPlane;
@@ -213,21 +213,15 @@ namespace FourTentacles
 			yield return PlaneZX;
 		}
 
+		public float Scale;
 		public void Draw(Vector3 gizmoPos, Camera camera, Size controlSize)
 		{
-			float scale = (float) camera.GetPerspectiveRatio(gizmoPos)*GizmoSizePx/controlSize.Height;
-			
-			AxisX.AdjustPosition(scale, gizmoPos);
-			AxisY.AdjustPosition(scale, gizmoPos);
-			AxisZ.AdjustPosition(scale, gizmoPos);
-
-			PlaneXY.AdjustPosition(scale, gizmoPos);
-			PlaneYZ.AdjustPosition(scale, gizmoPos);
-			PlaneZX.AdjustPosition(scale, gizmoPos);
+			Scale = (float) camera.GetPerspectiveRatio(gizmoPos)*GizmoSizePx/controlSize.Height;
+			Pos = gizmoPos;
 
 			GL.PushMatrix();
 			GL.Translate(gizmoPos);
-			GL.Scale(scale, scale, scale);
+			GL.Scale(Scale, Scale, Scale);
 			
 			AxisX.Draw(AxisY, AxisZ, constraints, camera);
 			AxisY.Draw(AxisX, AxisZ, constraints, camera);
@@ -238,6 +232,11 @@ namespace FourTentacles
 			PlaneZX.Draw(constraints);
 
 			GL.PopMatrix();
+		}
+
+		public Cursor GetCursor()
+		{
+			return Cursors.Move;
 		}
 	}
 }

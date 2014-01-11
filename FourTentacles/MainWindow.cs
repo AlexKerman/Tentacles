@@ -59,6 +59,8 @@ namespace FourTentacles
 			splines.Add(spline);
 
 			gizmo.ViewChanged += (o, args) => Render();
+
+			glc.Cursor = Cursors.Select;
 		}
 
 		private void OnShown(object sender, EventArgs e)
@@ -108,6 +110,11 @@ namespace FourTentacles
 				return;
 			}
 
+			if (mouseOverController != null)
+			{
+				
+			}
+
 			if (selectedSplines.Count > 0)
 			{
 				Controller controller = GetControllerUnderCursor(e.Location);
@@ -115,11 +122,14 @@ namespace FourTentacles
 				{
 					mouseOverController.OnMouseLeave();
 					mouseOverController = null;
+					glc.Cursor = Cursors.Select;
+					return;
 				}
 				if (controller != null)
 				{
 					mouseOverController = controller;
 					controller.OnMouseOver();
+					glc.Cursor = gizmo.GetCursor();
 				}
 			}
 		}

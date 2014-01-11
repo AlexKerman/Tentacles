@@ -8,11 +8,10 @@ using OpenTK.Graphics.OpenGL;
 
 namespace FourTentacles
 {
-	class Camera
+	class Camera : Node
 	{
 		private RollInterpolator zoom = new RollInterpolator();
 
-		private Vector3 xyz;
 		private Vector3 target;
 		private Vector3 top;
 		private float FieldOfViev { get; set; }
@@ -22,7 +21,7 @@ namespace FourTentacles
 			FieldOfViev = MathHelper.PiOver4;   //45 degree by default
 			target = Vector3.Zero;
 			top = Vector3.UnitY;
-			xyz = new Vector3(-3600, 1200, 0);
+			Pos = new Vector3(-3600, 1200, 0);
 		}
 
 		public Vector3 Top
@@ -34,7 +33,7 @@ namespace FourTentacles
 		{
 			get
 			{
-				Vector3 front = target - xyz;
+				Vector3 front = target - Pos;
 				Vector3 right = Vector3.Cross(front, top);
 				right.Normalize();
 				return right;
@@ -52,13 +51,13 @@ namespace FourTentacles
 			GL.MultMatrix(ref projection);
 
 			GL.MatrixMode(MatrixMode.Modelview);
-			Matrix4 projectionMatrix = Matrix4.LookAt(xyz, target, top);
+			Matrix4 projectionMatrix = Matrix4.LookAt(Pos, target, top);
 			GL.LoadMatrix(ref projectionMatrix);
 		}
 
 		public double GetPerspectiveRatio(Vector3 point)
 		{
-			double distance = (xyz - point).Length;
+			double distance = (Pos - point).Length;
 			return Math.Tan(FieldOfViev)*distance;
 		}
 
@@ -71,13 +70,13 @@ namespace FourTentacles
 		{
 			if (zoom.Active)
 			{
-				xyz = zoom.GetCameraPos(xyz, target);
+				Pos = zoom.GetCameraPos(Pos, target);
 			}
 		}
 
 		public void Roll(float scale)
 		{
-			zoom.Roll(xyz, target, scale);
+			zoom.Roll(Pos, target, scale);
 		}
 
 		public void Move(Vector3 move)
@@ -87,27 +86,27 @@ namespace FourTentacles
 			Vector3 vec;
 
 			movvy = top;
-			vec = target - xyz;
+			vec = target - Pos;
 			movvx = Vector3.Cross(vec, movvy);
 			movvx.Normalize();
 			movvx *= -move.X;
 			movvy *= move.Y;
 
-			xyz += movvx + movvy;
+			Pos += movvx + movvy;
 			target += movvx + movvy;
 		}
 
 		public void Rotate(float x, float y)
 		{
-			Vector3 xaxis = Vector3.Cross(target - xyz, top);
+			Vector3 xaxis = Vector3.Cross(target - Pos, top);
 			xaxis.Normalize();
 			Quaternion roty = Quaternion.FromAxisAngle(xaxis, y);
 			Quaternion rotx = Quaternion.FromAxisAngle(Vector3.UnitY, x);
 			var rotate = roty * rotx;
 
-			Vector3 vec = xyz - target;
+			Vector3 vec = Pos - target;
 			vec = Vector3.Transform(vec, rotate);
-			xyz = vec + target;
+			Pos = vec + target;
 
 			top = Vector3.Transform(top, rotate);
 			AdjustTopVector();
@@ -115,7 +114,7 @@ namespace FourTentacles
 
 		private void AdjustTopVector()
 		{
-			Vector3 front = target - xyz;
+			Vector3 front = target - Pos;
 			front.Normalize();
 			Vector3 left = Vector3.Cross(top, front);
 			top = Vector3.Cross(front, left);
