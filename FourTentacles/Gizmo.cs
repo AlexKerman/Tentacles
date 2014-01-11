@@ -60,9 +60,9 @@ namespace FourTentacles
 			public override void DrawShape()
 			{
 				GL.Begin(PrimitiveType.Triangles);
-				GL.Vertex3(axis1 * QuadSize * Gizmo.Scale + Pos);
-				GL.Vertex3(axis2 * QuadSize * Gizmo.Scale + Pos);
-				GL.Vertex3((axis1 + axis2) * QuadSize * Gizmo.Scale + Pos);
+				GL.Vertex3(axis1 * QuadSize * Gizmo.scale + Pos);
+				GL.Vertex3(axis2 * QuadSize * Gizmo.scale + Pos);
+				GL.Vertex3((axis1 + axis2) * QuadSize * Gizmo.scale + Pos);
 				GL.End();
 			}
 		}
@@ -102,8 +102,8 @@ namespace FourTentacles
 			public override void DrawShape()
 			{
 				GL.Begin(PrimitiveType.Lines);
-				GL.Vertex3(Pos + axisVector * Gizmo.Scale * QuadSize);
-				GL.Vertex3(Pos + axisVector * Gizmo.Scale);
+				GL.Vertex3(Pos + axisVector * Gizmo.scale * QuadSize);
+				GL.Vertex3(Pos + axisVector * Gizmo.scale);
 				GL.End();
 			}
 
@@ -154,6 +154,7 @@ namespace FourTentacles
 		private Plane PlaneZX = new Plane(Vector3.UnitZ, Vector3.UnitX, Constraints.Z | Constraints.X);
 
 		public event EventHandler ViewChanged;
+		public event EventHandler<Vector3> MoveObjects;
 
 		public Gizmo()
 		{
@@ -163,6 +164,7 @@ namespace FourTentacles
 				axis.MouseDown += OnMouseDown;
 				axis.MouseLeave += OnMouseLeave;
 				axis.MouseOver += OnMouseOverAxis;
+				axis.MouseDrag += OnMouseDrag;
 			}
 			foreach (var plane in new[] {PlaneXY, PlaneYZ, PlaneZX})
 			{
@@ -170,7 +172,18 @@ namespace FourTentacles
 				plane.MouseDown += OnMouseDown;
 				plane.MouseLeave += OnMouseLeave;
 				plane.MouseOver += OnMouseOverPlane;
+				plane.MouseDrag += OnMouseDrag;
 			}
+		}
+		
+		private void OnMouseDrag(object sender, Vector3 vector3)
+		{
+			if(MoveObjects == null) return;
+			Vector3 result = Vector3.Zero;
+			if (constraints.HasFlag(Constraints.X)) result.X = vector3.X;
+			if (constraints.HasFlag(Constraints.Y)) result.Y = vector3.Y;
+			if (constraints.HasFlag(Constraints.Z)) result.Z = vector3.Z;
+			MoveObjects(this, result);
 		}
 
 		private void OnMouseOverPlane(object sender, EventArgs eventArgs)
@@ -213,15 +226,15 @@ namespace FourTentacles
 			yield return PlaneZX;
 		}
 
-		public float Scale;
+		private float scale;
 		public void Draw(Vector3 gizmoPos, Camera camera, Size controlSize)
 		{
-			Scale = (float) camera.GetPerspectiveRatio(gizmoPos)*GizmoSizePx/controlSize.Height;
+			scale = (float) camera.GetPerspectiveRatio(gizmoPos)*GizmoSizePx/controlSize.Height;
 			Pos = gizmoPos;
 
 			GL.PushMatrix();
 			GL.Translate(gizmoPos);
-			GL.Scale(Scale, Scale, Scale);
+			GL.Scale(scale, scale, scale);
 			
 			AxisX.Draw(AxisY, AxisZ, constraints, camera);
 			AxisY.Draw(AxisX, AxisZ, constraints, camera);

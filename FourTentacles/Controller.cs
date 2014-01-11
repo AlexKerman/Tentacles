@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using OpenTK;
 
 namespace FourTentacles
 {
@@ -27,6 +28,13 @@ namespace FourTentacles
 		{
 			EventHandler handler = MouseDown;
 			if (handler != null) handler(this, EventArgs.Empty);
+		}
+
+		public event EventHandler<Vector3> MouseDrag;
+		public void OnMouseDrag(Vector3 e)
+		{
+			EventHandler<Vector3> handler = MouseDrag;
+			if (handler != null) handler(this, e);
 		}
 
 		public abstract void DrawShape();

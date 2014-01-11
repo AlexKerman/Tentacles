@@ -72,5 +72,10 @@ namespace FourTentacles
 			}
 			GL.End();
 		}
+
+		public BoundingBox Translate(Vector3 pos)
+		{
+			return new BoundingBox(minCoords + pos, maxCoords + pos);
+		}
 	}
 }

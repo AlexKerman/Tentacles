@@ -39,7 +39,6 @@ namespace FourTentacles
 		private Camera camera = new Camera();
 		private List<Spline4D> splines = new List<Spline4D>();
 		private List<Spline4D> selectedSplines = new List<Spline4D>();
-		private Controller selectedController;
 		private Controller mouseOverController;
 
 		private SelectionRectangle selectionRectangle = null;
@@ -59,8 +58,18 @@ namespace FourTentacles
 			splines.Add(spline);
 
 			gizmo.ViewChanged += (o, args) => Render();
+			gizmo.MoveObjects += GizmoOnMoveObjects;
 
 			glc.Cursor = Cursors.Select;
+		}
+
+		private void GizmoOnMoveObjects(object sender, Vector3 delta)
+		{
+			foreach (var spline in selectedSplines)
+			{
+				spline.Pos += delta;
+			}
+			Render();
 		}
 
 		private void OnShown(object sender, EventArgs e)
@@ -110,9 +119,14 @@ namespace FourTentacles
 				return;
 			}
 
-			if (mouseOverController != null)
+			if (mouseOverController != null && e.Button == MouseButtons.Left)
 			{
-				
+				double scale = camera.GetPerspectiveRatio(mouseOverController.Pos) / glc.Height;
+				Vector3 move = camera.Right * deltaX;
+				move -= camera.Top * deltaY;
+				move *= (float) scale;
+				mouseOverController.OnMouseDrag(move);
+				return;
 			}
 
 			if (selectedSplines.Count > 0)
@@ -159,7 +173,7 @@ namespace FourTentacles
 				if (mouseOverController != null)
 				{
 					mouseOverController.OnMouseDown();
-					selectedController = mouseOverController;
+					//selectedController = mouseOverController;
 					return;
 				}
 
@@ -219,15 +233,17 @@ namespace FourTentacles
 			DrawGrid();
 
 			foreach (var spline in splines)
+			{
+				GL.PushMatrix();
+				GL.Translate(spline.Pos);
 				spline.Render(renderMode);
+				GL.PopMatrix();
+			}
 
 			var box = new BoundingBox();
 			foreach (var spline in selectedSplines)
-			{
-				var bb = spline.GetBoundingBox();
-				box = box.Extend(bb);
-				bb.Draw();
-			}
+				box = box.Extend(spline.GetBoundingBox());
+			box.Draw();
 
 			GL.Clear(ClearBufferMask.DepthBufferBit);
 

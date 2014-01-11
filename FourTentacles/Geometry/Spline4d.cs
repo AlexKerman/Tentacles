@@ -30,7 +30,7 @@ namespace FourTentacles
 			var bb = new BoundingBox();
 			foreach (var segment in segments)
 				bb = bb.Extend(segment.GetBoundingBox());
-			return bb;
+			return bb.Translate(Pos);
 		}
 
 		public void Render(RenderMode renderMode)
