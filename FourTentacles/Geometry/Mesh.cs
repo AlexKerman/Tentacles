@@ -53,27 +53,31 @@ namespace FourTentacles
 
 		public void Render(RenderMode renderMode)
 		{
-			int stride = BlittableValueType.StrideOf(pointsArray);
+			//int stride = BlittableValueType.StrideOf(pointsArray);
 
-			GL.Enable(EnableCap.VertexArray);
-			GL.Enable(EnableCap.NormalArray);
-			GL.VertexPointer(3, VertexPointerType.Float, stride, pointsArray);
-			GL.NormalPointer(NormalPointerType.Float, stride, normalsArray);
+			//GL.Enable(EnableCap.VertexArray);
+			//GL.Enable(EnableCap.NormalArray);
+			//GL.VertexPointer(3, VertexPointerType.Float, stride, pointsArray);
+			//GL.NormalPointer(NormalPointerType.Float, stride, normalsArray);
 			
 			Material.SetMeshMaterial();
 			if (renderMode.HasFlag(RenderMode.Solid))
 				foreach (int[] indicies in triangleStripIndicies)
-					GL.DrawElements(PrimitiveType.TriangleStrip, indicies.Length, DrawElementsType.UnsignedInt, indicies);
+					//GL.DrawElements(PrimitiveType.TriangleStrip, indicies.Length, DrawElementsType.UnsignedInt, indicies);
+					WorkAroundDrawElements(PrimitiveType.TriangleStrip, pointsArray, normalsArray, indicies);
 
-			GL.Disable(EnableCap.NormalArray);
+			//GL.Disable(EnableCap.NormalArray);
 			
 			Material.SetLineMaterial(Color.White);
 			if (renderMode.HasFlag(RenderMode.Wireframe))
 			{
 				foreach (int[] indicies in triangleStripIndicies)
-					GL.DrawElements(PrimitiveType.Lines, indicies.Length, DrawElementsType.UnsignedInt, indicies);
+					//GL.DrawElements(PrimitiveType.Lines, indicies.Length, DrawElementsType.UnsignedInt, indicies);
+					WorkAroundDrawElements(PrimitiveType.Lines, pointsArray, indicies);
+
 				foreach (int[] indicies in lineStripIndicies)
-					GL.DrawElements(PrimitiveType.LineStrip, indicies.Length, DrawElementsType.UnsignedInt, indicies);
+					//GL.DrawElements(PrimitiveType.LineStrip, indicies.Length, DrawElementsType.UnsignedInt, indicies);
+					WorkAroundDrawElements(PrimitiveType.LineStrip, pointsArray, indicies);
 			}
 
 			if (renderMode.HasFlag(RenderMode.Normals))
@@ -90,8 +94,29 @@ namespace FourTentacles
 				GL.End();
 			}
 
-			GL.Disable(EnableCap.VertexArray);
+			//GL.Disable(EnableCap.VertexArray);
 			
+		}
+
+		private void WorkAroundDrawElements(PrimitiveType primitiveType, Vector3[] pointsArray, int[] indicies)
+		{
+			GL.Begin(primitiveType);
+			foreach (var i in indicies)
+			{
+				GL.Vertex3(pointsArray[i]);
+			}
+			GL.End();
+		}
+
+		private void WorkAroundDrawElements(PrimitiveType primitiveType, Vector3[] pointsArray, Vector3[] normalsArray, int[] indicies)
+		{
+			GL.Begin(primitiveType);
+			foreach (var i in indicies)
+			{
+				GL.Normal3(normalsArray[i]);
+				GL.Vertex3(pointsArray[i]);
+			}
+			GL.End();
 		}
 
 		public int GetTrianglesCount()

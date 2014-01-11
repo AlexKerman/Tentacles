@@ -77,6 +77,9 @@ namespace FourTentacles
 			InitRender();
 			Render();
 			UpdateSelectionModeLabel();
+
+			string renderer = GL.GetString(StringName.Renderer);
+			string version = GL.GetString(StringName.Version);
 		}
 
 		private void InitRender()
@@ -173,7 +176,6 @@ namespace FourTentacles
 				if (mouseOverController != null)
 				{
 					mouseOverController.OnMouseDown();
-					//selectedController = mouseOverController;
 					return;
 				}
 
