@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using OpenCLNet;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 
@@ -61,6 +62,10 @@ namespace FourTentacles
 			gizmo.MoveObjects += GizmoOnMoveObjects;
 
 			glc.Cursor = Cursors.Select;
+
+			//switch Optimus graphics card to NVIDIA
+			//https://github.com/opentk/opentk/issues/46
+			var openCLPlatform = OpenCL.GetPlatform(0);
 		}
 
 		private void GizmoOnMoveObjects(object sender, Vector3 delta)

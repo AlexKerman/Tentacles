@@ -42,7 +42,7 @@ namespace FourTentacles
 		public void DrawShape()
 		{
 			foreach (var segment in segments)
-				segment.Mesh.Render(RenderMode.SolidWireframe | RenderMode.Normals);
+				segment.Mesh.Render(RenderMode.Solid);
 		}
 
 		public int GetTrianglesCount()
