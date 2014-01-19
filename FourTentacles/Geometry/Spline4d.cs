@@ -33,7 +33,7 @@ namespace FourTentacles
 			return bb.Translate(Pos);
 		}
 
-		public void Render(RenderMode renderMode)
+		override public void Render(RenderMode renderMode)
 		{
 			foreach (var segment in segments)
 				segment.Mesh.Render(renderMode);

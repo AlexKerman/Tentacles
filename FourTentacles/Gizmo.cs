@@ -10,7 +10,7 @@ using OpenTK.Graphics.OpenGL;
 
 namespace FourTentacles
 {
-	class Gizmo : Node
+	class Gizmo
 	{
 		[Flags]
 		enum Constraints
@@ -30,12 +30,29 @@ namespace FourTentacles
 
 			public Gizmo Gizmo;
 
-			public Constraints Constraint { get { return constraint; } }
-
 			public override Vector3 Pos
 			{
 				get { return Gizmo.Pos; }
-				set { }
+			}
+
+			public override void OnMouseDown()
+			{
+				Gizmo.fixedConstraints = Gizmo.constraints;
+			}
+
+			public override void OnMouseOver()
+			{
+				Gizmo.ChangeConstraints(constraint);
+			}
+
+			public override void OnMouseLeave()
+			{
+				Gizmo.ChangeConstraints(Gizmo.fixedConstraints);
+			}
+
+			public override void OnMouseDrag(Vector3 e)
+			{
+				Gizmo.Move(e);
 			}
 
 			public Plane(Vector3 axis1, Vector3 axis2, Constraints constraint)
@@ -83,8 +100,6 @@ namespace FourTentacles
 			private readonly Vector2[] sign;
 			private readonly static Color SelectedColor = Color.Yellow;
 
-			public Constraints Constraint { get { return constraint; } }
-
 			public Axis(Color color, Vector3 axisVector, Constraints constraint, Vector2[] sign)
 			{
 				this.color = color;
@@ -96,7 +111,26 @@ namespace FourTentacles
 			public override Vector3 Pos
 			{
 				get { return Gizmo.Pos; }
-				set { }
+			}
+
+			public override void OnMouseDown()
+			{
+				Gizmo.fixedConstraints = Gizmo.constraints;
+			}
+
+			public override void OnMouseOver()
+			{
+				Gizmo.ChangeConstraints(constraint);
+			}
+
+			public override void OnMouseLeave()
+			{
+				Gizmo.ChangeConstraints(Gizmo.fixedConstraints);
+			}
+
+			public override void OnMouseDrag(Vector3 e)
+			{
+				Gizmo.Move(e);
 			}
 
 			public override void DrawShape()
@@ -141,6 +175,8 @@ namespace FourTentacles
 			}
 		}
 
+		private Vector3 Pos;
+
 		private const float QuadSize = 0.3f;
 		private const int GizmoSizePx = 96;
 		private Constraints fixedConstraints = Constraints.X | Constraints.Y;
@@ -159,24 +195,12 @@ namespace FourTentacles
 		public Gizmo()
 		{
 			foreach (var axis in new[] {AxisX, AxisY, AxisZ})
-			{
 				axis.Gizmo = this;
-				axis.MouseDown += OnMouseDown;
-				axis.MouseLeave += OnMouseLeave;
-				axis.MouseOver += OnMouseOverAxis;
-				axis.MouseDrag += OnMouseDrag;
-			}
 			foreach (var plane in new[] {PlaneXY, PlaneYZ, PlaneZX})
-			{
 				plane.Gizmo = this;
-				plane.MouseDown += OnMouseDown;
-				plane.MouseLeave += OnMouseLeave;
-				plane.MouseOver += OnMouseOverPlane;
-				plane.MouseDrag += OnMouseDrag;
-			}
 		}
 		
-		private void OnMouseDrag(object sender, Vector3 vector3)
+		private void Move(Vector3 vector3)
 		{
 			if(MoveObjects == null) return;
 			Vector3 result = Vector3.Zero;
@@ -184,16 +208,6 @@ namespace FourTentacles
 			if (constraints.HasFlag(Constraints.Y)) result.Y = vector3.Y;
 			if (constraints.HasFlag(Constraints.Z)) result.Z = vector3.Z;
 			MoveObjects(this, result);
-		}
-
-		private void OnMouseOverPlane(object sender, EventArgs eventArgs)
-		{
-			ChangeConstraints((sender as Plane).Constraint);
-		}
-
-		private void OnMouseOverAxis(object sender, EventArgs eventArgs)
-		{
-			ChangeConstraints((sender as Axis).Constraint);
 		}
 
 		private void ChangeConstraints(Constraints cons)
@@ -204,16 +218,6 @@ namespace FourTentacles
 				EventHandler handler = ViewChanged;
 				if (handler != null) handler(this, EventArgs.Empty);
 			}
-		}
-
-		private void OnMouseDown(object sender, EventArgs eventArgs)
-		{
-			fixedConstraints = constraints;
-		}
-
-		private void OnMouseLeave(object sender, EventArgs eventArgs)
-		{
-			ChangeConstraints(fixedConstraints);
 		}
 
 		public IEnumerable<Controller> GetControllers()

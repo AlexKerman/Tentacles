@@ -7,8 +7,13 @@ using OpenTK;
 
 namespace FourTentacles
 {
-	public abstract class Node
+	class Node4DPoint : Node
 	{
-		virtual public Vector3 Pos { get; set; }
+		public Vector4d Point { get; set; }
+
+		public override void Render(RenderMode renderMode)
+		{
+			throw new NotImplementedException();
+		}
 	}
 }

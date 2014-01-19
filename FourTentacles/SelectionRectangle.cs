@@ -30,16 +30,6 @@ namespace FourTentacles
 			this.controlSize = controlSize;
 		}
 
-		public int Width
-		{
-			get { return Math.Abs(startLocation.X - endLocaton.X); }
-		}
-
-		public int Height
-		{
-			get { return Math.Abs(startLocation.Y - endLocaton.Y); }
-		}
-
 		public bool IsPoint
 		{
 			get { return startLocation == endLocaton; }
@@ -103,8 +93,8 @@ namespace FourTentacles
 
 		private Matrix4d GetSelectionMatrix()
 		{
-			double width = Width;
-			double height = Height;
+			double width = Math.Abs(startLocation.X - endLocaton.X);
+			double height = Math.Abs(startLocation.Y - endLocaton.Y);
 			if (IsPoint) width = height = 5.0;
 
 			return new Matrix4d(

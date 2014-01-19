@@ -8,10 +8,11 @@ using OpenTK.Graphics.OpenGL;
 
 namespace FourTentacles
 {
-	class Camera : Node
+	class Camera
 	{
 		private RollInterpolator zoom = new RollInterpolator();
 
+		private Vector3 Pos;
 		private Vector3 target;
 		private Vector3 top;
 		private float FieldOfViev { get; set; }

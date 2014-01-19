@@ -38,6 +38,7 @@
 			this.lbRenderMode = new System.Windows.Forms.ToolStripStatusLabel();
 			this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
 			this.lbTrianglesCount = new System.Windows.Forms.ToolStripStatusLabel();
+			this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
 			this.menuStrip1.SuspendLayout();
 			this.tableLayoutPanel1.SuspendLayout();
 			this.statusStrip1.SuspendLayout();
@@ -70,8 +71,9 @@
 			// 
 			this.tableLayoutPanel1.ColumnCount = 2;
 			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 143F));
+			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 170F));
 			this.tableLayoutPanel1.Controls.Add(this.glc, 0, 0);
+			this.tableLayoutPanel1.Controls.Add(this.flowLayoutPanel1, 1, 0);
 			this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 24);
 			this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
@@ -87,7 +89,7 @@
 			this.glc.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.glc.Location = new System.Drawing.Point(3, 3);
 			this.glc.Name = "glc";
-			this.glc.Size = new System.Drawing.Size(581, 415);
+			this.glc.Size = new System.Drawing.Size(554, 415);
 			this.glc.TabIndex = 0;
 			this.glc.VSync = true;
 			this.glc.SizeChanged += new System.EventHandler(this.OnSizeChanged);
@@ -135,6 +137,15 @@
 			this.lbTrianglesCount.Size = new System.Drawing.Size(98, 17);
 			this.lbTrianglesCount.Text = "lbTrianglesCount";
 			// 
+			// flowLayoutPanel1
+			// 
+			this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.flowLayoutPanel1.Location = new System.Drawing.Point(560, 0);
+			this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
+			this.flowLayoutPanel1.Name = "flowLayoutPanel1";
+			this.flowLayoutPanel1.Size = new System.Drawing.Size(170, 421);
+			this.flowLayoutPanel1.TabIndex = 1;
+			// 
 			// MainWindow
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -169,6 +180,7 @@
 		private System.Windows.Forms.ToolStripStatusLabel lbRenderMode;
 		private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel2;
 		private System.Windows.Forms.ToolStripStatusLabel lbTrianglesCount;
+		private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
 	}
 }
 

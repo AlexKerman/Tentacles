@@ -13,10 +13,10 @@
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x86</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
+    <Optimize>true</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
@@ -69,7 +69,8 @@
     </Compile>
     <Compile Include="Material\Material.cs" />
     <Compile Include="Geometry\Mesh.cs" />
-    <Compile Include="Node.cs" />
+    <Compile Include="Geometry\Node.cs" />
+    <Compile Include="Geometry\Node4dPoint.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Geometry\Segment4D.cs" />
@@ -82,6 +83,12 @@
     <Compile Include="Material\Shader.cs" />
     <Compile Include="Geometry\SinCosTable.cs" />
     <Compile Include="Geometry\Spline4d.cs" />
+    <Compile Include="SplineProperties.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="SplineProperties.Designer.cs">
+      <DependentUpon>SplineProperties.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="MainWindow.resx">
       <DependentUpon>MainWindow.cs</DependentUpon>
     </EmbeddedResource>
@@ -89,6 +96,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <SubType>Designer</SubType>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SplineProperties.resx">
+      <DependentUpon>SplineProperties.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
