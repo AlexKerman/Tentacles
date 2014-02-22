@@ -109,7 +109,7 @@ namespace FourTentacles
 			vec = Vector3.Transform(vec, rotate);
 			Pos = vec + target;
 
-			top = Vector3.Transform(top, rotate);
+			//top = Vector3.Transform(top, rotate);
 			AdjustTopVector();
 		}
 
@@ -118,6 +118,7 @@ namespace FourTentacles
 			Vector3 front = target - Pos;
 			front.Normalize();
 			Vector3 left = Vector3.Cross(top, front);
+			left.Y = 0.0f;
 			top = Vector3.Cross(front, left);
 			top.Normalize();
 		}

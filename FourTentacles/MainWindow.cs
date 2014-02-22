@@ -26,11 +26,6 @@ namespace FourTentacles
 		Normals = 4
 	}
 
-	public enum SelectMode
-	{
-		New, Add, Sub
-	}
-
 	public partial class MainWindow : Form
 	{
 		[DllImport("User32.dll")]
@@ -38,8 +33,8 @@ namespace FourTentacles
 		private const int VK_MENU = 0x12;	//Any Alt key
 
 		private Camera camera = new Camera();
-		private List<Spline4D> splines = new List<Spline4D>();
-		private List<Spline4D> selectedSplines = new List<Spline4D>();
+		private List<Node> nodes = new List<Node>();
+		private List<Node> selectedNodes = new List<Node>();
 		private Controller mouseOverController;
 
 		private SelectionRectangle selectionRectangle = null;
@@ -56,7 +51,7 @@ namespace FourTentacles
 				new Vector4(0.0f, 1200.0f, -200.0f, 0.0f), 
 				new Vector4(0.0f, 800.0f, 0.0f, -150.0f),
 				new Vector4(0.0f, 600.0f, 800.0f, 200.0f));
-			splines.Add(spline);
+			nodes.Add(spline);
 
 			gizmo.ViewChanged += (o, args) => Render();
 			gizmo.MoveObjects += GizmoOnMoveObjects;
@@ -70,7 +65,7 @@ namespace FourTentacles
 
 		private void GizmoOnMoveObjects(object sender, Vector3 delta)
 		{
-			foreach (var spline in selectedSplines)
+			foreach (var spline in selectedNodes)
 			{
 				spline.Pos += delta;
 			}
@@ -82,9 +77,6 @@ namespace FourTentacles
 			InitRender();
 			Render();
 			UpdateSelectionModeLabel();
-
-			string renderer = GL.GetString(StringName.Renderer);
-			string version = GL.GetString(StringName.Version);
 		}
 
 		private void InitRender()
@@ -94,8 +86,6 @@ namespace FourTentacles
 			GL.ClearDepth(1.0f);
 			GL.Enable(EnableCap.DepthTest);
 			GL.Enable(EnableCap.Light0);
-			
-			//GL.Hint(HintTarget.PerspectiveCorrectionHint, HintMode.Nicest); // Really Nice Perspective Calculations
 
 			// Light model parameters:
 			// -------------------------------------------
@@ -137,7 +127,7 @@ namespace FourTentacles
 				return;
 			}
 
-			if (selectedSplines.Count > 0)
+			if (selectedNodes.Count > 0)
 			{
 				Controller controller = GetControllerUnderCursor(e.Location);
 				if (mouseOverController != null && controller != mouseOverController)
@@ -200,10 +190,10 @@ namespace FourTentacles
 
 		private void SelectObjects()
 		{
-			selectedSplines.Clear();
-			selectionRectangle.SelectObjects(splines, camera);
+			selectedNodes.Clear();
+			selectionRectangle.SelectObjects(nodes, camera);
 			foreach (int i in selectionRectangle.SelectedIndicies)
-				selectedSplines.Add(splines[i]);
+				selectedNodes.Add(nodes[i]);
 		}
 
 		private void OnSizeChanged(object sender, EventArgs e)
@@ -239,17 +229,17 @@ namespace FourTentacles
 
 			DrawGrid();
 
-			foreach (var spline in splines)
+			foreach (var node in nodes)
 			{
 				GL.PushMatrix();
-				GL.Translate(spline.Pos);
-				spline.Render(renderMode);
+				GL.Translate(node.Pos);
+				node.Render(renderMode);
 				GL.PopMatrix();
 			}
 
 			var box = new BoundingBox();
-			foreach (var spline in selectedSplines)
-				box = box.Extend(spline.GetBoundingBox());
+			foreach (var node in selectedNodes)
+				box = box.Extend(node.GetBoundingBox());
 			box.Draw();
 
 			GL.Clear(ClearBufferMask.DepthBufferBit);
@@ -262,7 +252,7 @@ namespace FourTentacles
 			if (selectionRectangle != null) selectionRectangle.Draw();
 			glc.SwapBuffers();
 
-			lbTrianglesCount.Text = splines.Sum(s => s.GetTrianglesCount()).ToString();
+			lbTrianglesCount.Text = nodes.Sum(s => s.GetTrianglesCount()).ToString();
 		}
 
 		void DrawGrid()

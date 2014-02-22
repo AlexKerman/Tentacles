@@ -15,7 +15,6 @@ namespace FourTentacles
 		public virtual void OnMouseLeave() { }
 		public virtual void OnMouseDown() { }
 		public virtual void OnMouseDrag(Vector3 e) { }
-
-		public abstract void DrawShape();
+		abstract public void DrawShape();
 	}
 }

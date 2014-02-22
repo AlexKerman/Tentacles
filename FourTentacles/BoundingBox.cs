@@ -9,7 +9,7 @@ using OpenTK.Graphics.OpenGL;
 
 namespace FourTentacles
 {
-	struct BoundingBox
+	public struct BoundingBox
 	{
 		private Vector3 minCoords;
 		private Vector3 maxCoords;

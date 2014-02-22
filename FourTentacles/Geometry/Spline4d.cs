@@ -8,7 +8,7 @@ using OpenTK.Graphics.OpenGL;
 
 namespace FourTentacles
 {
-	class Spline4D : Node, ISelectable
+	class Spline4D : Node
 	{
 		private readonly int roundSides;
 		private readonly int lenghtSides;
@@ -25,7 +25,7 @@ namespace FourTentacles
 			segments.Add(new Segment4D(start, end, startGuide, endGuide, roundSides, lenghtSides));
 		}
 
-		public BoundingBox GetBoundingBox()
+		override public BoundingBox GetBoundingBox()
 		{
 			var bb = new BoundingBox();
 			foreach (var segment in segments)
@@ -39,13 +39,7 @@ namespace FourTentacles
 				segment.Mesh.Render(renderMode);
 		}
 
-		public void DrawShape()
-		{
-			foreach (var segment in segments)
-				segment.Mesh.Render(RenderMode.Solid);
-		}
-
-		public int GetTrianglesCount()
+		override public int GetTrianglesCount()
 		{
 			return segments.Sum(s => s.Mesh.GetTrianglesCount());
 		}

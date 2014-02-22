@@ -90,9 +90,7 @@ namespace FourTentacles
 				}
 				GL.End();
 			}
-
 			GL.DisableClientState(ArrayCap.VertexArray);
-			
 		}
 
 		public int GetTrianglesCount()

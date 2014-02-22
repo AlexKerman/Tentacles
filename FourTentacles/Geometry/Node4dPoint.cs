@@ -15,5 +15,15 @@ namespace FourTentacles
 		{
 			throw new NotImplementedException();
 		}
+
+		public override BoundingBox GetBoundingBox()
+		{
+			throw new NotImplementedException();
+		}
+
+		public override int GetTrianglesCount()
+		{
+			throw new NotImplementedException();
+		}
 	}
 }
