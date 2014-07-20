@@ -8,7 +8,7 @@ using OpenTK.Graphics.OpenGL;
 
 namespace FourTentacles
 {
-	class Camera
+	public class Camera
 	{
 		private RollInterpolator zoom = new RollInterpolator();
 
@@ -16,6 +16,8 @@ namespace FourTentacles
 		private Vector3 target;
 		private Vector3 top;
 		private float FieldOfViev { get; set; }
+
+		private Size controlSize;
 
 		public Camera()
 		{
@@ -44,6 +46,7 @@ namespace FourTentacles
 		public void SetProjectionMatrix(Size size) { SetProjectionMatrix(size, Matrix4d.Identity);}
 		public void SetProjectionMatrix(Size size, Matrix4d selectionMatrix)
 		{
+			controlSize = size;
 			GL.Viewport(0, 0, size.Width, size.Height);
 			GL.MatrixMode(MatrixMode.Projection);
 			GL.LoadMatrix(ref selectionMatrix);
@@ -56,10 +59,15 @@ namespace FourTentacles
 			GL.LoadMatrix(ref projectionMatrix);
 		}
 
+		/// <summary>
+		/// Calculates perspective ratio for object
+		/// </summary>
+		/// <param name="point">Location of object</param>
+		/// <returns>Size in pt of each object pixel</returns>
 		public double GetPerspectiveRatio(Vector3 point)
 		{
 			double distance = (Pos - point).Length;
-			return Math.Tan(FieldOfViev)*distance;
+			return Math.Tan(FieldOfViev)*distance/controlSize.Height;
 		}
 
 		public bool Moving

@@ -6,37 +6,46 @@ using OpenTK;
 
 namespace FourTentacles
 {
-	class Segment4D
+	class Segment4D : Node
 	{
 		private Vector4 cpbp;
 		private Vector4 cpep;
-		private Vector4 bp;
-		private Vector4 ep;
+		private Node4DPoint bp;
+		private Node4DPoint ep;
 		private Mesh mesh;
 
-		public Segment4D(Vector4 start, Vector4 end, Vector4 startGuide, Vector4 endGuide, int roundSides, int lenghtSides)
+		public Segment4D(Node4DPoint start, Node4DPoint end, Vector4 startGuide, Vector4 endGuide)
 		{
 			this.bp = start;
 			this.ep = end;
 			this.cpbp = startGuide;
 			this.cpep = endGuide;
-			CalculateGeometry(new SinCosTable(roundSides), lenghtSides);
 		}
 
 		private Vector4 a, b, c, d;
 
-		public Mesh Mesh
-		{
-			get { return mesh; }
-		}
-
 		private void CalculateConstants()
 		{
 			//relative control points version
-			a = 2 * (bp - ep) + 3 * (cpbp - cpep);
-			b = 3 * (cpep + ep - 2 * cpbp - bp);
+			a = 2 * (bp.Point - ep.Point) + 3 * (cpbp - cpep);
+			b = 3 * (cpep + ep.Point - 2 * cpbp - bp.Point);
 			c = 3 * cpbp;
-			d = bp;
+			d = bp.Point;
+		}
+
+		public void Render(RenderMode renderMode)
+		{
+			mesh.Render(renderMode);
+		}
+
+		public override void DrawContour(Camera camera, Vector3 basePos)
+		{
+			mesh.Render(RenderMode.Solid);
+		}
+
+		public int GetTrianglesCount()
+		{
+			return mesh.GetTrianglesCount();
 		}
 
 		private void CalculateIndicies(int sides, int length)
@@ -70,7 +79,7 @@ namespace FourTentacles
 			return t;
 		}
 
-		private void CalculateGeometry(SinCosTable table, int lengthSides)
+		public void CalculateGeometry(SinCosTable table, int lengthSides)
 		{
 			CalculateConstants();
 			int sides = table.Sides;

@@ -3,20 +3,26 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
+using FourTentacles.Annotations;
 using OpenTK;
 
 namespace FourTentacles
 {
-	public abstract class Node : ISelectable
+	public abstract class Node
 	{
-		virtual public Vector3 Pos { get; set; }
-		public abstract void Render(RenderMode renderMode);
-		public void DrawShape()
-		{
-			Render(RenderMode.Solid);
-		}
+		/// <summary>
+		/// Draw contour for selection
+		/// </summary>
+		public abstract void DrawContour(Camera camera, Vector3 basePos);
 
-		public abstract BoundingBox GetBoundingBox();
-		public abstract int GetTrianglesCount();
+		public virtual Vector3 Pos { get; set; }
+		public virtual bool IsSelected { get; set; }
+
+		[CanBeNull]
+		public virtual GeometryControl GetNodeControl()
+		{
+			return null;
+		}
 	}
 }

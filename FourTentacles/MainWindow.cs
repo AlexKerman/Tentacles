@@ -33,42 +33,38 @@ namespace FourTentacles
 		private const int VK_MENU = 0x12;	//Any Alt key
 
 		private Camera camera = new Camera();
-		private List<Node> nodes = new List<Node>();
-		private List<Node> selectedNodes = new List<Node>();
 		private Controller mouseOverController;
 
 		private SelectionRectangle selectionRectangle = null;
 		private Gizmo gizmo = new Gizmo();
+
+		private SceneNode sceneNode = new SceneNode();
 
 		public MainWindow()
 		{
 			InitializeComponent();
 			glc.MouseWheel += OnMouseWheel;
 
-			var spline = new Spline4D(48, 96);
-			spline.AddSegment(
-				new Vector4(0.0f, 200.0f, 0.0f, 50.0f),
-				new Vector4(0.0f, 1200.0f, -200.0f, 0.0f), 
-				new Vector4(0.0f, 800.0f, 0.0f, -150.0f),
-				new Vector4(0.0f, 600.0f, 800.0f, 200.0f));
-			nodes.Add(spline);
-
 			gizmo.ViewChanged += (o, args) => Render();
 			gizmo.MoveObjects += GizmoOnMoveObjects;
+
+			sceneNode.RedrawRequested += SceneNodeOnRedrawRequested;
 
 			glc.Cursor = Cursors.Select;
 
 			//switch Optimus graphics card to NVIDIA
 			//https://github.com/opentk/opentk/issues/46
-			var openCLPlatform = OpenCL.GetPlatform(0);
+			//var openCLPlatform = OpenCL.GetPlatform(0);
+		}
+
+		private void SceneNodeOnRedrawRequested(object sender, EventArgs eventArgs)
+		{
+			Render();
 		}
 
 		private void GizmoOnMoveObjects(object sender, Vector3 delta)
 		{
-			foreach (var spline in selectedNodes)
-			{
-				spline.Pos += delta;
-			}
+			sceneNode.Move(delta);
 			Render();
 		}
 
@@ -89,12 +85,13 @@ namespace FourTentacles
 
 			// Light model parameters:
 			// -------------------------------------------
-			GL.LightModel(LightModelParameter.LightModelAmbient, new[] { 0.0f, 0.0f, 0.0f, 0.0f, });
+			GL.LightModel(LightModelParameter.LightModelAmbient, new[] { 0.0f, 0.0f, 0.0f, 0.0f });
 			GL.LightModel(LightModelParameter.LightModelLocalViewer, 1.0f);
 			GL.LightModel(LightModelParameter.LightModelTwoSide, 0.0f);
 		}
 
 		int oldx, oldy;     //previous event mouse coordinates
+
 		private void OnMouseMove(object sender, MouseEventArgs e)
 		{
 			int deltaX = e.X - oldx;
@@ -109,7 +106,7 @@ namespace FourTentacles
 				return;
 			}
 
-			if ((e.Button & MouseButtons.Middle) != 0)
+			if (e.Button.HasFlag(MouseButtons.Middle))
 			{
 				if (GetAsyncKeyState(VK_MENU) != 0) camera.Rotate((-deltaX) / 100.0f, (-deltaY) / 100.0f);
 				else camera.Move(new Vector3(deltaX, deltaY, 0));
@@ -119,7 +116,7 @@ namespace FourTentacles
 
 			if (mouseOverController != null && e.Button == MouseButtons.Left)
 			{
-				double scale = camera.GetPerspectiveRatio(mouseOverController.Pos) / glc.Height;
+				double scale = camera.GetPerspectiveRatio(mouseOverController.Pos);
 				Vector3 move = camera.Right * deltaX;
 				move -= camera.Top * deltaY;
 				move *= (float) scale;
@@ -127,22 +124,19 @@ namespace FourTentacles
 				return;
 			}
 
-			if (selectedNodes.Count > 0)
+			Controller controller = GetControllerUnderCursor(e.Location);
+			if (mouseOverController != null && controller != mouseOverController)
 			{
-				Controller controller = GetControllerUnderCursor(e.Location);
-				if (mouseOverController != null && controller != mouseOverController)
-				{
-					mouseOverController.OnMouseLeave();
-					mouseOverController = null;
-					glc.Cursor = Cursors.Select;
-					return;
-				}
-				if (controller != null)
-				{
-					mouseOverController = controller;
-					controller.OnMouseOver();
-					glc.Cursor = gizmo.GetCursor();
-				}
+				mouseOverController.OnMouseLeave();
+				mouseOverController = null;
+				glc.Cursor = Cursors.Select;
+				return;
+			}
+			if (controller != null)
+			{
+				mouseOverController = controller;
+				controller.OnMouseOver();
+				glc.Cursor = gizmo.GetCursor();
 			}
 		}
 
@@ -150,7 +144,7 @@ namespace FourTentacles
 		{
 			var rect = new SelectionRectangle(mousePosition, glc.Size);
 			var controllers = gizmo.GetControllers().ToList();
-			rect.SelectObjects(controllers, camera);
+			rect.SelectObjects(controllers, camera, sceneNode.GetNodesPos());
 			if (rect.SelectedCount == 0) return null;
 			return controllers[rect.SelectedIndicies.First()];
 		}
@@ -190,10 +184,17 @@ namespace FourTentacles
 
 		private void SelectObjects()
 		{
-			selectedNodes.Clear();
-			selectionRectangle.SelectObjects(nodes, camera);
+			var nodes = sceneNode.GetNodes().ToList();
+			foreach (var node in nodes)
+				node.IsSelected = false;
+			selectionRectangle.SelectObjects(nodes, camera, sceneNode.GetNodesPos());
 			foreach (int i in selectionRectangle.SelectedIndicies)
-				selectedNodes.Add(nodes[i]);
+				nodes[i].IsSelected = true;
+
+			Control control = sceneNode.GetNodeControl();
+			panel1.Controls.Clear();
+			if(control != null)
+				panel1.Controls.Add(control);
 		}
 
 		private void OnSizeChanged(object sender, EventArgs e)
@@ -229,30 +230,29 @@ namespace FourTentacles
 
 			DrawGrid();
 
-			foreach (var node in nodes)
-			{
-				GL.PushMatrix();
-				GL.Translate(node.Pos);
-				node.Render(renderMode);
-				GL.PopMatrix();
-			}
+			sceneNode.Render(renderMode);
 
-			var box = new BoundingBox();
-			foreach (var node in selectedNodes)
-				box = box.Extend(node.GetBoundingBox());
-			box.Draw();
+			var box = sceneNode.GetBoundingBox();
 
 			GL.Clear(ClearBufferMask.DepthBufferBit);
-
-			if (box.Initialized)
+			
+			GL.Translate(sceneNode.GetNodesPos());
+			if (sceneNode.HasSelectedNodes())
 			{
-				gizmo.Draw(box.Center, camera, glc.Size);
+				Vector3 gizmoCenter = Vector3.Zero;
+				foreach (var node in sceneNode.GetNodes().Where(n => n.IsSelected))
+					gizmoCenter += node.Pos;
+				gizmoCenter /= sceneNode.GetNodes().Count(n => n.IsSelected);
+
+				gizmo.Draw(gizmoCenter, camera);
+				box.Draw();
 			}
+			sceneNode.DrawContour(camera);
 
 			if (selectionRectangle != null) selectionRectangle.Draw();
 			glc.SwapBuffers();
 
-			lbTrianglesCount.Text = nodes.Sum(s => s.GetTrianglesCount()).ToString();
+			lbTrianglesCount.Text = sceneNode.GetTrianglesCount().ToString();
 		}
 
 		void DrawGrid()
@@ -271,7 +271,7 @@ namespace FourTentacles
 			GL.End();
 		}
 
-		private void glc_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+		private void OnPreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
 		{
 			if (e.KeyCode == Keys.F3)
 			{
@@ -293,6 +293,5 @@ namespace FourTentacles
 		{
 			lbRenderMode.Text = renderMode.ToString();
 		}
-
 	}
 }

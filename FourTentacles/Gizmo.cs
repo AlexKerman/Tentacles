@@ -30,9 +30,19 @@ namespace FourTentacles
 
 			public Gizmo Gizmo;
 
+			public override void DrawContour(Camera camera, Vector3 basePos)
+			{
+				GL.Begin(PrimitiveType.Triangles);
+				GL.Vertex3(axis1 * QuadSize * Gizmo.scale);
+				GL.Vertex3(axis2 * QuadSize * Gizmo.scale);
+				GL.Vertex3((axis1 + axis2) * QuadSize * Gizmo.scale);
+				GL.End();
+			}
+
 			public override Vector3 Pos
 			{
 				get { return Gizmo.Pos; }
+				set { }
 			}
 
 			public override void OnMouseDown()
@@ -73,15 +83,6 @@ namespace FourTentacles
 				GL.Vertex3((axis1 + axis2) * QuadSize);
 				GL.End();
 			}
-
-			public override void DrawShape()
-			{
-				GL.Begin(PrimitiveType.Triangles);
-				GL.Vertex3(axis1 * QuadSize * Gizmo.scale + Pos);
-				GL.Vertex3(axis2 * QuadSize * Gizmo.scale + Pos);
-				GL.Vertex3((axis1 + axis2) * QuadSize * Gizmo.scale + Pos);
-				GL.End();
-			}
 		}
 
 		class Axis : Controller
@@ -108,9 +109,18 @@ namespace FourTentacles
 				this.sign = sign;
 			}
 
+			public override void DrawContour(Camera camera, Vector3 basePos)
+			{
+				GL.Begin(PrimitiveType.Lines);
+				GL.Vertex3(axisVector * Gizmo.scale * QuadSize);
+				GL.Vertex3(axisVector * Gizmo.scale);
+				GL.End();
+			}
+
 			public override Vector3 Pos
 			{
 				get { return Gizmo.Pos; }
+				set { }
 			}
 
 			public override void OnMouseDown()
@@ -131,14 +141,6 @@ namespace FourTentacles
 			public override void OnMouseDrag(Vector3 e)
 			{
 				Gizmo.Move(e);
-			}
-
-			public override void DrawShape()
-			{
-				GL.Begin(PrimitiveType.Lines);
-				GL.Vertex3(Pos + axisVector * Gizmo.scale * QuadSize);
-				GL.Vertex3(Pos + axisVector * Gizmo.scale);
-				GL.End();
 			}
 
 			public void Draw(Axis axis1, Axis axis2, Constraints constraints, Camera camera)
@@ -215,8 +217,7 @@ namespace FourTentacles
 			if (cons != constraints)
 			{
 				constraints = cons;
-				EventHandler handler = ViewChanged;
-				if (handler != null) handler(this, EventArgs.Empty);
+				ViewChanged.Raise();
 			}
 		}
 
@@ -231,9 +232,9 @@ namespace FourTentacles
 		}
 
 		private float scale;
-		public void Draw(Vector3 gizmoPos, Camera camera, Size controlSize)
+		public void Draw(Vector3 gizmoPos, Camera camera)
 		{
-			scale = (float) camera.GetPerspectiveRatio(gizmoPos)*GizmoSizePx/controlSize.Height;
+			scale = (float) camera.GetPerspectiveRatio(gizmoPos)*GizmoSizePx;
 			Pos = gizmoPos;
 
 			GL.PushMatrix();

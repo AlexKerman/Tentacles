@@ -9,14 +9,6 @@ using OpenTK.Graphics.OpenGL;
 
 namespace FourTentacles
 {
-	interface ISelectable
-	{
-		/// <summary>
-		/// Draw contour for selection
-		/// </summary>
-		void DrawShape();
-	}
-
 	class SelectionRectangle
 	{
 		private Point startLocation;
@@ -41,20 +33,24 @@ namespace FourTentacles
 			set { endLocaton = value; }
 		}
 
-		public void SelectObjects(IEnumerable<ISelectable> selectable, Camera camera)
+		public void SelectObjects(IEnumerable<Node> selectable, Camera camera, Vector3 nodesBasePos)
 		{
 			var objects = selectable.ToList();
 			selectionBuffer = new uint[4 * objects.Count];
 			GL.SelectBuffer(selectionBuffer.Length, selectionBuffer);
 			GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 			camera.SetProjectionMatrix(controlSize, GetSelectionMatrix());
+			GL.Translate(nodesBasePos);
 			GL.RenderMode(RenderingMode.Select);
 
 			GL.InitNames();
 			for (int i = 0; i < objects.Count; i++)
 			{
 				GL.PushName(i);
-				objects[i].DrawShape();
+				GL.PushMatrix();
+				GL.Translate(objects[i].Pos);
+				objects[i].DrawContour(camera, nodesBasePos);
+				GL.PopMatrix();
 				GL.PopName();
 			}
 			GL.Finish();
