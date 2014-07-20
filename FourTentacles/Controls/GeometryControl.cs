@@ -24,6 +24,7 @@ namespace FourTentacles
 
 		protected Geometry geometry;
 
+		#region Events
 		public event EventHandler<GeometryLockedEventArgs> GeometryLocked;
 
 		protected virtual void OnGeometryLocked()
@@ -39,6 +40,16 @@ namespace FourTentacles
 			EventHandler<GeometryLockedEventArgs> handler = GeometryUnlocked;
 			if (handler != null) handler(this, new GeometryLockedEventArgs(geometry));
 		}
+
+		public event EventHandler RedrawRequired;
+
+		protected virtual void OnRedrawRequired()
+		{
+			EventHandler handler = RedrawRequired;
+			if (handler != null) handler(this, EventArgs.Empty);
+		}
+
+		#endregion
 
 		public GeometryControl()
 		{

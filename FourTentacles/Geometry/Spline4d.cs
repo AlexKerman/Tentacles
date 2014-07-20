@@ -19,8 +19,8 @@ namespace FourTentacles
 
 		public SelectionModeEnum SelectionMode = SelectionModeEnum.None;
 
-		private readonly int roundSides;
-		private readonly int lenghtSides;
+		private int roundSides;
+		private int lenghtSides;
 		private SinCosTable sinCos;
 		private List<Segment4D> segments = new List<Segment4D>();
 		private List<Node4DPoint> points = new List<Node4DPoint>();
@@ -30,6 +30,35 @@ namespace FourTentacles
 			this.roundSides = roundSides;
 			this.lenghtSides = lenghtSides;
 			sinCos = new SinCosTable(roundSides);
+		}
+
+		public int RoundSides
+		{
+			get { return roundSides; }
+			set
+			{
+				if(roundSides == value || value < 2) return;
+				roundSides = value;
+				sinCos = new SinCosTable(roundSides);
+				RecalculateGeometry();
+			}
+		}
+
+		public int LenghtSides
+		{
+			get { return lenghtSides; }
+			set
+			{
+				if(lenghtSides == value || value < 2) return;
+				lenghtSides = value;
+				RecalculateGeometry();
+			}
+		}
+
+		private void RecalculateGeometry()
+		{
+			foreach (var segment in segments)
+				segment.CalculateGeometry(sinCos, lenghtSides);
 		}
 
 		public void AddSegment(Node4DPoint start, Node4DPoint end, Vector4 startGuide, Vector4 endGuide)
@@ -96,9 +125,7 @@ namespace FourTentacles
 				{
 					point.Pos += vector;
 				}
-
-				foreach (var segment in segments)
-					segment.CalculateGeometry(sinCos, lenghtSides);
+				RecalculateGeometry();
 			}
 		}
 	}

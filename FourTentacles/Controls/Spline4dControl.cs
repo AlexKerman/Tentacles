@@ -21,11 +21,14 @@ namespace FourTentacles
 
 		public Spline4dControl(Spline4D spline4D) : base(spline4D)
 		{
-			this.spline4D = spline4D;
 			InitializeComponent();
+			this.spline4D = spline4D;
+
+			numLenghtSubdivide.Value = spline4D.LenghtSides;
+			numRoundSubdivide.Value = spline4D.RoundSides;
 		}
 
-		private void cbEditPoints_Click(object sender, EventArgs e)
+		private void EditPointsClick(object sender, EventArgs e)
 		{
 			cbEditSegments.Checked = false;
 			if (cbEditPoints.Checked)
@@ -40,7 +43,7 @@ namespace FourTentacles
 			}
 		}
 
-		private void cbEditSegments_Click(object sender, EventArgs e)
+		private void EditSegmentsClick(object sender, EventArgs e)
 		{
 			cbEditPoints.Checked = false;
 			if (cbEditSegments.Checked)
@@ -53,6 +56,18 @@ namespace FourTentacles
 				spline4D.SelectionMode = Spline4D.SelectionModeEnum.None;
 				OnGeometryUnlocked();
 			}
+		}
+
+		private void LenghtSubdivideValueChanged(object sender, EventArgs e)
+		{
+			spline4D.LenghtSides = (int) numLenghtSubdivide.Value;
+			OnRedrawRequired();
+		}
+
+		private void RoundSubdivideValueChanged(object sender, EventArgs e)
+		{
+			spline4D.RoundSides = (int) numRoundSubdivide.Value;
+			OnRedrawRequired();
 		}
 	}
 }

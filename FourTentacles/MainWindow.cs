@@ -48,7 +48,7 @@ namespace FourTentacles
 			gizmo.ViewChanged += (o, args) => Render();
 			gizmo.MoveObjects += GizmoOnMoveObjects;
 
-			sceneNode.RedrawRequested += SceneNodeOnRedrawRequested;
+			sceneNode.RedrawRequired += SceneNodeOnRedrawRequested;
 
 			glc.Cursor = Cursors.Select;
 
