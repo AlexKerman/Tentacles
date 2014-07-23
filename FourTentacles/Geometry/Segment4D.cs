@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -85,6 +86,7 @@ namespace FourTentacles
 			int sides = table.Sides;
 			var tPoints = DivideSpline(lengthSides);
 			mesh = new Mesh(sides * tPoints.Length);
+			var kompass = new Kompass(GetDirection(0), GetDirection(1));
 
 			foreach (float t in tPoints)
 			{
@@ -93,7 +95,7 @@ namespace FourTentacles
 
 				//3d direction vector
 				Vector3 dir3 = direction.Xyz;
-
+				
 				//коэффициенты для расчета нормалей
 				//фактически, это и есть нормаль, если сегмент направлен вдоль оси X
 				//Получается, что мы меняем местами направление сегмента и направление утолщения (W)
@@ -101,11 +103,13 @@ namespace FourTentacles
 				var normfactor = new Vector2(dir3.Length, -direction.W);
 				normfactor.Normalize();
 
+				Vector3 top = kompass.GetTop(t);
+
 				dir3.Normalize();
-				Vector3 left = Vector3.Cross(Vector3.UnitY, dir3);
+				Vector3 left = Vector3.Cross(top, dir3);
 				left.Normalize();
 				if (left.X < 0) left = -left;
-				Vector3 top = Vector3.Cross(dir3, left);
+				top = Vector3.Cross(dir3, left);
 				top.Normalize();
 
 				for (int i = 0; i < sides; i++)
@@ -130,6 +134,44 @@ namespace FourTentacles
 		public BoundingBox GetBoundingBox()
 		{
 			return mesh.GetBoundingBox();
+		}
+	}
+
+	class Kompass
+	{
+		private static Vector3[] axes = {Vector3.UnitX, Vector3.UnitY, Vector3.UnitZ};
+
+		private Vector3 _start;
+		private Vector3 _end;
+
+		public Kompass(Vector4 start, Vector4 end)
+		{
+			_start = GetTopVector(start.Xyz);
+			_end = GetTopVector(end.Xyz);
+		}
+
+		private Vector3 GetTopVector(Vector3 dir)
+		{
+			Vector3 result = Vector3.Zero;
+			float minDot = 1.0f;
+			dir.Normalize();
+			foreach (var axis in axes)
+			{
+				var dot = Math.Abs(Vector3.Dot(dir, axis));
+				if (dot < minDot)
+				{
+					minDot = dot;
+					result = axis;
+				}
+			}
+			return result;
+		}
+
+		public Vector3 GetTop(float t)
+		{
+			Vector3 result = _start * t + _end * (1.0f - t);
+			result.Normalize();
+			return result;
 		}
 	}
 }
