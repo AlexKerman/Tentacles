@@ -30,11 +30,11 @@
 		{
 			this.cbEditPoints = new System.Windows.Forms.CheckBox();
 			this.cbEditSegments = new System.Windows.Forms.CheckBox();
-			this.numLenghtSubdivide = new System.Windows.Forms.NumericUpDown();
+            this.numLengthSubdivide = new System.Windows.Forms.NumericUpDown();
 			this.label1 = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
 			this.numRoundSubdivide = new System.Windows.Forms.NumericUpDown();
-			((System.ComponentModel.ISupportInitialize)(this.numLenghtSubdivide)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numLengthSubdivide)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.numRoundSubdivide)).BeginInit();
 			this.SuspendLayout();
 			// 
@@ -62,14 +62,14 @@
 			this.cbEditSegments.UseVisualStyleBackColor = true;
 			this.cbEditSegments.Click += new System.EventHandler(this.EditSegmentsClick);
 			// 
-			// numLenghtSubdivide
+            // numLengthSubdivide
 			// 
-			this.numLenghtSubdivide.Location = new System.Drawing.Point(100, 32);
-			this.numLenghtSubdivide.Name = "numLenghtSubdivide";
-			this.numLenghtSubdivide.Size = new System.Drawing.Size(57, 20);
-			this.numLenghtSubdivide.TabIndex = 1;
-			this.numLenghtSubdivide.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-			this.numLenghtSubdivide.ValueChanged += new System.EventHandler(this.LenghtSubdivideValueChanged);
+            this.numLengthSubdivide.Location = new System.Drawing.Point(100, 32);
+            this.numLengthSubdivide.Name = "numLengthSubdivide";
+            this.numLengthSubdivide.Size = new System.Drawing.Size(57, 20);
+            this.numLengthSubdivide.TabIndex = 1;
+            this.numLengthSubdivide.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.numLengthSubdivide.ValueChanged += new System.EventHandler(this.LengthSubdivideValueChanged);
 			// 
 			// label1
 			// 
@@ -78,7 +78,7 @@
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(91, 13);
 			this.label1.TabIndex = 2;
-			this.label1.Text = "Lenght subdivide:";
+            this.label1.Text = "Length subdivide:";
 			// 
 			// label2
 			// 
@@ -105,12 +105,12 @@
 			this.Controls.Add(this.label2);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.numRoundSubdivide);
-			this.Controls.Add(this.numLenghtSubdivide);
+            this.Controls.Add(this.numLengthSubdivide);
 			this.Controls.Add(this.cbEditSegments);
 			this.Controls.Add(this.cbEditPoints);
 			this.Name = "Spline4dControl";
 			this.Size = new System.Drawing.Size(162, 150);
-			((System.ComponentModel.ISupportInitialize)(this.numLenghtSubdivide)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numLengthSubdivide)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.numRoundSubdivide)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
@@ -121,7 +121,7 @@
 
 		private System.Windows.Forms.CheckBox cbEditPoints;
 		private System.Windows.Forms.CheckBox cbEditSegments;
-		private System.Windows.Forms.NumericUpDown numLenghtSubdivide;
+		private System.Windows.Forms.NumericUpDown numLengthSubdivide;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.NumericUpDown numRoundSubdivide;

@@ -9,19 +9,14 @@ using OpenTK.Graphics.OpenGL;
 
 namespace FourTentacles
 {
-	class Mesh
+	abstract class Mesh
 	{
-		private Vector3[] pointsArray;
-		private Vector3[] normalsArray;
-		private List<int[]> triangleStripIndicies = new List<int[]>();
-		private List<int[]> lineStripIndicies = new List<int[]>();
+		protected Vector3[] pointsArray;
+        protected Vector3[] normalsArray;
+        protected List<int[]> triangleStripIndicies = new List<int[]>();
+        protected List<int[]> lineStripIndicies = new List<int[]>();
 
-		private int nextIndex = 0;
-		public Mesh(int points)
-		{
-			pointsArray = new Vector3[points];
-			normalsArray = new Vector3[points];
-		}
+	    public abstract void Init(Vector3[] points, Vector3[] normals, int length, int sides);
 
 		public BoundingBox GetBoundingBox()
 		{
@@ -29,26 +24,6 @@ namespace FourTentacles
 			foreach (var point in pointsArray)
 				bb = bb.Extend(point);
 			return bb;
-		}
-
-		public void AddPoint(Vector3 point, Vector3 normal)
-		{
-			if(nextIndex == pointsArray.Length) throw new Exception("Points array full");
-			pointsArray[nextIndex] = point;
-			normalsArray[nextIndex] = normal;
-			nextIndex++;
-		}
-
-		public void AddTriangleStripIndicies(int[] indicies)
-		{
-			if(nextIndex != pointsArray.Length) throw new Exception("Points array didn't filled comletely");
-
-			triangleStripIndicies.Add(indicies);
-		}
-
-		public void AddLineStripIndicies(int[] lineIndicies)
-		{
-			lineStripIndicies.Add(lineIndicies);
 		}
 
 		public void Render(RenderMode renderMode)
@@ -98,4 +73,64 @@ namespace FourTentacles
 			return triangleStripIndicies.Sum(s => s.Length - 2);
 		}
 	}
+
+    class SmoothMesh : Mesh
+    {
+        public override void Init(Vector3[] points, Vector3[] normals, int length, int sides)
+        {
+            pointsArray = points;
+            normalsArray = normals;
+
+            for (int ti = 0; ti < length - 1; ti++)
+            {
+                int offset = ti * sides;
+                var indicies = new int[sides * 2 + 2];
+                for (int i = 0; i < sides; i++)
+                {
+                    indicies[i * 2] = i + offset;
+                    indicies[i * 2 + 1] = i + sides + offset;
+                }
+                indicies[sides * 2] = offset;
+                indicies[sides * 2 + 1] = offset + sides;
+                triangleStripIndicies.Add(indicies);
+
+                var lineIndicies = new int[sides + 1];
+                for (int i = 0; i < sides; i++)
+                    lineIndicies[i] = i + offset;
+                lineIndicies[sides] = offset;
+                lineStripIndicies.Add(lineIndicies);
+            }
+        }
+    }
+
+    class SmoothLengthMesh : Mesh
+    {
+        public override void Init(Vector3[] points, Vector3[] normals, int length, int sides)
+        {
+            pointsArray = new Vector3[points.Length * 2];
+            normalsArray = new Vector3[normals.Length * 2];
+
+            int currentPos = 0;
+            for (int i = 0; i < sides; i++)
+            {
+                int ptOffset = (i + 1)%sides;
+                var indicies = new List<int>();
+                for (int j = 0; j < length; j++)
+                {
+                    Vector3 normal = normals[j*sides + i] + normals[j*sides + ptOffset];
+                    normal.Normalize();
+
+                    pointsArray[currentPos] = points[j*sides + i];
+                    pointsArray[currentPos + 1] = points[j*sides + ptOffset];
+                    normalsArray[currentPos] = normal;
+                    normalsArray[currentPos + 1] = normal;
+                    indicies.Add(currentPos);
+                    indicies.Add(currentPos + 1);
+                    currentPos += 2;
+                }
+                triangleStripIndicies.Add(indicies.ToArray());
+            }
+
+        }
+    }
 }
