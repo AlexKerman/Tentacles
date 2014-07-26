@@ -24,7 +24,7 @@ namespace FourTentacles
 			InitializeComponent();
 			this.spline4D = spline4D;
 
-			numLenghtSubdivide.Value = spline4D.LenghtSides;
+			numLengthSubdivide.Value = spline4D.LengthSides;
 			numRoundSubdivide.Value = spline4D.RoundSides;
 		}
 
@@ -58,9 +58,9 @@ namespace FourTentacles
 			}
 		}
 
-		private void LenghtSubdivideValueChanged(object sender, EventArgs e)
+		private void LengthSubdivideValueChanged(object sender, EventArgs e)
 		{
-			spline4D.LenghtSides = (int) numLenghtSubdivide.Value;
+			spline4D.LengthSides = (int) numLengthSubdivide.Value;
 			OnRedrawRequired();
 		}
 

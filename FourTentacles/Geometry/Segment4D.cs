@@ -9,10 +9,10 @@ namespace FourTentacles
 {
 	class Segment4D : Node
 	{
-		private Guide4DController cpbp;
-		private Guide4DController cpep;
-		private Point4DController bp;
-		private Point4DController ep;
+		private Vector4 cpbp;
+		private Vector4 cpep;
+		private Node4DPoint bp;
+		private Node4DPoint ep;
 		private Mesh mesh;
 
 		public Segment4D(Point4DController start, Point4DController end, Guide4DController startGuide, Guide4DController endGuide)
@@ -44,29 +44,6 @@ namespace FourTentacles
 			return mesh.GetTrianglesCount();
 		}
 
-		private void CalculateIndicies(int sides, int length)
-		{
-			for (int ti = 0; ti < length - 1; ti++)
-			{
-				int offset = ti * sides;
-				var indicies = new int[sides * 2 + 2];
-				for (int i = 0; i < sides; i++)
-				{
-					indicies[i * 2] = i + offset;
-					indicies[i * 2 + 1] = i + sides + offset;
-				}
-				indicies[sides * 2] = offset;
-				indicies[sides * 2 + 1] = offset + sides;
-				mesh.AddTriangleStripIndicies(indicies);
-
-				var lineIndicies = new int[sides + 1];
-				for (int i = 0; i < sides; i++)
-					lineIndicies[i] = i + offset;
-				lineIndicies[sides] = offset;
-				mesh.AddLineStripIndicies(lineIndicies);
-			}
-		}
-
 		private float[] DivideSpline(int lengthSides)
 		{
 			float[] t = new float[lengthSides + 1];
@@ -78,11 +55,13 @@ namespace FourTentacles
 		public void CalculateGeometry(SinCosTable table, int lengthSides)
 		{
 			CalculateConstants();
-			int sides = table.Sides;
 			var tPoints = DivideSpline(lengthSides);
-			mesh = new Mesh(sides * tPoints.Length);
 			var kompass = new Kompass(GetDirection(0), GetDirection(1));
 
+            var points = new Vector3[table.Sides * tPoints.Length];
+            var normals = new Vector3[table.Sides * tPoints.Length];
+
+		    int pos = 0;
 			foreach (float t in tPoints)
 			{
 				Vector4 position = GetPoint(t);
@@ -98,22 +77,18 @@ namespace FourTentacles
 				var normfactor = new Vector2(dir3.Length, -direction.W);
 				normfactor.Normalize();
 
-				Vector3 top = kompass.GetTop(t);
-
 				dir3.Normalize();
-				Vector3 left = Vector3.Cross(top, dir3);
-				left.Normalize();
-				if (left.X < 0) left = -left;
-				top = Vector3.Cross(dir3, left);
-				top.Normalize();
+                kompass.CalcVectors(t, dir3);
 
-				for (int i = 0; i < sides; i++)
+				for (int i = 0; i < table.Sides; i++)
 				{
-					Vector3 ringPoint = table.RingPoint(top, left, i);
-					mesh.AddPoint(position.Xyz + ringPoint * position.W, ringPoint * normfactor.X + dir3 * normfactor.Y);
+					Vector3 ringPoint = table.RingPoint(kompass.North, kompass.West, i);
+				    points[pos] = position.Xyz + ringPoint*position.W;
+				    normals[pos] = ringPoint*normfactor.X + dir3*normfactor.Y;
+                    pos++;
 				}
 			}
-			CalculateIndicies(sides, tPoints.Length);
+            mesh.Init(points, normals, tPoints.Length, table.Sides);
 		}
 
 		private Vector4 GetPoint(float t)
@@ -162,11 +137,18 @@ namespace FourTentacles
 			return result;
 		}
 
-		public Vector3 GetTop(float t)
+	    public Vector3 North { get; private set; }
+        public Vector3 West { get; private set; }
+
+		public void CalcVectors(float t, Vector3 dir3)
 		{
-			Vector3 result = _start * t + _end * (1.0f - t);
-			result.Normalize();
-			return result;
+			Vector3 north = _start * t + _end * (1.0f - t);
+			north.Normalize();
+
+            West = Vector3.Cross(north, dir3);
+            West.Normalize();
+            North = Vector3.Cross(dir3, West);
+            North.Normalize();
 		}
 	}
 }
