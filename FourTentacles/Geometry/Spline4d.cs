@@ -48,8 +48,8 @@ namespace FourTentacles
 			get { return lengthSides; }
 			set
 			{
-				if(lenghtSides == value || value < 2) return;
-				lenghtSides = value;
+				if(lengthSides == value || value < 2) return;
+				lengthSides = value;
 				RecalculateGeometry();
 			}
 		}

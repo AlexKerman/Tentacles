@@ -109,6 +109,8 @@ namespace FourTentacles
         {
             pointsArray = new Vector3[points.Length * 2];
             normalsArray = new Vector3[normals.Length * 2];
+			triangleStripIndicies.Clear();
+			lineStripIndicies.Clear();
 
             int currentPos = 0;
             for (int i = 0; i < sides; i++)

@@ -9,18 +9,18 @@ namespace FourTentacles
 {
 	class Segment4D : Node
 	{
-		private Vector4 cpbp;
-		private Vector4 cpep;
-		private Node4DPoint bp;
-		private Node4DPoint ep;
-		private Mesh mesh;
+		private Point4DController bp;
+		private Point4DController ep;
+		private readonly Guide4DController cpbp;
+		private readonly Guide4DController cpep;
+		private Mesh mesh = new SmoothLengthMesh();
 
 		public Segment4D(Point4DController start, Point4DController end, Guide4DController startGuide, Guide4DController endGuide)
 		{
-			this.bp = start;
-			this.ep = end;
-			this.cpbp = startGuide;
-			this.cpep = endGuide;
+			bp = start;
+			ep = end;
+			cpbp = startGuide;
+			cpep = endGuide;
 		}
 
 		private Vector4 a, b, c, d;
