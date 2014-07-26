@@ -22,11 +22,11 @@ namespace FourTentacles
 		public SceneNode()
 		{
 			var spline = new Spline4D(48, 96);
-			var bp = new Node4DPoint {Point = new Vector4(0.0f, 200.0f, 0.0f, 50.0f)};
-			var ep = new Node4DPoint {Point = new Vector4(0.0f, 1200.0f, -200.0f, 0.0f)};
-			spline.AddSegment(bp, ep,
-				new Vector4(0.0f, 800.0f, 0.0f, -150.0f),
-				new Vector4(0.0f, 600.0f, 800.0f, 200.0f));
+			var bp = new Point4DController {Point = new Vector4(0.0f, 200.0f, 0.0f, 50.0f)};
+			var ep = new Point4DController {Point = new Vector4(0.0f, 1200.0f, -200.0f, 0.0f)};
+			var gbp = new Guide4DController {Point = new Vector4(0.0f, 800.0f, 0.0f, -150.0f)};
+			var gep = new Guide4DController {Point = new Vector4(0.0f, 600.0f, 800.0f, 200.0f)};
+			spline.AddSegment(bp, ep, gbp, gep);
 			geometrys.Add(spline);
 		}
 		
@@ -66,27 +66,15 @@ namespace FourTentacles
 			RedrawRequired.Raise();
 		}
 
-		public override void Render(RenderMode renderMode)
+		public override void Render(RenderContext context)
 		{
 			foreach (var geom in geometrys)
 			{
 				GL.PushMatrix();
 				GL.Translate(geom.Pos);
-				geom.Render(renderMode);
+				geom.Render(context);
 				GL.PopMatrix();
 			}
-		}
-
-		public void DrawContour(Camera camera)
-		{
-			if (lockedGeometry != null)
-				foreach (var controller in lockedGeometry.GetControllers())
-				{
-					GL.PushMatrix();
-					GL.Translate(controller.Pos);
-					controller.DrawContour(camera, lockedGeometry.Pos);
-					GL.PopMatrix();
-				}
 		}
 
 		public override void Move(Vector3 vector)
@@ -123,7 +111,7 @@ namespace FourTentacles
 			return Vector3.Zero;
 		}
 
-		public override bool HasSelectedNodes()
+		public virtual bool HasSelectedNodes()
 		{
 			return GetNodes().Any(g => g.IsSelected);
 		}

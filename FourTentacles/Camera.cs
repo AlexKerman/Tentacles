@@ -15,7 +15,19 @@ namespace FourTentacles
 		private Vector3 Pos;
 		private Vector3 target;
 		private Vector3 top;
-		private float FieldOfViev { get; set; }
+
+		private float fieldOfViev;
+		private double fovAtan;
+
+		private float FieldOfViev
+		{
+			get { return fieldOfViev; }
+			set
+			{
+				fieldOfViev = value;
+				fovAtan = Math.Atan(fieldOfViev);
+			}
+		}
 
 		private Size controlSize;
 
@@ -43,6 +55,10 @@ namespace FourTentacles
 			}
 		}
 
+		Matrix4 modelViewMatrix;
+		Matrix4 projectionMatrix;
+		
+
 		public void SetProjectionMatrix(Size size) { SetProjectionMatrix(size, Matrix4d.Identity);}
 		public void SetProjectionMatrix(Size size, Matrix4d selectionMatrix)
 		{
@@ -50,13 +66,32 @@ namespace FourTentacles
 			GL.Viewport(0, 0, size.Width, size.Height);
 			GL.MatrixMode(MatrixMode.Projection);
 			GL.LoadMatrix(ref selectionMatrix);
-
-			Matrix4 projection = Matrix4.CreatePerspectiveFieldOfView(FieldOfViev, size.Width / (float)size.Height, 1.0f, 30000.0f);
-			GL.MultMatrix(ref projection);
+			
+			projectionMatrix = Matrix4.CreatePerspectiveFieldOfView(FieldOfViev, size.Width / (float)size.Height, 1.0f, 30000.0f);
+			GL.MultMatrix(ref projectionMatrix);
+			projectionMatrix.Transpose();
 
 			GL.MatrixMode(MatrixMode.Modelview);
-			Matrix4 projectionMatrix = Matrix4.LookAt(Pos, target, top);
-			GL.LoadMatrix(ref projectionMatrix);
+			modelViewMatrix = Matrix4.LookAt(Pos, target, top);
+			GL.LoadMatrix(ref modelViewMatrix);
+		}
+
+		public Vector2 WordToScreen(Vector3 vec)
+		{
+			var v3 = Vector3.Transform(vec, modelViewMatrix);
+			var v4 = Vector4.Transform(new Vector4(v3), projectionMatrix);
+			return new Vector2(
+				(v4.X / v4.W + 0.5f) * controlSize.Width,
+				(v4.Y / v4.W + 0.5f) * controlSize.Height);
+		}
+
+		public void SetOrtho()
+		{
+			GL.MatrixMode(MatrixMode.Projection);
+			GL.LoadIdentity();
+			GL.Ortho(0, controlSize.Width, 0, controlSize.Height, -10000, 10000);
+			GL.MatrixMode(MatrixMode.Modelview);
+			GL.LoadIdentity();
 		}
 
 		/// <summary>
@@ -67,7 +102,7 @@ namespace FourTentacles
 		public double GetPerspectiveRatio(Vector3 point)
 		{
 			double distance = (Pos - point).Length;
-			return Math.Tan(FieldOfViev)*distance/controlSize.Height;
+			return fovAtan*distance/controlSize.Height;
 		}
 
 		public bool Moving

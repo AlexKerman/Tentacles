@@ -66,6 +66,7 @@
     <Compile Include="Controls\GeometryControl.Designer.cs">
       <DependentUpon>GeometryControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="Geometry\Guide4DController.cs" />
     <Compile Include="Interpolator.cs" />
     <Compile Include="Geometry\Controller.cs" />
     <Compile Include="Gizmo.cs" />
@@ -78,7 +79,7 @@
     <Compile Include="Material\Material.cs" />
     <Compile Include="Geometry\Mesh.cs" />
     <Compile Include="Geometry\Node.cs" />
-    <Compile Include="Geometry\Node4dPoint.cs" />
+    <Compile Include="Geometry\Point4dController.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -89,6 +90,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Geometry\SceneNode.cs" />
+    <Compile Include="RenderContext.cs" />
     <Compile Include="SelectionRectangle.cs" />
     <Compile Include="Material\Shader.cs" />
     <Compile Include="Geometry\SinCosTable.cs" />

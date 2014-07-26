@@ -14,7 +14,7 @@ namespace FourTentacles
 		/// <summary>
 		/// Draw contour for selection
 		/// </summary>
-		public abstract void DrawContour(Camera camera, Vector3 basePos);
+		public abstract void Render(RenderContext context);
 
 		public virtual Vector3 Pos { get; set; }
 		public virtual bool IsSelected { get; set; }

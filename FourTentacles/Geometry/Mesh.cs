@@ -61,7 +61,7 @@ namespace FourTentacles
 			GL.NormalPointer(NormalPointerType.Float, stride, normalsArray);
 
 			Material.SetMeshMaterial();
-			if (renderMode.HasFlag(RenderMode.Solid))
+			if (renderMode.HasFlag(RenderMode.Solid) || renderMode == RenderMode.Selection)
 				foreach (int[] indicies in triangleStripIndicies)
 					GL.DrawElements(PrimitiveType.TriangleStrip, indicies.Length, DrawElementsType.UnsignedInt, indicies);
 

@@ -20,10 +20,11 @@ namespace FourTentacles
 	[Flags]
 	public enum RenderMode
 	{
+		Selection = 0,
 		Solid = 1,
 		Wireframe = 2,
 		SolidWireframe = 3,
-		Normals = 4
+		Normals = 4,
 	}
 
 	public partial class MainWindow : Form
@@ -143,8 +144,11 @@ namespace FourTentacles
 		private Controller GetControllerUnderCursor(Point mousePosition)
 		{
 			var rect = new SelectionRectangle(mousePosition, glc.Size);
+
+			gizmo.SelectedNodes = sceneNode.GetNodes().Where(n => n.IsSelected).ToList();
 			var controllers = gizmo.GetControllers().ToList();
-			rect.SelectObjects(controllers, camera, sceneNode.GetNodesPos());
+
+			rect.SelectObjects(controllers, new RenderContext(camera, sceneNode.GetNodesPos(), RenderMode.Selection));
 			if (rect.SelectedCount == 0) return null;
 			return controllers[rect.SelectedIndicies.First()];
 		}
@@ -187,7 +191,7 @@ namespace FourTentacles
 			var nodes = sceneNode.GetNodes().ToList();
 			foreach (var node in nodes)
 				node.IsSelected = false;
-			selectionRectangle.SelectObjects(nodes, camera, sceneNode.GetNodesPos());
+			selectionRectangle.SelectObjects(nodes, new RenderContext(camera, sceneNode.GetNodesPos(), RenderMode.Selection));
 			foreach (int i in selectionRectangle.SelectedIndicies)
 				nodes[i].IsSelected = true;
 
@@ -230,13 +234,14 @@ namespace FourTentacles
 
 			DrawGrid();
 
-			sceneNode.Render(renderMode);
+			var renderContext = new RenderContext(camera, sceneNode.GetNodesPos(), renderMode);
+			sceneNode.Render(renderContext);
 
 			var box = sceneNode.GetBoundingBox();
 
 			GL.Clear(ClearBufferMask.DepthBufferBit);
 			
-			GL.Translate(sceneNode.GetNodesPos());
+			GL.Translate(renderContext.AbsolutePosition);
 			if (sceneNode.HasSelectedNodes())
 			{
 				Vector3 gizmoCenter = Vector3.Zero;
@@ -247,9 +252,8 @@ namespace FourTentacles
 				gizmo.Draw(gizmoCenter, camera);
 				box.Draw();
 			}
-			sceneNode.DrawContour(camera);
 
-			if (selectionRectangle != null) selectionRectangle.Draw();
+			if (selectionRectangle != null) selectionRectangle.Draw(renderContext);
 			glc.SwapBuffers();
 
 			lbTrianglesCount.Text = sceneNode.GetTrianglesCount().ToString();

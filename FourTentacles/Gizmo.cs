@@ -10,7 +10,7 @@ using OpenTK.Graphics.OpenGL;
 
 namespace FourTentacles
 {
-	class Gizmo
+	class Gizmo : Controller
 	{
 		[Flags]
 		enum Constraints
@@ -30,7 +30,7 @@ namespace FourTentacles
 
 			public Gizmo Gizmo;
 
-			public override void DrawContour(Camera camera, Vector3 basePos)
+			public override void Render(RenderContext context)
 			{
 				GL.Begin(PrimitiveType.Triangles);
 				GL.Vertex3(axis1 * QuadSize * Gizmo.scale);
@@ -109,7 +109,7 @@ namespace FourTentacles
 				this.sign = sign;
 			}
 
-			public override void DrawContour(Camera camera, Vector3 basePos)
+			public override void Render(RenderContext context)
 			{
 				GL.Begin(PrimitiveType.Lines);
 				GL.Vertex3(axisVector * Gizmo.scale * QuadSize);
@@ -177,8 +177,6 @@ namespace FourTentacles
 			}
 		}
 
-		private Vector3 Pos;
-
 		private const float QuadSize = 0.3f;
 		private const int GizmoSizePx = 96;
 		private Constraints fixedConstraints = Constraints.X | Constraints.Y;
@@ -204,12 +202,11 @@ namespace FourTentacles
 		
 		private void Move(Vector3 vector3)
 		{
-			if(MoveObjects == null) return;
 			Vector3 result = Vector3.Zero;
 			if (constraints.HasFlag(Constraints.X)) result.X = vector3.X;
 			if (constraints.HasFlag(Constraints.Y)) result.Y = vector3.Y;
 			if (constraints.HasFlag(Constraints.Z)) result.Z = vector3.Z;
-			MoveObjects(this, result);
+			MoveObjects.Raise(result);
 		}
 
 		private void ChangeConstraints(Constraints cons)
@@ -229,6 +226,7 @@ namespace FourTentacles
 			yield return PlaneXY;
 			yield return PlaneYZ;
 			yield return PlaneZX;
+			if (SelectedNodes.Any()) yield return this;
 		}
 
 		private float scale;
@@ -255,6 +253,19 @@ namespace FourTentacles
 		public Cursor GetCursor()
 		{
 			return Cursors.Move;
+		}
+
+		public List<Node> SelectedNodes;
+
+		public override void Render(RenderContext context)
+		{
+			foreach (var node in SelectedNodes)
+				node.Render(context);
+		}
+
+		public override void OnMouseDrag(Vector3 e)
+		{
+			Move(e);
 		}
 	}
 }

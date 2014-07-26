@@ -33,14 +33,14 @@ namespace FourTentacles
 			set { endLocaton = value; }
 		}
 
-		public void SelectObjects(IEnumerable<Node> selectable, Camera camera, Vector3 nodesBasePos)
+		public void SelectObjects(IEnumerable<Node> selectable, RenderContext context)
 		{
 			var objects = selectable.ToList();
 			selectionBuffer = new uint[4 * objects.Count];
 			GL.SelectBuffer(selectionBuffer.Length, selectionBuffer);
 			GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-			camera.SetProjectionMatrix(controlSize, GetSelectionMatrix());
-			GL.Translate(nodesBasePos);
+			context.Camera.SetProjectionMatrix(controlSize, GetSelectionMatrix());
+			GL.Translate(context.AbsolutePosition);
 			GL.RenderMode(RenderingMode.Select);
 
 			GL.InitNames();
@@ -49,7 +49,7 @@ namespace FourTentacles
 				GL.PushName(i);
 				GL.PushMatrix();
 				GL.Translate(objects[i].Pos);
-				objects[i].DrawContour(camera, nodesBasePos);
+				objects[i].Render(context);
 				GL.PopMatrix();
 				GL.PopName();
 			}
@@ -101,20 +101,14 @@ namespace FourTentacles
 					(startLocation.Y + endLocaton.Y - controlSize.Height) / height, 0, 1));
 		}
 
-		public void Draw()
+		public void Draw(RenderContext context)
 		{
 			int y1 = controlSize.Height - startLocation.Y;
 			int y2 = controlSize.Height - endLocaton.Y;
 			int x1 = startLocation.X;
 			int x2 = endLocaton.X;
 
-			//GL.Disable(EnableCap.Lighting);
-			//GL.ShadeModel(ShadingModel.Flat);
-			GL.MatrixMode(MatrixMode.Projection);
-			GL.LoadIdentity();
-			GL.Ortho(0, controlSize.Width, 0, controlSize.Height, -10000, 10000);
-			GL.MatrixMode(MatrixMode.Modelview);
-			GL.LoadIdentity();
+			context.Camera.SetOrtho();
 
 			GL.Color4(1, 1, 1, 0.3f);
 			GL.Begin(PrimitiveType.Quads);

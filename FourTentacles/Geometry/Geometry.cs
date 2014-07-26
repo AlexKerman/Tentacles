@@ -12,18 +12,7 @@ namespace FourTentacles
 	{
 		public abstract BoundingBox GetBoundingBox();
 		public abstract int GetTrianglesCount();
-		public abstract void Render(RenderMode renderMode);
 		public virtual IEnumerable<Controller> GetControllers() { yield break; }
-
-		public override void DrawContour(Camera camera, Vector3 basePos)
-		{
-			Render(RenderMode.Solid);
-		}
-
-		public virtual bool HasSelectedNodes()
-		{
-			return false;
-		}
 
 		public virtual IEnumerable<Node> GetNodes()
 		{

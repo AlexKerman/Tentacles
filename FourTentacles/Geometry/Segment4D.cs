@@ -9,13 +9,13 @@ namespace FourTentacles
 {
 	class Segment4D : Node
 	{
-		private Vector4 cpbp;
-		private Vector4 cpep;
-		private Node4DPoint bp;
-		private Node4DPoint ep;
+		private Guide4DController cpbp;
+		private Guide4DController cpep;
+		private Point4DController bp;
+		private Point4DController ep;
 		private Mesh mesh;
 
-		public Segment4D(Node4DPoint start, Node4DPoint end, Vector4 startGuide, Vector4 endGuide)
+		public Segment4D(Point4DController start, Point4DController end, Guide4DController startGuide, Guide4DController endGuide)
 		{
 			this.bp = start;
 			this.ep = end;
@@ -28,20 +28,15 @@ namespace FourTentacles
 		private void CalculateConstants()
 		{
 			//relative control points version
-			a = 2 * (bp.Point - ep.Point) + 3 * (cpbp - cpep);
-			b = 3 * (cpep + ep.Point - 2 * cpbp - bp.Point);
-			c = 3 * cpbp;
+			a = 2 * (bp.Point - ep.Point) + 3 * (cpbp.Point - cpep.Point);
+			b = 3 * (cpep.Point + ep.Point - 2 * cpbp.Point - bp.Point);
+			c = 3 * cpbp.Point;
 			d = bp.Point;
 		}
 
-		public void Render(RenderMode renderMode)
+		public override void Render(RenderContext context)
 		{
-			mesh.Render(renderMode);
-		}
-
-		public override void DrawContour(Camera camera, Vector3 basePos)
-		{
-			mesh.Render(RenderMode.Solid);
+			mesh.Render(context.Mode);
 		}
 
 		public int GetTrianglesCount()

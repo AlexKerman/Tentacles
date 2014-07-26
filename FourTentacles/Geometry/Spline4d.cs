@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
@@ -23,7 +22,7 @@ namespace FourTentacles
 		private int lenghtSides;
 		private SinCosTable sinCos;
 		private List<Segment4D> segments = new List<Segment4D>();
-		private List<Node4DPoint> points = new List<Node4DPoint>();
+		private List<Point4DController> points = new List<Point4DController>();
 
 		public Spline4D(int roundSides, int lenghtSides)
 		{
@@ -49,7 +48,7 @@ namespace FourTentacles
 			get { return lenghtSides; }
 			set
 			{
-				if(lenghtSides == value || value < 2) return;
+				if (lenghtSides == value || value < 2) return;
 				lenghtSides = value;
 				RecalculateGeometry();
 			}
@@ -61,7 +60,7 @@ namespace FourTentacles
 				segment.CalculateGeometry(sinCos, lenghtSides);
 		}
 
-		public void AddSegment(Node4DPoint start, Node4DPoint end, Vector4 startGuide, Vector4 endGuide)
+		public void AddSegment(Point4DController start, Point4DController end, Guide4DController startGuide, Guide4DController endGuide)
 		{
 			var segment = new Segment4D(start, end, startGuide, endGuide);
 			segment.CalculateGeometry(sinCos, lenghtSides);
@@ -78,10 +77,12 @@ namespace FourTentacles
 			return bb.Translate(Pos);
 		}
 
-		override public void Render(RenderMode renderMode)
+		override public void Render(RenderContext context)
 		{
 			foreach (var segment in segments)
-				segment.Render(renderMode);
+				segment.Render(context);
+			foreach (var node in GetNodes())
+				node.Render(context);
 		}
 
 		override public int GetTrianglesCount()
@@ -94,19 +95,14 @@ namespace FourTentacles
 			return new Spline4dControl(this);
 		}
 
-		public override IEnumerable<Controller> GetControllers()
-		{
-			return points;
-		}
-
-		public override bool HasSelectedNodes()
+		public virtual bool HasSelectedNodes()
 		{
 			return points.Any(p => p.IsSelected);
 		}
 
 		public override IEnumerable<Node> GetNodes()
 		{
-			if(SelectionMode == SelectionModeEnum.Points) return points;
+			if (SelectionMode == SelectionModeEnum.Points) return points;
 			if (SelectionMode == SelectionModeEnum.Segments) return segments;
 			return new Node[0];
 		}
