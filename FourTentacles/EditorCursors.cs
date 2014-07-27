@@ -8,7 +8,7 @@ using System.Windows.Forms;
 
 namespace FourTentacles
 {
-	class Cursors
+	static class EditorCursors
 	{
 		public static Cursor Select = new Cursor(new MemoryStream(Properties.Resources.Select));
 		public static Cursor Move = new Cursor(new MemoryStream(Properties.Resources.Move));

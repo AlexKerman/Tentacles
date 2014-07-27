@@ -65,6 +65,11 @@ namespace FourTentacles
 				Gizmo.Move(e);
 			}
 
+			public override Cursor GetCursor()
+			{
+				return EditorCursors.Move;
+			}
+
 			public Plane(Vector3 axis1, Vector3 axis2, Constraints constraint)
 			{
 				this.axis1 = axis1;
@@ -141,6 +146,11 @@ namespace FourTentacles
 			public override void OnMouseDrag(Vector3 e)
 			{
 				Gizmo.Move(e);
+			}
+
+			public override Cursor GetCursor()
+			{
+				return EditorCursors.Move;
 			}
 
 			public void Draw(Axis axis1, Axis axis2, Constraints constraints, Camera camera)
@@ -250,9 +260,9 @@ namespace FourTentacles
 			GL.PopMatrix();
 		}
 
-		public Cursor GetCursor()
+		public override Cursor GetCursor()
 		{
-			return Cursors.Move;
+			return EditorCursors.Move;
 		}
 
 		public List<Node> SelectedNodes;

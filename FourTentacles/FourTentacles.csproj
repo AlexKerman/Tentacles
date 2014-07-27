@@ -57,7 +57,7 @@
   <ItemGroup>
     <Compile Include="BoundingBox.cs" />
     <Compile Include="Camera.cs" />
-    <Compile Include="Cursors.cs" />
+    <Compile Include="EditorCursors.cs" />
     <Compile Include="EventsExtensions.cs" />
     <Compile Include="Geometry\Geometry.cs" />
     <Compile Include="Controls\GeometryControl.cs">

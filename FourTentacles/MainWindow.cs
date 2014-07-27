@@ -51,8 +51,6 @@ namespace FourTentacles
 
 			sceneNode.RedrawRequired += SceneNodeOnRedrawRequested;
 
-			glc.Cursor = Cursors.Select;
-
 			//switch Optimus graphics card to NVIDIA
 			//https://github.com/opentk/opentk/issues/46
 			//var openCLPlatform = OpenCL.GetPlatform(0);
@@ -91,14 +89,13 @@ namespace FourTentacles
 			GL.LightModel(LightModelParameter.LightModelTwoSide, 0.0f);
 		}
 
-		int oldx, oldy;     //previous event mouse coordinates
+		private Point mouseLocation;
 
 		private void OnMouseMove(object sender, MouseEventArgs e)
 		{
-			int deltaX = e.X - oldx;
-			int deltaY = e.Y - oldy;
-			oldx = e.X;
-			oldy = e.Y;
+			int deltaX = e.X - mouseLocation.X;
+			int deltaY = e.Y - mouseLocation.Y;
+			mouseLocation = e.Location;
 
 			if (selectionRectangle != null)
 			{
@@ -130,14 +127,17 @@ namespace FourTentacles
 			{
 				mouseOverController.OnMouseLeave();
 				mouseOverController = null;
-				glc.Cursor = Cursors.Select;
 				return;
 			}
 			if (controller != null)
 			{
 				mouseOverController = controller;
 				controller.OnMouseOver();
-				glc.Cursor = gizmo.GetCursor();
+				glc.Cursor = controller.GetCursor();
+			}
+			if (controller == null)
+			{
+				glc.Cursor = Cursors.Default;
 			}
 		}
 
@@ -147,6 +147,8 @@ namespace FourTentacles
 
 			gizmo.SelectedNodes = sceneNode.GetNodes().Where(n => n.IsSelected).ToList();
 			var controllers = gizmo.GetControllers().ToList();
+
+			controllers.Add(new SelectNodeController(sceneNode.GetNodes().Where(n => !n.IsSelected)));
 
 			rect.SelectObjects(controllers, new RenderContext(camera, sceneNode.GetNodesPos(), RenderMode.Selection));
 			if (rect.SelectedCount == 0) return null;
@@ -161,8 +163,7 @@ namespace FourTentacles
 
 		private void OnMouseButtonPressed(object sender, MouseEventArgs e)
 		{
-			oldx = e.X;
-			oldy = e.Y;
+			mouseLocation = e.Location;
 
 			if (e.Button == MouseButtons.Left)
 			{
