@@ -5,11 +5,20 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using OpenTK;
+using OpenTK.Graphics.OpenGL;
 
 namespace FourTentacles
 {
 	public abstract class Controller : Node
 	{
+		public event EventHandler Changed;
+
+		protected virtual void OnChanged()
+		{
+			EventHandler handler = Changed;
+			if (handler != null) handler(this, EventArgs.Empty);
+		}
+
 		public virtual void OnMouseOver() { }
 		public virtual void OnMouseLeave() { }
 		public virtual void OnMouseDown() { }
@@ -33,7 +42,12 @@ namespace FourTentacles
 		public override void Render(RenderContext context)
 		{
 			foreach (var node in nodes)
+			{
+				GL.PushMatrix();
+				GL.Translate(node.Pos);
 				node.Render(context);
+				GL.PopMatrix();
+			}
 		}
 
 		public override Cursor GetCursor()

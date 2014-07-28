@@ -149,6 +149,7 @@ namespace FourTentacles
 			var controllers = gizmo.GetControllers().ToList();
 
 			controllers.Add(new SelectNodeController(sceneNode.GetNodes().Where(n => !n.IsSelected)));
+			controllers.AddRange(sceneNode.GetControllers());
 
 			rect.SelectObjects(controllers, new RenderContext(camera, sceneNode.GetNodesPos(), RenderMode.Selection));
 			if (rect.SelectedCount == 0) return null;

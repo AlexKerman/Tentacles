@@ -21,6 +21,11 @@ namespace FourTentacles
 			ep = end;
 			cpbp = startGuide;
 			cpep = endGuide;
+
+			start.Guides.Add(startGuide);
+			startGuide.BasePoint = start;
+			end.Guides.Add(endGuide);
+			endGuide.BasePoint = end;
 		}
 
 		private Vector4 a, b, c, d;

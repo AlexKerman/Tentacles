@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
@@ -79,10 +80,9 @@ namespace FourTentacles
 
 		override public void Render(RenderContext context)
 		{
-			foreach (var segment in segments)
-				segment.Render(context);
-			foreach (var node in GetNodes())
-				node.Render(context);
+			foreach (var segment in segments) segment.Render(context);
+			foreach (var node in GetNodes()) node.Render(context);
+			foreach (var controller in GetControllers()) controller.Render(context);
 		}
 
 		override public int GetTrianglesCount()
@@ -95,16 +95,20 @@ namespace FourTentacles
 			return new Spline4dControl(this);
 		}
 
-		public virtual bool HasSelectedNodes()
-		{
-			return points.Any(p => p.IsSelected);
-		}
-
 		public override IEnumerable<Node> GetNodes()
 		{
 			if (SelectionMode == SelectionModeEnum.Points) return points;
 			if (SelectionMode == SelectionModeEnum.Segments) return segments;
 			return new Node[0];
+		}
+
+		public override IEnumerable<Controller> GetControllers()
+		{
+			if(SelectionMode == SelectionModeEnum.Points)
+				foreach (var point in points)
+					if(point.IsSelected)
+						foreach (var controller in point.Guides)
+							yield return controller;
 		}
 
 		public override void Move(Vector3 vector)

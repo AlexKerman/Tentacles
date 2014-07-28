@@ -109,6 +109,8 @@ namespace FourTentacles
 			int x2 = endLocaton.X;
 
 			context.Camera.SetOrtho();
+			GL.Disable(EnableCap.LineSmooth);
+			GL.Disable(EnableCap.DepthTest);
 
 			GL.Color4(1, 1, 1, 0.3f);
 			GL.Begin(PrimitiveType.Quads);
@@ -120,7 +122,7 @@ namespace FourTentacles
 
 			GL.Color4(1, 1, 1, 1.0f);
 			GL.Begin(PrimitiveType.LineLoop);
-			GL.Vertex2(x1, y1);
+			GL.Vertex2(x1, y1 + 1);
 			GL.Vertex2(x2, y1);
 			GL.Vertex2(x2, y2);
 			GL.Vertex2(x1, y2);

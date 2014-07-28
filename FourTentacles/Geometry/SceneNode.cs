@@ -104,6 +104,13 @@ namespace FourTentacles
 			return geometrys;
 		}
 
+		public override IEnumerable<Controller> GetControllers()
+		{
+			if (lockedGeometry != null)
+				return lockedGeometry.GetControllers();
+			return new Controller[0];
+		}
+
 		public Vector3 GetNodesPos()
 		{
 			if (lockedGeometry != null)

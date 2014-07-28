@@ -23,12 +23,28 @@ namespace FourTentacles
 			}
 		}
 
+		public readonly List<Guide4DController> Guides = new List<Guide4DController>();
+
 		private float width;
 		public override void Render(RenderContext context)
 		{
-			Vector2 pos = context.WorldToScreen(Pos);
-			int x = (int) (pos.X - PointSizePx/2.0f);
-			int y = (int) (pos.Y - PointSizePx/2.0f);
+			if (context.Mode == RenderMode.Selection)
+			{
+				GL.Begin(PrimitiveType.Points);
+				GL.Vertex3(Vector3.Zero);
+				GL.End();
+			}
+			else
+			{
+				DrawOrthoPoint(context, Pos);
+			}
+		}
+
+		protected void DrawOrthoPoint(RenderContext context, Vector3 vector)
+		{
+			Vector2 pos = context.WorldToScreen(vector);
+			int x = (int)(pos.X - PointSizePx / 2.0f);
+			int y = (int)(pos.Y - PointSizePx / 2.0f);
 
 			Material.SetLineMaterial(IsSelected ? Color.Red : Color.White);
 
@@ -36,10 +52,10 @@ namespace FourTentacles
 			GL.MatrixMode(MatrixMode.Projection);
 			GL.PushMatrix();
 			GL.MatrixMode(MatrixMode.Modelview);
-			
+
 			context.Camera.SetOrtho();
 			GL.Disable(EnableCap.LineSmooth);
-			
+
 			GL.Begin(PrimitiveType.LineStrip);
 			GL.Vertex2(x, y);
 			GL.Vertex2(x + PointSizePx, y);
