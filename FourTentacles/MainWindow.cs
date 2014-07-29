@@ -64,7 +64,6 @@ namespace FourTentacles
 		private void GizmoOnMoveObjects(object sender, Vector3 delta)
 		{
 			sceneNode.Move(delta);
-			Render();
 		}
 
 		private void OnShown(object sender, EventArgs e)
@@ -119,6 +118,7 @@ namespace FourTentacles
 				move -= camera.Top * deltaY;
 				move *= (float) scale;
 				mouseOverController.OnMouseDrag(move);
+				Render();
 				return;
 			}
 

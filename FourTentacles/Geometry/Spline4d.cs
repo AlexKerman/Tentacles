@@ -68,6 +68,13 @@ namespace FourTentacles
 			segments.Add(segment);
 			points.Add(start);
 			points.Add(end);
+			startGuide.Changed += GuideOnChanged;
+			endGuide.Changed += GuideOnChanged;
+		}
+
+		private void GuideOnChanged(object sender, EventArgs eventArgs)
+		{
+			RecalculateGeometry();
 		}
 
 		override public BoundingBox GetBoundingBox()
