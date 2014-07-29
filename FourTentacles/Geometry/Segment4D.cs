@@ -85,9 +85,8 @@ namespace FourTentacles
 				dir3.Normalize();
                 kompass.CalcVectors(t, dir3);
 
-				for (int i = 0; i < table.Sides; i++)
+				foreach (Vector3 ringPoint in table.Points(kompass.North, kompass.West))
 				{
-					Vector3 ringPoint = table.RingPoint(kompass.North, kompass.West, i);
 				    points[pos] = position.Xyz + ringPoint*position.W;
 				    normals[pos] = ringPoint*normfactor.X + dir3*normfactor.Y;
                     pos++;

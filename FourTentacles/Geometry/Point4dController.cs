@@ -13,19 +13,20 @@ namespace FourTentacles
 	{
 		private const int PointSizePx = 4;
 
+		private WidthController Width = new WidthController();
+
 		public Vector4 Point
 		{
-			get { return new Vector4(Pos, width); }
+			get { return new Vector4(Pos, Width.Width); }
 			set 
 			{
-				Pos = value.Xyz;
-				width = value.W;
+				Width.Pos = value.Xyz;
+				Width.Width = value.W;
 			}
 		}
 
 		public readonly List<Guide4DController> Guides = new List<Guide4DController>();
 
-		private float width;
 		public override void Render(RenderContext context)
 		{
 			if (context.Mode == RenderMode.Selection)

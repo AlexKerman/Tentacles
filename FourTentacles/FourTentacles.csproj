@@ -101,6 +101,7 @@
     <Compile Include="Controls\Spline4dControl.Designer.cs">
       <DependentUpon>Spline4dControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="Geometry\WidthController.cs" />
     <EmbeddedResource Include="MainWindow.resx">
       <DependentUpon>MainWindow.cs</DependentUpon>
     </EmbeddedResource>

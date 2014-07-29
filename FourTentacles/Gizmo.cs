@@ -178,11 +178,8 @@ namespace FourTentacles
 				GL.Color3(color);
 				GL.Begin(PrimitiveType.TriangleFan);
 				GL.Vertex3(axisVector);
-				for (int i = 0; i <= ArrowSides; i++)
-				{
-					Vector3 ringPoint = sinCos.RingPoint(axis1.axisVector, axis2.axisVector, i);
+				foreach (Vector3 ringPoint in sinCos.Points(axis1.axisVector, axis2.axisVector))
 					GL.Vertex3((1.0f - ArrowSize) * axisVector + ArrowWidth * ringPoint);
-				}
 				GL.End();
 			}
 		}
