@@ -8,7 +8,7 @@ namespace FourTentacles
 {
 	public static class EventsExtensions
 	{
-		public static void Raise<T>(this EventHandler<T> evt, T e)
+		public static void Raise<T>(this EventHandler<T> evt, T e) where T: EventArgs
 		{
 			if (evt != null)
 			{

@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FourTentacles", "FourTentacles\FourTentacles.csproj", "{97C09090-A0FD-4AD9-A83F-0F73C4161331}"
 EndProject
 Global

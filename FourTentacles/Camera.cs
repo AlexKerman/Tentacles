@@ -165,5 +165,14 @@ namespace FourTentacles
 			top = Vector3.Cross(front, left);
 			top.Normalize();
 		}
+
+		public Vector3 ScreenVectorToWorld(Point delta, Vector3 objectPos)
+		{
+			double scale = GetPerspectiveRatio(objectPos);
+			Vector3 move = Right*delta.X;
+			move -= Top*delta.Y;
+			move *= (float) scale;
+			return move;
+		}
 	}
 }

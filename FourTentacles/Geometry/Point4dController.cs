@@ -20,7 +20,7 @@ namespace FourTentacles
 			get { return new Vector4(Pos, Width.Width); }
 			set 
 			{
-				Width.Pos = value.Xyz;
+				Pos = value.Xyz;
 				Width.Width = value.W;
 			}
 		}

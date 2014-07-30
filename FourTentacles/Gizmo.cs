@@ -60,9 +60,9 @@ namespace FourTentacles
 				Gizmo.ChangeConstraints(Gizmo.fixedConstraints);
 			}
 
-			public override void OnMouseDrag(Vector3 e)
+			public override void OnMouseDrag(MouseMoveParams e)
 			{
-				Gizmo.Move(e);
+				Gizmo.OnMouseDrag(e);
 			}
 
 			public override Cursor GetCursor()
@@ -143,9 +143,9 @@ namespace FourTentacles
 				Gizmo.ChangeConstraints(Gizmo.fixedConstraints);
 			}
 
-			public override void OnMouseDrag(Vector3 e)
+			public override void OnMouseDrag(MouseMoveParams e)
 			{
-				Gizmo.Move(e);
+				Gizmo.OnMouseDrag(e);
 			}
 
 			public override Cursor GetCursor()
@@ -197,7 +197,6 @@ namespace FourTentacles
 		private Plane PlaneZX = new Plane(Vector3.UnitZ, Vector3.UnitX, Constraints.Z | Constraints.X);
 
 		public event EventHandler ViewChanged;
-		public event EventHandler<Vector3> MoveObjects;
 
 		public Gizmo()
 		{
@@ -206,14 +205,14 @@ namespace FourTentacles
 			foreach (var plane in new[] {PlaneXY, PlaneYZ, PlaneZX})
 				plane.Gizmo = this;
 		}
-		
-		private void Move(Vector3 vector3)
+
+		public Vector3 ConstrainVector(Vector3 vec)
 		{
 			Vector3 result = Vector3.Zero;
-			if (constraints.HasFlag(Constraints.X)) result.X = vector3.X;
-			if (constraints.HasFlag(Constraints.Y)) result.Y = vector3.Y;
-			if (constraints.HasFlag(Constraints.Z)) result.Z = vector3.Z;
-			MoveObjects.Raise(result);
+			if (constraints.HasFlag(Constraints.X)) result.X = vec.X;
+			if (constraints.HasFlag(Constraints.Y)) result.Y = vec.Y;
+			if (constraints.HasFlag(Constraints.Z)) result.Z = vec.Z;
+			return result;
 		}
 
 		private void ChangeConstraints(Constraints cons)
@@ -270,9 +269,16 @@ namespace FourTentacles
 				node.Render(context);
 		}
 
-		public override void OnMouseDrag(Vector3 e)
+		public event EventHandler<MouseMoveEventArgs> MoveObjects;
+
+		public override void OnMouseDrag(MouseMoveParams e)
 		{
-			Move(e);
+			MoveObjects.Raise(new MouseMoveEventArgs {Vec = e.Constrained});
+		}
+
+		public class MouseMoveEventArgs : EventArgs
+		{
+			public Vector3 Vec;
 		}
 	}
 }

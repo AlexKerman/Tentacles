@@ -61,9 +61,9 @@ namespace FourTentacles
 			Render();
 		}
 
-		private void GizmoOnMoveObjects(object sender, Vector3 delta)
+		private void GizmoOnMoveObjects(object sender, Gizmo.MouseMoveEventArgs e)
 		{
-			sceneNode.Move(delta);
+			sceneNode.Move(e.Vec);
 		}
 
 		private void OnShown(object sender, EventArgs e)
@@ -92,8 +92,7 @@ namespace FourTentacles
 
 		private void OnMouseMove(object sender, MouseEventArgs e)
 		{
-			int deltaX = e.X - mouseLocation.X;
-			int deltaY = e.Y - mouseLocation.Y;
+			Point delta = Point.Subtract(e.Location, new Size(mouseLocation));
 			mouseLocation = e.Location;
 
 			if (selectionRectangle != null)
@@ -105,24 +104,23 @@ namespace FourTentacles
 
 			if (e.Button.HasFlag(MouseButtons.Middle))
 			{
-				if (GetAsyncKeyState(VK_MENU) != 0) camera.Rotate((-deltaX) / 100.0f, (-deltaY) / 100.0f);
-				else camera.Move(new Vector3(deltaX, deltaY, 0));
+				if (GetAsyncKeyState(VK_MENU) != 0) camera.Rotate((-delta.X) / 100.0f, (-delta.Y) / 100.0f);
+				else camera.Move(new Vector3(delta.X, delta.Y, 0));
 				Render();
 				return;
 			}
 
 			if (mouseOverController != null && e.Button == MouseButtons.Left)
 			{
-				double scale = camera.GetPerspectiveRatio(mouseOverController.Pos);
-				Vector3 move = camera.Right * deltaX;
-				move -= camera.Top * deltaY;
-				move *= (float) scale;
-				mouseOverController.OnMouseDrag(move);
+				var move = camera.ScreenVectorToWorld(delta, mouseOverController.Pos);
+				var constrainedMove = gizmo.ConstrainVector(move);
+
+				mouseOverController.OnMouseDrag(new MouseMoveParams(e.Location, delta, move, constrainedMove));
 				Render();
 				return;
 			}
 
-			Controller controller = GetControllerUnderCursor(e.Location);
+			var controller = GetControllerUnderCursor(e.Location);
 			if (mouseOverController != null && controller != mouseOverController)
 			{
 				mouseOverController.OnMouseLeave();

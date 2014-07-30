@@ -14,9 +14,9 @@ namespace FourTentacles
 		//Disable selection
 		public override bool IsSelected { get { return false; } set{} }
 
-		public override void OnMouseDrag(Vector3 e)
+		public override void OnMouseDrag(MouseMoveParams e)
 		{
-			Pos += e;
+			Pos += e.Constrained;
 		}
 
 		public override void Render(RenderContext context)
