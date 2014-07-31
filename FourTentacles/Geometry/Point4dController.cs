@@ -70,5 +70,34 @@ namespace FourTentacles
 			GL.PopMatrix();
 			GL.MatrixMode(MatrixMode.Modelview);
 		}
+
+		public IEnumerable<Controller> GetControllers()
+		{
+			yield return Width;
+			foreach (var guide in Guides)
+			{
+				yield return guide;
+				yield return guide.Width;
+			}
+		}
+
+		public void UpdateGuides(Kompass kompass, SinCosTable table)
+		{
+			Width.SinCos = table;
+			foreach (var guide in Guides)
+			{
+				Vector3 direction = Pos;
+				direction.Normalize();
+				Width.Pos = Pos;
+				Width.Direction = direction;
+				Width.North = kompass.North;
+				Width.West = kompass.West;
+				guide.Width.Pos = guide.Pos + Pos;
+				guide.Width.SinCos = table;
+				guide.Width.Direction = direction;
+				guide.Width.North = kompass.North;
+				guide.Width.West = kompass.West;
+			}
+		}
 	}
 }

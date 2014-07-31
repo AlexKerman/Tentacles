@@ -93,6 +93,16 @@ namespace FourTentacles
 				}
 			}
             mesh.Init(points, normals, tPoints.Length, table.Sides);
+
+			Vector3 front = GetDirection(0.0f).Xyz;
+			front.Normalize();
+			kompass.CalcVectors(0, front);
+			bp.UpdateGuides(kompass, table);
+
+			Vector3 back = GetDirection(1.0f).Xyz;
+			back.Normalize();
+			kompass.CalcVectors(0, back);
+			ep.UpdateGuides(kompass, table);
 		}
 
 		private Vector4 GetPoint(float t)

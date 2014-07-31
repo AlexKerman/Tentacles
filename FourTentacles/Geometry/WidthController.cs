@@ -23,7 +23,7 @@ namespace FourTentacles
 			Material.SetLineMaterial(Color.White);
 			GL.Begin(PrimitiveType.LineLoop);
 			foreach (Vector3 vec in SinCos.Points(North, West))
-				GL.Vertex3(vec);
+				GL.Vertex3(vec * Width + Pos);
 			GL.End();
 		}
 	}

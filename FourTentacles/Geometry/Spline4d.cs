@@ -114,7 +114,7 @@ namespace FourTentacles
 			if(SelectionMode == SelectionModeEnum.Points)
 				foreach (var point in points)
 					if(point.IsSelected)
-						foreach (var controller in point.Guides)
+						foreach (var controller in point.GetControllers())
 							yield return controller;
 		}
 
