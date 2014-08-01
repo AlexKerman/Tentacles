@@ -9,7 +9,7 @@ using OpenTK.Graphics.OpenGL;
 
 namespace FourTentacles
 {
-	class Point4DController : Controller
+	class Point4DController : Node
 	{
 		private const int PointSizePx = 4;
 
@@ -41,7 +41,12 @@ namespace FourTentacles
 			}
 		}
 
-		protected void DrawOrthoPoint(RenderContext context, Vector3 vector)
+		public void DrawControllers(RenderContext context)
+		{
+			
+		}
+
+		private void DrawOrthoPoint(RenderContext context, Vector3 vector)
 		{
 			Vector2 pos = context.WorldToScreen(vector);
 			int x = (int)(pos.X - PointSizePx / 2.0f);

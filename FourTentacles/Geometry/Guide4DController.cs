@@ -6,13 +6,31 @@ using OpenTK.Graphics.OpenGL;
 
 namespace FourTentacles
 {
-	class Guide4DController : Point4DController
+	class Guide4DController : Controller
 	{
 		public Point4DController BasePoint;
-		private Vector3 pos1;
+		public WidthController Width = new WidthController();
+		private Vector3 point;
 
-		//Disable selection
-		public override bool IsSelected { get { return false; } set{} }
+		public Vector4 Point
+		{
+			get { return new Vector4(point, Width.Width); }
+			set
+			{
+				point = value.Xyz;
+				Width.Width = value.W;
+			}
+		}
+
+		public override Vector3 Pos
+		{
+			get { return point + BasePoint.Pos; }
+			set
+			{
+				point = value - BasePoint.Pos;
+				OnChanged();
+			}
+		}
 
 		public override void OnMouseDrag(MouseMoveParams e)
 		{
@@ -21,13 +39,10 @@ namespace FourTentacles
 
 		public override void Render(RenderContext context)
 		{
-			//¬идова€ матрица уже смещена на Pos гайда, но не смещена на Pos базовой точки
-			//“ак неправильно, как только начнутс€ повороты объектов, это работать не будет.
-			//Ќужно, чтобы гайда опиралась на базовую точку, но ничего про неЄ не знала.
 			if (context.Mode == RenderMode.Selection)
 			{
 				GL.Begin(PrimitiveType.Points);
-				GL.Vertex3(BasePoint.Pos);
+				GL.Vertex3(Vector3.Zero);
 				GL.End();
 			}
 			else
@@ -44,16 +59,6 @@ namespace FourTentacles
 		public override Cursor GetCursor()
 		{
 			return EditorCursors.Move;
-		}
-
-		public override Vector3 Pos
-		{
-			get { return pos1; }
-			set
-			{
-				pos1 = value;
-				OnChanged();
-			}
 		}
 	}
 }
