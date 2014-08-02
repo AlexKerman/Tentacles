@@ -22,11 +22,6 @@ namespace FourTentacles
 			this.controlSize = controlSize;
 		}
 
-		public bool IsPoint
-		{
-			get { return startLocation == endLocaton; }
-		}
-
 		public Point EndLocaton
 		{
 			get { return endLocaton; }
@@ -58,7 +53,7 @@ namespace FourTentacles
 			selectedCount = GL.RenderMode(RenderingMode.Render);
 
 			// если просто щелчок, то ищем один самый ближний объект
-			if (selectedCount > 0 && IsPoint)
+			if (selectedCount > 0 && startLocation == endLocaton)
 			{
 				for (int i = 0; i < selectedCount; i++)
 					if (selectionBuffer[4 * i + 1] < selectionBuffer[1])
@@ -91,7 +86,7 @@ namespace FourTentacles
 		{
 			double width = Math.Abs(startLocation.X - endLocaton.X);
 			double height = Math.Abs(startLocation.Y - endLocaton.Y);
-			if (IsPoint) width = height = 5.0;
+			if (startLocation == endLocaton) width = height = 5.0;
 
 			return new Matrix4d(
 				new Vector4d(controlSize.Width / width, 0, 0, 0),

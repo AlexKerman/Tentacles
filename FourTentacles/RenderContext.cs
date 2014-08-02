@@ -9,8 +9,8 @@ namespace FourTentacles
 {
 	public class RenderContext
 	{
-		public RenderMode Mode;
-		public Camera Camera;
+		public readonly RenderMode Mode;
+		public readonly Camera Camera;
 		public Vector3 AbsolutePosition;
 
 		public RenderContext(Camera camera, Vector3 pos, RenderMode renderMode)

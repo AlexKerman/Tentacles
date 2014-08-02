@@ -13,7 +13,7 @@ namespace FourTentacles
 		private Point4DController ep;
 		private readonly Guide4DController cpbp;
 		private readonly Guide4DController cpep;
-		private Mesh mesh = new SmoothLengthMesh();
+		private readonly Mesh mesh = new SmoothLengthMesh();
 
 		public Segment4D(Point4DController start, Point4DController end, Guide4DController startGuide, Guide4DController endGuide)
 		{
@@ -51,9 +51,9 @@ namespace FourTentacles
 
 		private float[] DivideSpline(int lengthSides)
 		{
-			float[] t = new float[lengthSides + 1];
+			var t = new float[lengthSides + 1];
 			for (int i = 0; i <= lengthSides; i++)
-				t[i] = (float)i / (float)lengthSides;
+				t[i] = i / (float)lengthSides;
 			return t;
 		}
 
@@ -123,15 +123,15 @@ namespace FourTentacles
 
 	class Kompass
 	{
-		private static Vector3[] axes = {Vector3.UnitX, Vector3.UnitY, Vector3.UnitZ};
+		private static readonly Vector3[] axes = {Vector3.UnitX, Vector3.UnitY, Vector3.UnitZ};
 
-		private Vector3 _start;
-		private Vector3 _end;
+		private readonly Vector3 start;
+		private readonly Vector3 end;
 
 		public Kompass(Vector4 start, Vector4 end)
 		{
-			_start = GetTopVector(start.Xyz);
-			_end = GetTopVector(end.Xyz);
+			this.start = GetTopVector(start.Xyz);
+			this.end = GetTopVector(end.Xyz);
 		}
 
 		private Vector3 GetTopVector(Vector3 dir)
@@ -156,7 +156,7 @@ namespace FourTentacles
 
 		public void CalcVectors(float t, Vector3 dir3)
 		{
-			Vector3 north = _start * t + _end * (1.0f - t);
+			Vector3 north = start * t + end * (1.0f - t);
 			north.Normalize();
 
             West = Vector3.Cross(north, dir3);

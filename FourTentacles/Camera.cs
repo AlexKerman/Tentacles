@@ -125,13 +125,9 @@ namespace FourTentacles
 
 		public void Move(Vector3 move)
 		{
-			Vector3 movvx;		//вектор движения по горизонтали
-			Vector3 movvy;		//вектор движения по вертикали
-			Vector3 vec;
-
-			movvy = top;
-			vec = target - Pos;
-			movvx = Vector3.Cross(vec, movvy);
+			Vector3 movvy = top;
+			Vector3 vec = target - Pos;
+			Vector3 movvx = Vector3.Cross(vec, movvy);
 			movvx.Normalize();
 			movvx *= -move.X;
 			movvy *= move.Y;

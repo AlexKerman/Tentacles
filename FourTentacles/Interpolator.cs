@@ -12,31 +12,31 @@ namespace FourTentacles
 	{
 		private DateTime lastUpdated;
 		private int timeLeftMs = 0;
-		private const int animationTime = 300;
+		private const int AnimationTime = 300;
 
-		protected float interpolation;
+		protected float Interpolation;
 
 		public bool Active { get { return timeLeftMs > 0; } }
 
 		protected void StartAnimation()
 		{
 			lastUpdated = DateTime.Now;
-			timeLeftMs = animationTime;
+			timeLeftMs = AnimationTime;
 		}
 
-		public void CheckPosition()
+		protected void CheckPosition()
 		{
 			var now = DateTime.Now;
 			int interval = (now - lastUpdated).Milliseconds;
 			lastUpdated = now;
 			if (interval >= timeLeftMs)
 			{
-				interpolation = 1.0f;
+				Interpolation = 1.0f;
 				timeLeftMs = 0;
 				return;
 			}
 			timeLeftMs -= interval;
-			interpolation = 1.0f - ((float)timeLeftMs / (float)animationTime);
+			Interpolation = 1.0f - (timeLeftMs / (float)AnimationTime);
 		}
 	}
 
@@ -47,7 +47,7 @@ namespace FourTentacles
 
 		public void Roll(Vector3 camPos, Vector3 targetPos, float factor)
 		{
-			float leftDistance = deltaDistance * (1.0f - interpolation);
+			float leftDistance = deltaDistance * (1.0f - Interpolation);
 			distanceToTarget = (camPos - targetPos).Length;
 
 			deltaDistance = (distanceToTarget + leftDistance) * factor + leftDistance;
@@ -59,7 +59,7 @@ namespace FourTentacles
 			CheckPosition();
 			Vector3 direction = pos - target;
 			direction.Normalize();
-			return target + direction * (distanceToTarget + deltaDistance * interpolation);
+			return target + direction * (distanceToTarget + deltaDistance * Interpolation);
 		}
 	}
 }

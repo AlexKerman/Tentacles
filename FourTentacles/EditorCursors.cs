@@ -10,7 +10,7 @@ namespace FourTentacles
 {
 	static class EditorCursors
 	{
-		public static Cursor Select = new Cursor(new MemoryStream(Properties.Resources.Select));
-		public static Cursor Move = new Cursor(new MemoryStream(Properties.Resources.Move));
+		public static readonly Cursor Select = new Cursor(new MemoryStream(Properties.Resources.Select));
+		public static readonly Cursor Move = new Cursor(new MemoryStream(Properties.Resources.Move));
 	}
 }

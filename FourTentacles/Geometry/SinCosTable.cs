@@ -7,8 +7,8 @@ namespace FourTentacles
 {
 	class SinCosTable
 	{
-		private float[] sin;
-		private float[] cos;
+		private readonly float[] sin;
+		private readonly float[] cos;
 		public SinCosTable(int sides)
 		{
 			sin = new float[sides];

@@ -22,7 +22,7 @@ namespace FourTentacles
 
 		class Plane : Controller
 		{
-			private static readonly Color color = Color.FromArgb(168, 255, 255, 0);
+			private static readonly Color Color = Color.FromArgb(168, 255, 255, 0);
 
 			private readonly Vector3 axis1;
 			private readonly Vector3 axis2;
@@ -80,7 +80,7 @@ namespace FourTentacles
 			public void Draw(Constraints constraint)
 			{
 				if(constraint != this.constraint) return;
-				GL.Color4(color);
+				GL.Color4(Color);
 				GL.Begin(PrimitiveType.TriangleStrip);
 				GL.Vertex3(Vector3.Zero);
 				GL.Vertex3(axis1 * QuadSize);
@@ -98,7 +98,7 @@ namespace FourTentacles
 
 			private const float SignSize = 0.07f;
 
-			private SinCosTable sinCos = new SinCosTable(ArrowSides);
+			private readonly SinCosTable sinCos = new SinCosTable(ArrowSides);
 			public Gizmo Gizmo;
 			private readonly Color color;
 			private readonly Vector3 axisVector;
@@ -189,20 +189,20 @@ namespace FourTentacles
 		private Constraints fixedConstraints = Constraints.X | Constraints.Y;
 		private Constraints constraints = Constraints.X | Constraints.Y;
 
-		private Axis AxisX = new Axis(Color.DarkRed, Vector3.UnitX, Constraints.X, new[] {new Vector2(0,0), new Vector2(0.6f,1), new Vector2(0.6f,0), new Vector2(0,1)});
-		private Axis AxisY = new Axis(Color.DarkGreen, Vector3.UnitY, Constraints.Y, new[] {new Vector2(0,0), new Vector2(0.6f,1), new Vector2(0,1), new Vector2(0.3f,0.5f)});
-		private Axis AxisZ = new Axis(Color.DarkBlue, Vector3.UnitZ, Constraints.Z, new[] {new Vector2(0,1), new Vector2(0.6f,1), new Vector2(0.6f,1), new Vector2(0,0), new Vector2(0,0), new Vector2(0.6f,0)});
-		private Plane PlaneXY = new Plane(Vector3.UnitX, Vector3.UnitY, Constraints.X | Constraints.Y);
-		private Plane PlaneYZ = new Plane(Vector3.UnitY, Vector3.UnitZ, Constraints.Y | Constraints.Z);
-		private Plane PlaneZX = new Plane(Vector3.UnitZ, Vector3.UnitX, Constraints.Z | Constraints.X);
+		private readonly Axis axisX = new Axis(Color.DarkRed, Vector3.UnitX, Constraints.X, new[] {new Vector2(0,0), new Vector2(0.6f,1), new Vector2(0.6f,0), new Vector2(0,1)});
+		private readonly Axis axisY = new Axis(Color.DarkGreen, Vector3.UnitY, Constraints.Y, new[] {new Vector2(0,0), new Vector2(0.6f,1), new Vector2(0,1), new Vector2(0.3f,0.5f)});
+		private readonly Axis axisZ = new Axis(Color.DarkBlue, Vector3.UnitZ, Constraints.Z, new[] {new Vector2(0,1), new Vector2(0.6f,1), new Vector2(0.6f,1), new Vector2(0,0), new Vector2(0,0), new Vector2(0.6f,0)});
+		private readonly Plane planeXy = new Plane(Vector3.UnitX, Vector3.UnitY, Constraints.X | Constraints.Y);
+		private readonly Plane planeYz = new Plane(Vector3.UnitY, Vector3.UnitZ, Constraints.Y | Constraints.Z);
+		private readonly Plane planeZx = new Plane(Vector3.UnitZ, Vector3.UnitX, Constraints.Z | Constraints.X);
 
 		public event EventHandler ViewChanged;
 
 		public Gizmo()
 		{
-			foreach (var axis in new[] {AxisX, AxisY, AxisZ})
+			foreach (var axis in new[] {axisX, axisY, axisZ})
 				axis.Gizmo = this;
-			foreach (var plane in new[] {PlaneXY, PlaneYZ, PlaneZX})
+			foreach (var plane in new[] {planeXy, planeYz, planeZx})
 				plane.Gizmo = this;
 		}
 
@@ -226,12 +226,12 @@ namespace FourTentacles
 
 		public IEnumerable<Controller> GetControllers()
 		{
-			yield return AxisX;
-			yield return AxisY;
-			yield return AxisZ;
-			yield return PlaneXY;
-			yield return PlaneYZ;
-			yield return PlaneZX;
+			yield return axisX;
+			yield return axisY;
+			yield return axisZ;
+			yield return planeXy;
+			yield return planeYz;
+			yield return planeZx;
 			if (SelectedNodes.Any()) yield return this;
 		}
 
@@ -245,13 +245,13 @@ namespace FourTentacles
 			GL.Translate(gizmoPos);
 			GL.Scale(scale, scale, scale);
 			
-			AxisX.Draw(AxisY, AxisZ, constraints, camera);
-			AxisY.Draw(AxisX, AxisZ, constraints, camera);
-			AxisZ.Draw(AxisX, AxisY, constraints, camera);
+			axisX.Draw(axisY, axisZ, constraints, camera);
+			axisY.Draw(axisX, axisZ, constraints, camera);
+			axisZ.Draw(axisX, axisY, constraints, camera);
 			
-			PlaneXY.Draw(constraints);
-			PlaneYZ.Draw(constraints);
-			PlaneZX.Draw(constraints);
+			planeXy.Draw(constraints);
+			planeYz.Draw(constraints);
+			planeZx.Draw(constraints);
 
 			GL.PopMatrix();
 		}

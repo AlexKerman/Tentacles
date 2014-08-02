@@ -11,9 +11,9 @@ namespace FourTentacles
 {
 	public struct BoundingBox
 	{
-		private Vector3 minCoords;
-		private Vector3 maxCoords;
-		private bool initialized;
+		private readonly Vector3 minCoords;
+		private readonly Vector3 maxCoords;
+		private readonly bool initialized;
 
 		private const float LineSize = 0.1f;
 
