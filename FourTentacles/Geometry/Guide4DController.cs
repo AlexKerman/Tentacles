@@ -8,27 +8,20 @@ namespace FourTentacles
 {
 	class Guide4DController : Controller
 	{
-		public Point4DController BasePoint;
-		public WidthController Width = new WidthController();
-		private Vector3 point;
+		private readonly Guide4D guide;
 
-		public Vector4 Point
+		public Guide4DController(Guide4D guide4D)
 		{
-			get { return new Vector4(point, Width.Width); }
-			set
-			{
-				point = value.Xyz;
-				Width.Width = value.W;
-			}
+			guide = guide4D;
 		}
 
 		public override Vector3 Pos
 		{
-			get { return point + BasePoint.Pos; }
+			get { return guide.Point.Xyz + guide.BasePoint.Pos; }
 			set
 			{
-				point = value - BasePoint.Pos;
-				OnChanged();
+				guide.Point.Xyz = value - guide.BasePoint.Pos;
+				guide.BasePoint.Changed = true;
 			}
 		}
 
@@ -47,12 +40,12 @@ namespace FourTentacles
 			}
 			else
 			{
-				Material.SetLineMaterial(Color.LightYellow);
+				GL.Color3(Color.LightYellow);
 				GL.Begin(PrimitiveType.Lines);
-				GL.Vertex3(BasePoint.Pos);
-				GL.Vertex3(Pos + BasePoint.Pos);
+				GL.Vertex3(guide.BasePoint.Pos);
+				GL.Vertex3(Pos);
 				GL.End();
-				DrawOrthoPoint(context, BasePoint.Pos + Pos);
+				guide.BasePoint.DrawOrthoPoint(context, Pos);
 			}
 		}
 

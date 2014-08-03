@@ -9,23 +9,40 @@ using OpenTK.Graphics.OpenGL;
 
 namespace FourTentacles
 {
-	class Point4DController : Node
+	class Point4D : Node
 	{
 		private const int PointSizePx = 4;
 
-		private WidthController Width = new WidthController();
+		private Windrose windRose;
+		private SinCosTable table;
+		private Vector4 point;
+
+		public readonly List<Guide4D> Guides = new List<Guide4D>();
+		private PointWidthController WidthController;
+		public bool Changed;
 
 		public Vector4 Point
 		{
-			get { return new Vector4(Pos, Width.Width); }
-			set 
+			get { return point; }
+			set
 			{
-				Pos = value.Xyz;
-				Width.Width = value.W;
+				if(point == value) return;
+				Changed = true;
+				point = value;
 			}
 		}
 
-		public readonly List<Guide4DController> Guides = new List<Guide4DController>();
+		public Point4D(Vector4 point)
+		{
+			Point = point;
+			WidthController = new PointWidthController(this);
+		}
+
+		public override Vector3 Pos
+		{
+			get { return Point.Xyz; }
+			set { Point = new Vector4(value, Point.W); }
+		}
 
 		public override void Render(RenderContext context)
 		{
@@ -41,12 +58,7 @@ namespace FourTentacles
 			}
 		}
 
-		public void DrawControllers(RenderContext context)
-		{
-			
-		}
-
-		private void DrawOrthoPoint(RenderContext context, Vector3 vector)
+		public void DrawOrthoPoint(RenderContext context, Vector3 vector)
 		{
 			Vector2 pos = context.WorldToScreen(vector);
 			int x = (int)(pos.X - PointSizePx / 2.0f);
@@ -78,31 +90,27 @@ namespace FourTentacles
 
 		public IEnumerable<Controller> GetControllers()
 		{
-			yield return Width;
+			yield return WidthController;
 			foreach (var guide in Guides)
 			{
-				yield return guide;
-				yield return guide.Width;
+				yield return guide.GuideController;
+				yield return guide.WidthController;
 			}
 		}
 
-		public void UpdateGuides(Kompass kompass, SinCosTable table)
+		public void DrawWidthCircle(RenderContext context, Vector4 pos)
 		{
-			Width.SinCos = table;
-			foreach (var guide in Guides)
-			{
-				Vector3 direction = Pos;
-				direction.Normalize();
-				Width.Pos = Pos;
-				Width.Direction = direction;
-				Width.North = kompass.North;
-				Width.West = kompass.West;
-				guide.Width.Pos = guide.Pos + Pos;
-				guide.Width.SinCos = table;
-				guide.Width.Direction = direction;
-				guide.Width.North = kompass.North;
-				guide.Width.West = kompass.West;
-			}
+			Material.SetLineMaterial(Color.White);
+			GL.Begin(PrimitiveType.LineLoop);
+			foreach (Vector3 vec in table.Points(windRose.North, windRose.West))
+				GL.Vertex3(vec * pos.W + pos.Xyz + Pos);
+			GL.End();
+		}
+
+		public void SetRose(Windrose windRose, SinCosTable table)
+		{
+			this.windRose = windRose;
+			this.table = table;
 		}
 	}
 }

@@ -18,9 +18,5 @@ namespace FourTentacles
 		{
 			yield break;
 		}
-
-		public virtual void Move(Vector3 vector)
-		{
-		}
 	}
 }

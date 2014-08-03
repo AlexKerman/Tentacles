@@ -23,7 +23,9 @@ namespace FourTentacles
 		private int lengthSides;
 		private SinCosTable sinCos;
 		private List<Segment4D> segments = new List<Segment4D>();
-		private List<Point4DController> points = new List<Point4DController>();
+		private List<Point4D> points = new List<Point4D>();
+
+		private bool changed = true;
 
 		public Spline4D(int roundSides, int lengthSides)
 		{
@@ -40,7 +42,7 @@ namespace FourTentacles
 				if(roundSides == value || value < 2) return;
 				roundSides = value;
 				sinCos = new SinCosTable(roundSides);
-				RecalculateGeometry();
+				changed = true;
 			}
 		}
 
@@ -51,30 +53,19 @@ namespace FourTentacles
 			{
 				if(lengthSides == value || value < 2) return;
 				lengthSides = value;
-				RecalculateGeometry();
+				changed = true;
 			}
 		}
 
-		private void RecalculateGeometry()
+		public void AddSegment(Vector4 start, Vector4 end, Vector4 startGuide, Vector4 endGuide)
 		{
-			foreach (var segment in segments)
-				segment.CalculateGeometry(sinCos, lengthSides);
-		}
-
-		public void AddSegment(Point4DController start, Point4DController end, Guide4DController startGuide, Guide4DController endGuide)
-		{
-			var segment = new Segment4D(start, end, startGuide, endGuide);
+			var startPoint = new Point4D(start);
+			var endPoint = new Point4D(end);
+			var segment = new Segment4D(startPoint, endPoint, new Guide4D(startPoint, startGuide), new Guide4D(endPoint, endGuide));
 			segment.CalculateGeometry(sinCos, lengthSides);
 			segments.Add(segment);
-			points.Add(start);
-			points.Add(end);
-			startGuide.Changed += GuideOnChanged;
-			endGuide.Changed += GuideOnChanged;
-		}
-
-		private void GuideOnChanged(object sender, EventArgs eventArgs)
-		{
-			RecalculateGeometry();
+			points.Add(startPoint);
+			points.Add(endPoint);
 		}
 
 		override public BoundingBox GetBoundingBox()
@@ -87,9 +78,17 @@ namespace FourTentacles
 
 		override public void Render(RenderContext context)
 		{
-			foreach (var segment in segments) segment.Render(context);
+			foreach (var segment in segments)
+			{
+				if(changed || segment.Changed) segment.CalculateGeometry(sinCos, lengthSides);
+				segment.Render(context);
+			}
 			foreach (var node in GetNodes()) node.Render(context);
 			foreach (var controller in GetControllers()) controller.Render(context);
+
+			changed = false;
+			foreach (var segment in segments)
+				segment.Changed = false;
 		}
 
 		override public int GetTrianglesCount()
@@ -116,24 +115,6 @@ namespace FourTentacles
 					if(point.IsSelected)
 						foreach (var controller in point.GetControllers())
 							yield return controller;
-		}
-
-		public override void Move(Vector3 vector)
-		{
-			if (SelectionMode == SelectionModeEnum.None)
-			{
-				Pos += vector;
-				return;
-			}
-
-			if(SelectionMode == SelectionModeEnum.Points && points.Any(p => p.IsSelected))
-			{
-				foreach (var point in points.Where(p => p.IsSelected))
-				{
-					point.Pos += vector;
-				}
-				RecalculateGeometry();
-			}
 		}
 	}
 }

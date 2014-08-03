@@ -67,6 +67,7 @@
       <DependentUpon>GeometryControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Geometry\Guide4DController.cs" />
+    <Compile Include="Geometry\Guide4d.cs" />
     <Compile Include="Interpolator.cs" />
     <Compile Include="Geometry\Controller.cs" />
     <Compile Include="Gizmo.cs" />
@@ -79,7 +80,7 @@
     <Compile Include="Material\Material.cs" />
     <Compile Include="Geometry\Mesh.cs" />
     <Compile Include="Geometry\Node.cs" />
-    <Compile Include="Geometry\Point4dController.cs" />
+    <Compile Include="Geometry\Point4d.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

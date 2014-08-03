@@ -21,12 +21,12 @@ namespace FourTentacles
 
 		public SceneNode()
 		{
-			var spline = new Spline4D(48, 96);
-			var bp = new Point4DController { Point = new Vector4(0.0f, 200.0f, 0.0f, 50.0f) };
-			var ep = new Point4DController { Point = new Vector4(0.0f, 1200.0f, -200.0f, 0.0f) };
-			var cpbp = new Guide4DController {Point = new Vector4(0.0f, 800.0f, 0.0f, -150.0f)};
-			var cpep = new Guide4DController {Point = new Vector4(0.0f, 600.0f, 800.0f, 200.0f)};
-			spline.AddSegment(bp, ep, cpbp, cpep);
+			var spline = new Spline4D(6, 96);
+			spline.AddSegment(
+				new Vector4(0.0f, 200.0f, 0.0f, 50.0f),
+				new Vector4(0.0f, 1200.0f, -200.0f, 0.0f),
+				new Vector4(0.0f, 800.0f, 0.0f, -150.0f),
+				new Vector4(0.0f, 600.0f, 800.0f, 200.0f));
 			geometrys.Add(spline);
 		}
 		
@@ -77,11 +77,10 @@ namespace FourTentacles
 			}
 		}
 
-		public override void Move(Vector3 vector)
+		public void Move(Vector3 vector)
 		{
-			foreach (var geometry in geometrys)
-				if (geometry.IsSelected)
-					geometry.Move(vector);
+			foreach (var node in GetNodes().Where(node => node.IsSelected))
+				node.Pos += vector;
 		}
 
 		public override BoundingBox GetBoundingBox()

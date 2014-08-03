@@ -45,17 +45,17 @@ namespace FourTentacles
 				set { }
 			}
 
-			public override void OnMouseDown()
+			public override void OnMouseDown(Point location)
 			{
 				Gizmo.fixedConstraints = Gizmo.constraints;
 			}
 
-			public override void OnMouseOver()
+			public override void OnMouseOver(Point location)
 			{
 				Gizmo.ChangeConstraints(constraint);
 			}
 
-			public override void OnMouseLeave()
+			public override void OnMouseLeave(Point location)
 			{
 				Gizmo.ChangeConstraints(Gizmo.fixedConstraints);
 			}
@@ -128,17 +128,17 @@ namespace FourTentacles
 				set { }
 			}
 
-			public override void OnMouseDown()
+			public override void OnMouseDown(Point location)
 			{
 				Gizmo.fixedConstraints = Gizmo.constraints;
 			}
 
-			public override void OnMouseOver()
+			public override void OnMouseOver(Point location)
 			{
 				Gizmo.ChangeConstraints(constraint);
 			}
 
-			public override void OnMouseLeave()
+			public override void OnMouseLeave(Point location)
 			{
 				Gizmo.ChangeConstraints(Gizmo.fixedConstraints);
 			}

@@ -9,13 +9,13 @@ namespace FourTentacles
 {
 	class Segment4D : Node
 	{
-		private Point4DController bp;
-		private Point4DController ep;
-		private readonly Guide4DController cpbp;
-		private readonly Guide4DController cpep;
+		private Point4D bp;
+		private Point4D ep;
+		private readonly Guide4D cpbp;
+		private readonly Guide4D cpep;
 		private readonly Mesh mesh = new SmoothLengthMesh();
 
-		public Segment4D(Point4DController start, Point4DController end, Guide4DController startGuide, Guide4DController endGuide)
+		public Segment4D(Point4D start, Point4D end, Guide4D startGuide, Guide4D endGuide)
 		{
 			bp = start;
 			ep = end;
@@ -26,6 +26,12 @@ namespace FourTentacles
 			startGuide.BasePoint = start;
 			end.Guides.Add(endGuide);
 			endGuide.BasePoint = end;
+		}
+
+		public bool Changed
+		{
+			get { return bp.Changed || ep.Changed; }
+			set { bp.Changed = ep.Changed = value; }
 		}
 
 		private Vector4 a, b, c, d;
@@ -61,9 +67,9 @@ namespace FourTentacles
 		{
 			CalculateConstants();
 			var tPoints = DivideSpline(lengthSides);
-			var kompass = new Kompass(GetDirection(0), GetDirection(1));
+			var kompass = new Kompass(Vector3.Normalize(GetDirection(0).Xyz), Vector3.Normalize(GetDirection(1).Xyz));
 
-            var points = new Vector3[table.Sides * tPoints.Length];
+			var points = new Vector3[table.Sides * tPoints.Length];
             var normals = new Vector3[table.Sides * tPoints.Length];
 
 		    int pos = 0;
@@ -83,26 +89,19 @@ namespace FourTentacles
 				normfactor.Normalize();
 
 				dir3.Normalize();
-                kompass.CalcVectors(t, dir3);
+                var rose = kompass.CalcWindrose(t, dir3);
 
-				foreach (Vector3 ringPoint in table.Points(kompass.North, kompass.West))
+				foreach (Vector3 ringPoint in table.Points(rose.North, rose.West))
 				{
 				    points[pos] = position.Xyz + ringPoint*position.W;
-				    normals[pos] = ringPoint*normfactor.X + dir3*normfactor.Y;
+				    normals[pos] = ringPoint*normfactor.X + rose.Dir*normfactor.Y;
                     pos++;
 				}
 			}
             mesh.Init(points, normals, tPoints.Length, table.Sides);
 
-			Vector3 front = GetDirection(0.0f).Xyz;
-			front.Normalize();
-			kompass.CalcVectors(0, front);
-			bp.UpdateGuides(kompass, table);
-
-			Vector3 back = GetDirection(1.0f).Xyz;
-			back.Normalize();
-			kompass.CalcVectors(0, back);
-			ep.UpdateGuides(kompass, table);
+			bp.SetRose(kompass.StartRose, table);
+			ep.SetRose(kompass.EndRose, table);
 		}
 
 		private Vector4 GetPoint(float t)
@@ -125,20 +124,19 @@ namespace FourTentacles
 	{
 		private static readonly Vector3[] axes = {Vector3.UnitX, Vector3.UnitY, Vector3.UnitZ};
 
-		private readonly Vector3 start;
-		private readonly Vector3 end;
+		public readonly Windrose StartRose;
+		public readonly Windrose EndRose;
 
-		public Kompass(Vector4 start, Vector4 end)
+		public Kompass(Vector3 start, Vector3 end)
 		{
-			this.start = GetTopVector(start.Xyz);
-			this.end = GetTopVector(end.Xyz);
+			StartRose = new Windrose(start, GetTopVector(start));
+			EndRose = new Windrose(end, GetTopVector(end));
 		}
 
 		private Vector3 GetTopVector(Vector3 dir)
 		{
 			Vector3 result = Vector3.Zero;
 			float minDot = 1.0f;
-			dir.Normalize();
 			foreach (var axis in axes)
 			{
 				var dot = Math.Abs(Vector3.Dot(dir, axis));
@@ -151,18 +149,39 @@ namespace FourTentacles
 			return result;
 		}
 
-	    public Vector3 North { get; private set; }
-        public Vector3 West { get; private set; }
-
-		public void CalcVectors(float t, Vector3 dir3)
+		public Windrose CalcWindrose(float t, Vector3 dir3)
 		{
-			Vector3 north = start * t + end * (1.0f - t);
+			var north = StartRose.North * t + EndRose.North * (1.0f - t);
 			north.Normalize();
-
-            West = Vector3.Cross(north, dir3);
-            West.Normalize();
-            North = Vector3.Cross(dir3, West);
-            North.Normalize();
+            var west = Vector3.Cross(north, dir3);
+            west.Normalize();
+            north = Vector3.Cross(dir3, west);
+            north.Normalize();
+			return new Windrose(north, west, dir3);
 		}
+	}
+
+	class Windrose
+	{
+		public Windrose(Vector3 north, Vector3 west, Vector3 dir)
+		{
+			North = north;
+			West = west;
+			Dir = dir;
+		}
+
+		public Windrose(Vector3 dir, Vector3 top)
+		{
+			North = top;
+			Dir = dir;
+			West = Vector3.Cross(North, Dir);
+			West.Normalize();
+		}
+
+		public Vector3 North;
+		public Vector3 West;
+		public Vector3 Dir;
+
+
 	}
 }

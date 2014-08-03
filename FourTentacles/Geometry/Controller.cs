@@ -12,6 +12,7 @@ namespace FourTentacles
 {
 	public class MouseMoveParams
 	{
+		public readonly Point Location;
 		public readonly Point Delta;
 		public readonly Vector3 Move;
 		public readonly Vector3 Constrained;
@@ -19,6 +20,7 @@ namespace FourTentacles
 
 		public MouseMoveParams(Point screenPoint, Point delta, Vector3 move, Vector3 constrained)
 		{
+			Location = screenPoint;
 			Delta = delta;
 			Move = move;
 			Constrained = constrained;
@@ -28,17 +30,9 @@ namespace FourTentacles
 
 	public abstract class Controller : Node
 	{
-		public event EventHandler Changed;
-
-		protected virtual void OnChanged()
-		{
-			EventHandler handler = Changed;
-			if (handler != null) handler(this, EventArgs.Empty);
-		}
-
-		public virtual void OnMouseOver() { }
-		public virtual void OnMouseLeave() { }
-		public virtual void OnMouseDown() { }
+		public virtual void OnMouseOver(Point location) { }
+		public virtual void OnMouseLeave(Point location) { }
+		public virtual void OnMouseDown(Point location) { }
 		public virtual void OnMouseDrag(MouseMoveParams e) { }
 
 		public virtual Cursor GetCursor()

@@ -114,7 +114,6 @@ namespace FourTentacles
 			{
 				var move = camera.ScreenVectorToWorld(delta, mouseOverController.Pos);
 				var constrainedMove = gizmo.ConstrainVector(move);
-
 				mouseOverController.OnMouseDrag(new MouseMoveParams(e.Location, delta, move, constrainedMove));
 				Render();
 				return;
@@ -123,14 +122,14 @@ namespace FourTentacles
 			var controller = GetControllerUnderCursor(e.Location);
 			if (mouseOverController != null && controller != mouseOverController)
 			{
-				mouseOverController.OnMouseLeave();
+				mouseOverController.OnMouseLeave(e.Location);
 				mouseOverController = null;
 				return;
 			}
 			if (controller != null)
 			{
 				mouseOverController = controller;
-				controller.OnMouseOver();
+				controller.OnMouseOver(e.Location);
 				glc.Cursor = controller.GetCursor();
 			}
 			if (controller == null)
@@ -168,7 +167,7 @@ namespace FourTentacles
 			{
 				if (mouseOverController != null)
 				{
-					mouseOverController.OnMouseDown();
+					mouseOverController.OnMouseDown(e.Location);
 					return;
 				}
 
