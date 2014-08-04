@@ -13,7 +13,7 @@ namespace FourTentacles
 	{
 		private const int PointSizePx = 4;
 
-		private Windrose windRose;
+		public Windrose WindRose;
 		private SinCosTable table;
 		private Vector4 point;
 
@@ -102,14 +102,14 @@ namespace FourTentacles
 		{
 			Material.SetLineMaterial(Color.White);
 			GL.Begin(PrimitiveType.LineLoop);
-			foreach (Vector3 vec in table.Points(windRose.North, windRose.West))
+			foreach (Vector3 vec in table.Points(WindRose.North, WindRose.West))
 				GL.Vertex3(vec * pos.W + pos.Xyz + Pos);
 			GL.End();
 		}
 
 		public void SetRose(Windrose windRose, SinCosTable table)
 		{
-			this.windRose = windRose;
+			this.WindRose = windRose;
 			this.table = table;
 		}
 	}

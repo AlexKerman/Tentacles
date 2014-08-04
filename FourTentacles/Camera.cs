@@ -85,6 +85,11 @@ namespace FourTentacles
 				(v4.Y / v4.W + 0.5f) * controlSize.Height);
 		}
 
+		public Vector3 VectorToCam(Vector3 absolute)
+		{
+			return Vector3.Normalize(Pos - absolute);
+		}
+
 		public void SetOrtho()
 		{
 			GL.MatrixMode(MatrixMode.Projection);

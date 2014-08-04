@@ -20,8 +20,7 @@ namespace FourTentacles
 			get { return guide.Point.Xyz + guide.BasePoint.Pos; }
 			set
 			{
-				guide.Point.Xyz = value - guide.BasePoint.Pos;
-				guide.BasePoint.Changed = true;
+				guide.Point = new Vector4(value - guide.BasePoint.Pos, guide.Point.W);
 			}
 		}
 
@@ -40,10 +39,23 @@ namespace FourTentacles
 			}
 			else
 			{
+				Vector3 guideSide = Vector3.Cross(guide.BasePoint.WindRose.Dir, context.Camera.VectorToCam(Pos + context.AbsolutePosition));
+				Vector3 pointSide = Vector3.Cross(guide.BasePoint.WindRose.Dir, context.Camera.VectorToCam(guide.BasePoint.Pos + context.AbsolutePosition));
+				guideSide *= guide.Point.W;
+				pointSide *= guide.BasePoint.Point.W;
+
 				GL.Color3(Color.LightYellow);
 				GL.Begin(PrimitiveType.Lines);
+				
 				GL.Vertex3(guide.BasePoint.Pos);
 				GL.Vertex3(Pos);
+
+				GL.Vertex3(guide.BasePoint.Pos + pointSide);
+				GL.Vertex3(Pos + guideSide);
+
+				GL.Vertex3(guide.BasePoint.Pos - pointSide);
+				GL.Vertex3(Pos - guideSide);
+
 				GL.End();
 				guide.BasePoint.DrawOrthoPoint(context, Pos);
 			}

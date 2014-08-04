@@ -41,6 +41,11 @@ namespace FourTentacles
 			SetWidth(newWidth);
 		}
 
+		public override Cursor GetCursor()
+		{
+			return Cursors.SizeWE;
+		}
+
 		protected abstract void SetWidth(float width);
 	}
 
@@ -85,14 +90,9 @@ namespace FourTentacles
 			base.OnMouseDown(location);
 		}
 
-		public override Cursor GetCursor()
-		{
-			return Cursors.SizeWE;
-		}
-
 		protected override void SetWidth(float width)
 		{
-			BasePoint.Point = new Vector4(baseGuide.Point.Xyz, width);
+			baseGuide.Point = new Vector4(baseGuide.Point.Xyz, width);
 		}
 	}
 }
