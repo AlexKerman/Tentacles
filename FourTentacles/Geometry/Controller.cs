@@ -28,17 +28,24 @@ namespace FourTentacles
 		}
 	}
 
+	public class MouseOverParams
+	{
+		public readonly Point Location;
+		public Cursor Cursor = Cursors.Default;
+		public bool Changed;
+
+		public MouseOverParams(Point location)
+		{
+			Location = location;
+		}
+	}
+
 	public abstract class Controller : Node
 	{
-		public virtual void OnMouseOver(Point location) { }
-		public virtual void OnMouseLeave(Point location) { }
+		public virtual void OnMouseOver(MouseOverParams mouseOverParams) { }
+		public virtual void OnMouseLeave(MouseOverParams mouseOverParams) { }
 		public virtual void OnMouseDown(Point location) { }
 		public virtual void OnMouseDrag(MouseMoveParams e) { }
-
-		public virtual Cursor GetCursor()
-		{
-			return Cursors.Default;
-		}
 	}
 
 	public class SelectNodeController : Controller
@@ -61,9 +68,9 @@ namespace FourTentacles
 			}
 		}
 
-		public override Cursor GetCursor()
+		public override void OnMouseOver(MouseOverParams mouseOverParams)
 		{
-			return EditorCursors.Select;
+			mouseOverParams.Cursor = EditorCursors.Select;
 		}
 	}
 }

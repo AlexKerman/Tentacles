@@ -50,24 +50,20 @@ namespace FourTentacles
 				Gizmo.fixedConstraints = Gizmo.constraints;
 			}
 
-			public override void OnMouseOver(Point location)
+			public override void OnMouseOver(MouseOverParams mouseOverParams)
 			{
-				Gizmo.ChangeConstraints(constraint);
+				mouseOverParams.Changed = Gizmo.ChangeConstraints(constraint);
+				mouseOverParams.Cursor = EditorCursors.Move;
 			}
 
-			public override void OnMouseLeave(Point location)
+			public override void OnMouseLeave(MouseOverParams mouseOverParams)
 			{
-				Gizmo.ChangeConstraints(Gizmo.fixedConstraints);
+				mouseOverParams.Changed = Gizmo.ChangeConstraints(Gizmo.fixedConstraints);
 			}
 
 			public override void OnMouseDrag(MouseMoveParams e)
 			{
 				Gizmo.OnMouseDrag(e);
-			}
-
-			public override Cursor GetCursor()
-			{
-				return EditorCursors.Move;
 			}
 
 			public Plane(Vector3 axis1, Vector3 axis2, Constraints constraint)
@@ -133,24 +129,20 @@ namespace FourTentacles
 				Gizmo.fixedConstraints = Gizmo.constraints;
 			}
 
-			public override void OnMouseOver(Point location)
+			public override void OnMouseOver(MouseOverParams mouseOverParams)
 			{
-				Gizmo.ChangeConstraints(constraint);
+				mouseOverParams.Changed = Gizmo.ChangeConstraints(constraint);
+				mouseOverParams.Cursor = EditorCursors.Move;
 			}
 
-			public override void OnMouseLeave(Point location)
+			public override void OnMouseLeave(MouseOverParams mouseOverParams)
 			{
-				Gizmo.ChangeConstraints(Gizmo.fixedConstraints);
+				mouseOverParams.Changed = Gizmo.ChangeConstraints(Gizmo.fixedConstraints);
 			}
 
 			public override void OnMouseDrag(MouseMoveParams e)
 			{
 				Gizmo.OnMouseDrag(e);
-			}
-
-			public override Cursor GetCursor()
-			{
-				return EditorCursors.Move;
 			}
 
 			public void Draw(Axis axis1, Axis axis2, Constraints constraints, Camera camera)
@@ -196,8 +188,6 @@ namespace FourTentacles
 		private readonly Plane planeYz = new Plane(Vector3.UnitY, Vector3.UnitZ, Constraints.Y | Constraints.Z);
 		private readonly Plane planeZx = new Plane(Vector3.UnitZ, Vector3.UnitX, Constraints.Z | Constraints.X);
 
-		public event EventHandler ViewChanged;
-
 		public Gizmo()
 		{
 			foreach (var axis in new[] {axisX, axisY, axisZ})
@@ -215,13 +205,11 @@ namespace FourTentacles
 			return result;
 		}
 
-		private void ChangeConstraints(Constraints cons)
+		private bool ChangeConstraints(Constraints cons)
 		{
-			if (cons != constraints)
-			{
-				constraints = cons;
-				ViewChanged.Raise();
-			}
+			if (cons == constraints) return false;
+			constraints = cons;
+			return true;
 		}
 
 		public IEnumerable<Controller> GetControllers()
@@ -256,9 +244,9 @@ namespace FourTentacles
 			GL.PopMatrix();
 		}
 
-		public override Cursor GetCursor()
+		public override void OnMouseOver(MouseOverParams mouseOverParams)
 		{
-			return EditorCursors.Move;
+			mouseOverParams.Cursor = EditorCursors.Move;
 		}
 
 		public List<Node> SelectedNodes;

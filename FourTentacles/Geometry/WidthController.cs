@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.Serialization.Formatters;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -13,14 +14,29 @@ namespace FourTentacles
 {
 	abstract class WidthController : Controller
 	{
+		private static int centerZone = 5;
+
 		private Point mouseDownLocation;
 		protected Vector2 circleCenter;
 		protected Point4D BasePoint;
 		protected float prevWidth;
 
-		public override void OnMouseOver(Point location)
+		public override void OnMouseOver(MouseOverParams mouseOverParams)
 		{
-			
+			int dx = Math.Abs(mouseOverParams.Location.X - mouseDownLocation.X);
+			int dy = Math.Abs(mouseOverParams.Location.Y - mouseDownLocation.Y);
+			if (dx <= centerZone && dy > centerZone)
+			{
+				mouseOverParams.Cursor = Cursors.SizeNS;
+				return;
+			}
+			if (dy <= centerZone && dx > centerZone)
+			{
+				mouseOverParams.Cursor = Cursors.SizeWE;
+				return;
+			}
+			int sign = (mouseOverParams.Location.X - mouseDownLocation.X)*(mouseOverParams.Location.Y - mouseDownLocation.Y);
+			mouseOverParams.Cursor = sign > 0 ? Cursors.SizeNESW : Cursors.SizeNWSE;
 		}
 
 		public override void OnMouseDown(Point location)
@@ -41,11 +57,6 @@ namespace FourTentacles
 			SetWidth(newWidth);
 		}
 
-		public override Cursor GetCursor()
-		{
-			return Cursors.SizeWE;
-		}
-
 		protected abstract void SetWidth(float width);
 	}
 
@@ -54,6 +65,12 @@ namespace FourTentacles
 		public PointWidthController(Point4D point)
 		{
 			BasePoint = point;
+		}
+
+		public override void OnMouseDown(Point location)
+		{
+			prevWidth = BasePoint.Point.W;
+			base.OnMouseDown(location);
 		}
 
 		public override void Render(RenderContext context)

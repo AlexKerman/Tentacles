@@ -46,7 +46,6 @@ namespace FourTentacles
 			InitializeComponent();
 			glc.MouseWheel += OnMouseWheel;
 
-			gizmo.ViewChanged += (o, args) => Render();
 			gizmo.MoveObjects += GizmoOnMoveObjects;
 
 			sceneNode.RedrawRequired += SceneNodeOnRedrawRequested;
@@ -119,23 +118,23 @@ namespace FourTentacles
 				return;
 			}
 
+			var mouseOverParams = new MouseOverParams(e.Location);
 			var controller = GetControllerUnderCursor(e.Location);
 			if (mouseOverController != null && controller != mouseOverController)
 			{
-				mouseOverController.OnMouseLeave(e.Location);
+				mouseOverController.OnMouseLeave(mouseOverParams);
 				mouseOverController = null;
 				return;
 			}
 			if (controller != null)
 			{
 				mouseOverController = controller;
-				controller.OnMouseOver(e.Location);
-				glc.Cursor = controller.GetCursor();
+				controller.OnMouseOver(mouseOverParams);
 			}
-			if (controller == null)
-			{
-				glc.Cursor = Cursors.Default;
-			}
+		
+			glc.Cursor = mouseOverParams.Cursor;
+			if(mouseOverParams.Changed)
+				Render();
 		}
 
 		private Controller GetControllerUnderCursor(Point mousePosition)

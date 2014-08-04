@@ -40,7 +40,9 @@ namespace FourTentacles
 			else
 			{
 				Vector3 guideSide = Vector3.Cross(guide.BasePoint.WindRose.Dir, context.Camera.VectorToCam(Pos + context.AbsolutePosition));
+				guideSide.Normalize();
 				Vector3 pointSide = Vector3.Cross(guide.BasePoint.WindRose.Dir, context.Camera.VectorToCam(guide.BasePoint.Pos + context.AbsolutePosition));
+				pointSide.Normalize();
 				guideSide *= guide.Point.W;
 				pointSide *= guide.BasePoint.Point.W;
 
@@ -61,9 +63,9 @@ namespace FourTentacles
 			}
 		}
 
-		public override Cursor GetCursor()
+		public override void OnMouseOver(MouseOverParams mouseOverParams)
 		{
-			return EditorCursors.Move;
+			mouseOverParams.Cursor = EditorCursors.Move;
 		}
 	}
 }
