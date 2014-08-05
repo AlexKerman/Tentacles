@@ -98,8 +98,8 @@ namespace FourTentacles
 
 		public void Draw(RenderContext context)
 		{
-			int y1 = controlSize.Height - startLocation.Y;
-			int y2 = controlSize.Height - endLocaton.Y;
+			int y1 = startLocation.Y;
+			int y2 = endLocaton.Y;
 			int x1 = startLocation.X;
 			int x2 = endLocaton.X;
 

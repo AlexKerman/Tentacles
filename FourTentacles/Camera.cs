@@ -82,7 +82,7 @@ namespace FourTentacles
 			var v4 = Vector4.Transform(new Vector4(v3), projectionMatrix);
 			return new Vector2(
 				(v4.X / v4.W + 0.5f) * controlSize.Width,
-				(v4.Y / v4.W + 0.5f) * controlSize.Height);
+				(0.5f - v4.Y / v4.W) * controlSize.Height);
 		}
 
 		public Vector3 VectorToCam(Vector3 absolute)
@@ -94,7 +94,7 @@ namespace FourTentacles
 		{
 			GL.MatrixMode(MatrixMode.Projection);
 			GL.LoadIdentity();
-			GL.Ortho(0, controlSize.Width, 0, controlSize.Height, -10000, 10000);
+			GL.Ortho(0, controlSize.Width, controlSize.Height, 0, -10000, 10000);
 			GL.MatrixMode(MatrixMode.Modelview);
 			GL.LoadIdentity();
 		}

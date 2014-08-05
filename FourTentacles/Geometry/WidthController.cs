@@ -23,8 +23,8 @@ namespace FourTentacles
 
 		public override void OnMouseOver(MouseOverParams mouseOverParams)
 		{
-			int dx = Math.Abs(mouseOverParams.Location.X - mouseDownLocation.X);
-			int dy = Math.Abs(mouseOverParams.Location.Y - mouseDownLocation.Y);
+			int dx = (int) Math.Abs(mouseOverParams.Location.X - circleCenter.X);
+			int dy = (int) Math.Abs(mouseOverParams.Location.Y - circleCenter.Y);
 			if (dx <= centerZone && dy > centerZone)
 			{
 				mouseOverParams.Cursor = Cursors.SizeNS;
@@ -35,8 +35,8 @@ namespace FourTentacles
 				mouseOverParams.Cursor = Cursors.SizeWE;
 				return;
 			}
-			int sign = (mouseOverParams.Location.X - mouseDownLocation.X)*(mouseOverParams.Location.Y - mouseDownLocation.Y);
-			mouseOverParams.Cursor = sign > 0 ? Cursors.SizeNESW : Cursors.SizeNWSE;
+			var sign = (mouseOverParams.Location.X - circleCenter.X)*(mouseOverParams.Location.Y - circleCenter.Y);
+			mouseOverParams.Cursor = sign > 0 ? Cursors.SizeNWSE : Cursors.SizeNESW;
 		}
 
 		public override void OnMouseDown(Point location)
@@ -75,7 +75,7 @@ namespace FourTentacles
 
 		public override void Render(RenderContext context)
 		{
-			circleCenter = context.WorldToScreen(Vector3.Zero);
+			circleCenter = context.WorldToScreen(BasePoint.Point.Xyz);
 			BasePoint.DrawWidthCircle(context, new Vector4(Vector3.Zero, BasePoint.Point.W));
 		}
 
@@ -97,7 +97,7 @@ namespace FourTentacles
 
 		public override void Render(RenderContext context)
 		{
-			circleCenter = context.WorldToScreen(baseGuide.Point.Xyz);
+			circleCenter = context.WorldToScreen(baseGuide.BasePoint.Pos + baseGuide.Point.Xyz);
 			BasePoint.DrawWidthCircle(context, baseGuide.Point);
 		}
 
