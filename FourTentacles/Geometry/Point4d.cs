@@ -98,12 +98,19 @@ namespace FourTentacles
 			}
 		}
 
-		public void DrawWidthCircle(RenderContext context, Vector4 pos)
+		public void DrawWidthCircle(RenderContext context, Vector3 pos, float width, bool selected)
 		{
-			Material.SetLineMaterial(Color.White);
-			GL.Begin(PrimitiveType.LineLoop);
+			pos += Pos;
+			var pixOffset = (float)context.Camera.GetPerspectiveRatio(pos);
+			width += Math.Sign(width)*pixOffset;
+
+			Material.SetLineMaterial(selected ? Color.Red : Color.White);
+			GL.Disable(EnableCap.DepthTest);
+			GL.Begin(PrimitiveType.LineStrip);
+			GL.Vertex3(WindRose.North * (pixOffset * 5 + width) + pos);
 			foreach (Vector3 vec in table.Points(WindRose.North, WindRose.West))
-				GL.Vertex3(vec * pos.W + pos.Xyz + Pos);
+				GL.Vertex3(vec * width + pos);
+			GL.Vertex3(WindRose.North * width + pos);
 			GL.End();
 		}
 

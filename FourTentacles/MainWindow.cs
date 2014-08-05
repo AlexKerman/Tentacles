@@ -124,7 +124,6 @@ namespace FourTentacles
 			{
 				mouseOverController.OnMouseLeave(mouseOverParams);
 				mouseOverController = null;
-				return;
 			}
 			if (controller != null)
 			{

@@ -32,7 +32,13 @@ namespace FourTentacles
 	{
 		public readonly Point Location;
 		public Cursor Cursor = Cursors.Default;
-		public bool Changed;
+		private bool changed;
+
+		public bool Changed
+		{
+			get { return changed; }
+			set { changed |= value; }
+		}
 
 		public MouseOverParams(Point location)
 		{

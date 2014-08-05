@@ -24,11 +24,7 @@ namespace FourTentacles
 		public IEnumerable<Vector3> Points(Vector3 north, Vector3 west)
 		{
 			for (int i = 0; i < sin.Length; i++)
-			{
-				int index = i;
-				if (index >= sin.Length) index = index%sin.Length;
-				yield return west * sin[index] + north * cos[index];
-			}
+				yield return west * sin[i] + north * cos[i];
 		}
 
 		public int Sides { get { return sin.Length; } }

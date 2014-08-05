@@ -21,6 +21,8 @@ namespace FourTentacles
 		protected Point4D BasePoint;
 		protected float prevWidth;
 
+		protected bool selected;
+
 		public override void OnMouseOver(MouseOverParams mouseOverParams)
 		{
 			int dx = (int) Math.Abs(mouseOverParams.Location.X - circleCenter.X);
@@ -37,6 +39,15 @@ namespace FourTentacles
 			}
 			var sign = (mouseOverParams.Location.X - circleCenter.X)*(mouseOverParams.Location.Y - circleCenter.Y);
 			mouseOverParams.Cursor = sign > 0 ? Cursors.SizeNWSE : Cursors.SizeNESW;
+
+			mouseOverParams.Changed = !selected;
+			selected = true;
+		}
+
+		public override void OnMouseLeave(MouseOverParams mouseOverParams)
+		{
+			selected = false;
+			mouseOverParams.Changed = true;
 		}
 
 		public override void OnMouseDown(Point location)
@@ -76,7 +87,7 @@ namespace FourTentacles
 		public override void Render(RenderContext context)
 		{
 			circleCenter = context.WorldToScreen(BasePoint.Point.Xyz);
-			BasePoint.DrawWidthCircle(context, new Vector4(Vector3.Zero, BasePoint.Point.W));
+			BasePoint.DrawWidthCircle(context, Vector3.Zero, BasePoint.Point.W, selected);
 		}
 
 		protected override void SetWidth(float width)
@@ -98,7 +109,7 @@ namespace FourTentacles
 		public override void Render(RenderContext context)
 		{
 			circleCenter = context.WorldToScreen(baseGuide.BasePoint.Pos + baseGuide.Point.Xyz);
-			BasePoint.DrawWidthCircle(context, baseGuide.Point);
+			BasePoint.DrawWidthCircle(context, baseGuide.Point.Xyz, baseGuide.Point.W, selected);
 		}
 
 		public override void OnMouseDown(Point location)
