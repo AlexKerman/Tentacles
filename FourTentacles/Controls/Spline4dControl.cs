@@ -26,6 +26,7 @@ namespace FourTentacles
 
 			numLengthSubdivide.Value = spline4D.LengthSides;
 			numRoundSubdivide.Value = spline4D.RoundSides;
+			cbLengthSmooth.Checked = spline4D.LengthSmooth;
 		}
 
 		private void EditPointsClick(object sender, EventArgs e)
@@ -67,6 +68,12 @@ namespace FourTentacles
 		private void RoundSubdivideValueChanged(object sender, EventArgs e)
 		{
 			spline4D.RoundSides = (int) numRoundSubdivide.Value;
+			OnRedrawRequired();
+		}
+
+		private void cbLengthSmooth_Click(object sender, EventArgs e)
+		{
+			spline4D.LengthSmooth = cbLengthSmooth.Checked;
 			OnRedrawRequired();
 		}
 	}

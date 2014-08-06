@@ -30,11 +30,12 @@
 		{
 			this.cbEditPoints = new System.Windows.Forms.CheckBox();
 			this.cbEditSegments = new System.Windows.Forms.CheckBox();
-            this.numLengthSubdivide = new System.Windows.Forms.NumericUpDown();
+			this.numLengthSubdivide = new System.Windows.Forms.NumericUpDown();
 			this.label1 = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
 			this.numRoundSubdivide = new System.Windows.Forms.NumericUpDown();
-            ((System.ComponentModel.ISupportInitialize)(this.numLengthSubdivide)).BeginInit();
+			this.cbLengthSmooth = new System.Windows.Forms.CheckBox();
+			((System.ComponentModel.ISupportInitialize)(this.numLengthSubdivide)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.numRoundSubdivide)).BeginInit();
 			this.SuspendLayout();
 			// 
@@ -62,14 +63,14 @@
 			this.cbEditSegments.UseVisualStyleBackColor = true;
 			this.cbEditSegments.Click += new System.EventHandler(this.EditSegmentsClick);
 			// 
-            // numLengthSubdivide
+			// numLengthSubdivide
 			// 
-            this.numLengthSubdivide.Location = new System.Drawing.Point(100, 32);
-            this.numLengthSubdivide.Name = "numLengthSubdivide";
-            this.numLengthSubdivide.Size = new System.Drawing.Size(57, 20);
-            this.numLengthSubdivide.TabIndex = 1;
-            this.numLengthSubdivide.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.numLengthSubdivide.ValueChanged += new System.EventHandler(this.LengthSubdivideValueChanged);
+			this.numLengthSubdivide.Location = new System.Drawing.Point(100, 32);
+			this.numLengthSubdivide.Name = "numLengthSubdivide";
+			this.numLengthSubdivide.Size = new System.Drawing.Size(57, 20);
+			this.numLengthSubdivide.TabIndex = 1;
+			this.numLengthSubdivide.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+			this.numLengthSubdivide.ValueChanged += new System.EventHandler(this.LengthSubdivideValueChanged);
 			// 
 			// label1
 			// 
@@ -78,7 +79,7 @@
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(91, 13);
 			this.label1.TabIndex = 2;
-            this.label1.Text = "Length subdivide:";
+			this.label1.Text = "Length subdivide:";
 			// 
 			// label2
 			// 
@@ -98,19 +99,31 @@
 			this.numRoundSubdivide.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
 			this.numRoundSubdivide.ValueChanged += new System.EventHandler(this.RoundSubdivideValueChanged);
 			// 
+			// cbLengthSmooth
+			// 
+			this.cbLengthSmooth.AutoSize = true;
+			this.cbLengthSmooth.Location = new System.Drawing.Point(3, 88);
+			this.cbLengthSmooth.Name = "cbLengthSmooth";
+			this.cbLengthSmooth.Size = new System.Drawing.Size(96, 17);
+			this.cbLengthSmooth.TabIndex = 3;
+			this.cbLengthSmooth.Text = "Length smooth";
+			this.cbLengthSmooth.UseVisualStyleBackColor = true;
+			this.cbLengthSmooth.Click += new System.EventHandler(this.cbLengthSmooth_Click);
+			// 
 			// Spline4dControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.Controls.Add(this.cbLengthSmooth);
 			this.Controls.Add(this.label2);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.numRoundSubdivide);
-            this.Controls.Add(this.numLengthSubdivide);
+			this.Controls.Add(this.numLengthSubdivide);
 			this.Controls.Add(this.cbEditSegments);
 			this.Controls.Add(this.cbEditPoints);
 			this.Name = "Spline4dControl";
 			this.Size = new System.Drawing.Size(162, 150);
-            ((System.ComponentModel.ISupportInitialize)(this.numLengthSubdivide)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.numLengthSubdivide)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.numRoundSubdivide)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
@@ -125,6 +138,7 @@
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.NumericUpDown numRoundSubdivide;
+		private System.Windows.Forms.CheckBox cbLengthSmooth;
 
 	}
 }

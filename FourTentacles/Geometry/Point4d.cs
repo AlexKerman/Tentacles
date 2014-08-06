@@ -78,6 +78,7 @@ namespace FourTentacles
 			GL.Vertex2(x, y);
 			GL.Vertex2(x + PointSizePx, y);
 			GL.Vertex2(x + PointSizePx, y + PointSizePx);
+			//bug workaround (+1)
 			GL.Vertex2(x, y + PointSizePx + 1);
 			GL.Vertex2(x, y);
 			GL.End();

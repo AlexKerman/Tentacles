@@ -19,8 +19,6 @@ namespace FourTentacles
 
 		public SelectionModeEnum SelectionMode = SelectionModeEnum.None;
 
-		private int roundSides;
-		private int lengthSides;
 		private SinCosTable sinCos;
 		private List<Segment4D> segments = new List<Segment4D>();
 		private List<Point4D> points = new List<Point4D>();
@@ -33,6 +31,12 @@ namespace FourTentacles
 			this.lengthSides = lengthSides;
 			sinCos = new SinCosTable(roundSides);
 		}
+
+		#region geometry params
+
+		private int roundSides;
+		private int lengthSides;
+		private bool lengthSmooth = true;
 
 		public int RoundSides
 		{
@@ -56,6 +60,21 @@ namespace FourTentacles
 				changed = true;
 			}
 		}
+
+		public bool LengthSmooth
+		{
+			get { return lengthSmooth; }
+			set
+			{
+				if(lengthSmooth == value) return;
+				lengthSmooth = value;
+				foreach (var segment in segments)
+					segment.Mesh = lengthSmooth ? (Mesh)new SmoothMesh() : new SmoothLengthMesh();
+				changed = true;
+			}
+		}
+
+		#endregion eometry params
 
 		public void AddSegment(Vector4 start, Vector4 end, Vector4 startGuide, Vector4 endGuide)
 		{

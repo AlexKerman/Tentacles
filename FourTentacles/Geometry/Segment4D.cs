@@ -13,7 +13,8 @@ namespace FourTentacles
 		private Point4D ep;
 		private readonly Guide4D cpbp;
 		private readonly Guide4D cpep;
-		private readonly Mesh mesh = new SmoothLengthMesh();
+
+		public Mesh Mesh = new SmoothMesh();
 
 		public Segment4D(Point4D start, Point4D end, Guide4D startGuide, Guide4D endGuide)
 		{
@@ -47,12 +48,12 @@ namespace FourTentacles
 
 		public override void Render(RenderContext context)
 		{
-			mesh.Render(context.Mode);
+			Mesh.Render(context.Mode);
 		}
 
 		public int GetTrianglesCount()
 		{
-			return mesh.GetTrianglesCount();
+			return Mesh.GetTrianglesCount();
 		}
 
 		private float[] DivideSpline(int lengthSides)
@@ -98,7 +99,7 @@ namespace FourTentacles
                     pos++;
 				}
 			}
-            mesh.Init(points, normals, tPoints.Length, table.Sides);
+            Mesh.Init(points, normals, tPoints.Length, table.Sides);
 
 			bp.SetRose(kompass.StartRose, table);
 			ep.SetRose(kompass.EndRose, table);
@@ -116,7 +117,7 @@ namespace FourTentacles
 
 		public BoundingBox GetBoundingBox()
 		{
-			return mesh.GetBoundingBox();
+			return Mesh.GetBoundingBox();
 		}
 	}
 
