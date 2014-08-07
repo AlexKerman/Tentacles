@@ -80,6 +80,8 @@ namespace FourTentacles
         {
             pointsArray = points;
             normalsArray = normals;
+			triangleStripIndicies.Clear();
+			lineStripIndicies.Clear();
 
             for (int ti = 0; ti < length - 1; ti++)
             {
@@ -117,8 +119,10 @@ namespace FourTentacles
             {
                 int ptOffset = (i + 1)%sides;
                 var indicies = new List<int>();
+				var lineIndicies = new int[length];
                 for (int j = 0; j < length; j++)
                 {
+	                lineIndicies[j] = currentPos;
                     Vector3 normal = normals[j*sides + i] + normals[j*sides + ptOffset];
                     normal.Normalize();
 
@@ -130,9 +134,9 @@ namespace FourTentacles
                     indicies.Add(currentPos + 1);
                     currentPos += 2;
                 }
+				lineStripIndicies.Add(lineIndicies);
                 triangleStripIndicies.Add(indicies.ToArray());
             }
-
         }
     }
 }
