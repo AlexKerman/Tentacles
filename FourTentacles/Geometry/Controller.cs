@@ -52,7 +52,6 @@ namespace FourTentacles
 		public virtual void OnMouseLeave(MouseOverParams mouseOverParams) { }
 		public virtual void OnMouseDown(Point location) { }
 		public virtual void OnMouseDrag(MouseMoveParams e) { }
-		public virtual void OnMouseUp() { }
 	}
 
 	public class SelectNodeController : Controller

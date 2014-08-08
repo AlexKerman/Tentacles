@@ -173,20 +173,11 @@ namespace FourTentacles
 
 		private void OnMouseButtonReleased(object sender, MouseEventArgs e)
 		{
-			if (e.Button == MouseButtons.Left)
+			if (e.Button == MouseButtons.Left && selectionRectangle != null)
 			{
-				if (selectionRectangle != null)
-				{
-					SelectObjects();
-					selectionRectangle = null;
-					Render();
-					return;
-				}
-
-				if (mouseOverController != null)
-				{
-					mouseOverController.OnMouseUp();
-				}
+				SelectObjects();
+				selectionRectangle = null;
+				Render();
 			}
 		}
 

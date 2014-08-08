@@ -24,9 +24,16 @@ namespace FourTentacles
 			}
 		}
 
+		private DoUndoMove doUndoMove;
+		public override void OnMouseDown(Point location)
+		{
+			doUndoMove = new DoUndoMove(new[] {this});
+			UndoStack.AddAction(doUndoMove);
+		}
+
 		public override void OnMouseDrag(MouseMoveParams e)
 		{
-			Pos += e.Constrained;
+			doUndoMove.Move(e.Constrained);
 		}
 
 		public override void Render(RenderContext context)

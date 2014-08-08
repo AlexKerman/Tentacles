@@ -36,6 +36,7 @@ namespace FourTentacles
 			{
 				Gizmo.fixedConstraints = Gizmo.constraints;
 				doUndoMove = new DoUndoMove(Gizmo.SelectedNodes);
+				UndoStack.AddAction(doUndoMove);
 			}
 
 			public override void OnMouseOver(MouseOverParams mouseOverParams)
@@ -52,11 +53,6 @@ namespace FourTentacles
 			public override void OnMouseDrag(MouseMoveParams e)
 			{
 				doUndoMove.Move(e.Constrained);
-			}
-
-			public override void OnMouseUp()
-			{
-				UndoStack.AddAction(doUndoMove);
 			}
 		}
 
@@ -236,6 +232,7 @@ namespace FourTentacles
 		public override void OnMouseDown(Point location)
 		{
 			doUndoMove = new DoUndoMove(SelectedNodes);
+			UndoStack.AddAction(doUndoMove);
 		}
 
 		public override void Render(RenderContext context)
@@ -247,11 +244,6 @@ namespace FourTentacles
 		public override void OnMouseDrag(MouseMoveParams e)
 		{
 			doUndoMove.Move(e.Constrained);
-		}
-
-		public override void OnMouseUp()
-		{
-			UndoStack.AddAction(doUndoMove);
 		}
 	}
 }

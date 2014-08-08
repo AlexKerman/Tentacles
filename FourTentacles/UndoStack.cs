@@ -51,43 +51,32 @@ namespace FourTentacles
 
 	class DoUndoMove : IDoUndo
 	{
-		class BeforeAfter
-		{
-			public BeforeAfter(Vector3 pos)
-			{
-				Before = pos;
-				After = pos;
-			}
+		private Vector3 move = Vector3.Zero;
 
-			public Vector3 Before;
-			public Vector3 After;
-		}
-
-		private Dictionary<Node, BeforeAfter> nodePositions = new Dictionary<Node, BeforeAfter>();
+		private Dictionary<Node, Vector3> nodePositions = new Dictionary<Node, Vector3>();
 
 		public DoUndoMove(IEnumerable<Node> nodes)
 		{
 			foreach (var node in nodes)
-				nodePositions[node] = new BeforeAfter(node.Pos);
+				nodePositions[node] = node.Pos;
 		}
 
 		public void Move(Vector3 delta)
 		{
-			foreach (var pos in nodePositions.Values)
-				pos.After += delta;
+			move += delta;
 			Redo();
 		}
 
 		public void Undo()
 		{
 			foreach (var nodePosition in nodePositions)
-				nodePosition.Key.Pos = nodePosition.Value.Before;
+				nodePosition.Key.Pos = nodePosition.Value;
 		}
 
 		public void Redo()
 		{
 			foreach (var nodePosition in nodePositions)
-				nodePosition.Key.Pos = nodePosition.Value.After;
+				nodePosition.Key.Pos = nodePosition.Value + move;
 		}
 	}
 }
