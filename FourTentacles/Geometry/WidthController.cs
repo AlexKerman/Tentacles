@@ -50,8 +50,12 @@ namespace FourTentacles
 			mouseOverParams.Changed = true;
 		}
 
+		DoUndoWidth doUndoWidth;
+
 		public override void OnMouseDown(Point location)
 		{
+			doUndoWidth = new DoUndoWidth(this);
+			UndoStack.AddAction(doUndoWidth);
 			mouseDownLocation = location;
 		}
 
@@ -65,10 +69,10 @@ namespace FourTentacles
 			float newWidth = prevWidth / baseDist * newDist;
 			newWidth *= Math.Sign(e.Location.X - circleCenter.X) * Math.Sign(mouseDownLocation.X - circleCenter.X)
 			            * Math.Sign(e.Location.Y - circleCenter.Y) * Math.Sign(mouseDownLocation.Y - circleCenter.Y);
-			SetWidth(newWidth);
+			doUndoWidth.SetWidth(newWidth);
 		}
 
-		protected abstract void SetWidth(float width);
+		public abstract float Width { get; set; }
 	}
 
 	class PointWidthController : WidthController
@@ -90,9 +94,10 @@ namespace FourTentacles
 			BasePoint.DrawWidthCircle(context, Vector3.Zero, BasePoint.Point.W, selected);
 		}
 
-		protected override void SetWidth(float width)
+		public override float Width
 		{
-			BasePoint.Point = new Vector4(BasePoint.Point.Xyz, width);
+			set { BasePoint.Point = new Vector4(BasePoint.Point.Xyz, value); }
+			get { return BasePoint.Point.W; }
 		}
 	}
 
@@ -118,9 +123,10 @@ namespace FourTentacles
 			base.OnMouseDown(location);
 		}
 
-		protected override void SetWidth(float width)
+		public override float Width
 		{
-			baseGuide.Point = new Vector4(baseGuide.Point.Xyz, width);
+			set { baseGuide.Point = new Vector4(baseGuide.Point.Xyz, value); }
+			get { return baseGuide.Point.W; }
 		}
 	}
 }

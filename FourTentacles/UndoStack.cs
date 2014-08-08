@@ -79,4 +79,33 @@ namespace FourTentacles
 				nodePosition.Key.Pos = nodePosition.Value + move;
 		}
 	}
+
+	class DoUndoWidth : IDoUndo
+	{
+		private readonly WidthController controller;
+		private readonly float oldValue;
+		private float newValue;
+
+		public DoUndoWidth(WidthController controller)
+		{
+			this.controller = controller;
+			oldValue = controller.Width;
+		}
+
+		public void SetWidth(float value)
+		{
+			newValue = value;
+			Redo();
+		}
+
+		public void Undo()
+		{
+			controller.Width = oldValue;
+		}
+
+		public void Redo()
+		{
+			controller.Width = newValue;
+		}
+	}
 }
