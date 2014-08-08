@@ -77,12 +77,6 @@ namespace FourTentacles
 			}
 		}
 
-		public void Move(Vector3 vector)
-		{
-			foreach (var node in GetNodes().Where(node => node.IsSelected))
-				node.Pos += vector;
-		}
-
 		public override BoundingBox GetBoundingBox()
 		{
 			var box = new BoundingBox();

@@ -20,24 +20,11 @@ namespace FourTentacles
 			Z = 4,
 		}
 
-		class Plane : Controller
+		abstract class GizmoController : Controller
 		{
-			private static readonly Color Color = Color.FromArgb(168, 255, 255, 0);
-
-			private readonly Vector3 axis1;
-			private readonly Vector3 axis2;
-			private readonly Constraints constraint;
-
 			public Gizmo Gizmo;
-
-			public override void Render(RenderContext context)
-			{
-				GL.Begin(PrimitiveType.Triangles);
-				GL.Vertex3(axis1 * QuadSize * Gizmo.scale);
-				GL.Vertex3(axis2 * QuadSize * Gizmo.scale);
-				GL.Vertex3((axis1 + axis2) * QuadSize * Gizmo.scale);
-				GL.End();
-			}
+			protected Constraints constraint;
+			private DoUndoMove doUndoMove;
 
 			public override Vector3 Pos
 			{
@@ -48,6 +35,7 @@ namespace FourTentacles
 			public override void OnMouseDown(Point location)
 			{
 				Gizmo.fixedConstraints = Gizmo.constraints;
+				doUndoMove = new DoUndoMove(Gizmo.SelectedNodes);
 			}
 
 			public override void OnMouseOver(MouseOverParams mouseOverParams)
@@ -63,7 +51,29 @@ namespace FourTentacles
 
 			public override void OnMouseDrag(MouseMoveParams e)
 			{
-				Gizmo.OnMouseDrag(e);
+				doUndoMove.Move(e.Constrained);
+			}
+
+			public override void OnMouseUp()
+			{
+				UndoStack.AddAction(doUndoMove);
+			}
+		}
+
+		class Plane : GizmoController
+		{
+			private static readonly Color Color = Color.FromArgb(168, 255, 255, 0);
+
+			private readonly Vector3 axis1;
+			private readonly Vector3 axis2;
+
+			public override void Render(RenderContext context)
+			{
+				GL.Begin(PrimitiveType.Triangles);
+				GL.Vertex3(axis1 * QuadSize * Gizmo.scale);
+				GL.Vertex3(axis2 * QuadSize * Gizmo.scale);
+				GL.Vertex3((axis1 + axis2) * QuadSize * Gizmo.scale);
+				GL.End();
 			}
 
 			public Plane(Vector3 axis1, Vector3 axis2, Constraints constraint)
@@ -86,7 +96,7 @@ namespace FourTentacles
 			}
 		}
 
-		class Axis : Controller
+		class Axis : GizmoController
 		{
 			private const int ArrowSides = 6;
 			private const float ArrowSize = 0.3f;
@@ -95,10 +105,8 @@ namespace FourTentacles
 			private const float SignSize = 0.07f;
 
 			private readonly SinCosTable sinCos = new SinCosTable(ArrowSides);
-			public Gizmo Gizmo;
 			private readonly Color color;
 			private readonly Vector3 axisVector;
-			private readonly Constraints constraint;
 			private readonly Vector2[] sign;
 			private readonly static Color SelectedColor = Color.Yellow;
 
@@ -116,33 +124,6 @@ namespace FourTentacles
 				GL.Vertex3(axisVector * Gizmo.scale * QuadSize);
 				GL.Vertex3(axisVector * Gizmo.scale);
 				GL.End();
-			}
-
-			public override Vector3 Pos
-			{
-				get { return Gizmo.Pos; }
-				set { }
-			}
-
-			public override void OnMouseDown(Point location)
-			{
-				Gizmo.fixedConstraints = Gizmo.constraints;
-			}
-
-			public override void OnMouseOver(MouseOverParams mouseOverParams)
-			{
-				mouseOverParams.Changed = Gizmo.ChangeConstraints(constraint);
-				mouseOverParams.Cursor = EditorCursors.Move;
-			}
-
-			public override void OnMouseLeave(MouseOverParams mouseOverParams)
-			{
-				mouseOverParams.Changed = Gizmo.ChangeConstraints(Gizmo.fixedConstraints);
-			}
-
-			public override void OnMouseDrag(MouseMoveParams e)
-			{
-				Gizmo.OnMouseDrag(e);
 			}
 
 			public void Draw(Axis axis1, Axis axis2, Constraints constraints, Camera camera)
@@ -249,7 +230,13 @@ namespace FourTentacles
 			mouseOverParams.Cursor = EditorCursors.Move;
 		}
 
-		public List<Node> SelectedNodes;
+		public List<Node> SelectedNodes = new List<Node>();
+
+		private DoUndoMove doUndoMove;
+		public override void OnMouseDown(Point location)
+		{
+			doUndoMove = new DoUndoMove(SelectedNodes);
+		}
 
 		public override void Render(RenderContext context)
 		{
@@ -257,16 +244,14 @@ namespace FourTentacles
 				node.Render(context);
 		}
 
-		public event EventHandler<MouseMoveEventArgs> MoveObjects;
-
 		public override void OnMouseDrag(MouseMoveParams e)
 		{
-			MoveObjects.Raise(new MouseMoveEventArgs {Vec = e.Constrained});
+			doUndoMove.Move(e.Constrained);
 		}
 
-		public class MouseMoveEventArgs : EventArgs
+		public override void OnMouseUp()
 		{
-			public Vector3 Vec;
+			UndoStack.AddAction(doUndoMove);
 		}
 	}
 }

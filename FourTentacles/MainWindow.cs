@@ -46,23 +46,22 @@ namespace FourTentacles
 			InitializeComponent();
 			glc.MouseWheel += OnMouseWheel;
 
-			gizmo.MoveObjects += GizmoOnMoveObjects;
-
 			sceneNode.RedrawRequired += SceneNodeOnRedrawRequested;
+			UndoStack.StackChanged += UndoStackOnStackChanged;
 
 			//switch Optimus graphics card to NVIDIA
 			//https://github.com/opentk/opentk/issues/46
 			//var openCLPlatform = OpenCL.GetPlatform(0);
 		}
 
+		private void UndoStackOnStackChanged(object sender, EventArgs eventArgs)
+		{
+			//todo: update undo/redo buttons
+		}
+
 		private void SceneNodeOnRedrawRequested(object sender, EventArgs eventArgs)
 		{
 			Render();
-		}
-
-		private void GizmoOnMoveObjects(object sender, Gizmo.MouseMoveEventArgs e)
-		{
-			sceneNode.Move(e.Vec);
 		}
 
 		private void OnShown(object sender, EventArgs e)
@@ -140,7 +139,6 @@ namespace FourTentacles
 		{
 			var rect = new SelectionRectangle(mousePosition, glc.Size);
 
-			gizmo.SelectedNodes = sceneNode.GetNodes().Where(n => n.IsSelected).ToList();
 			var controllers = gizmo.GetControllers().ToList();
 
 			controllers.Add(new SelectNodeController(sceneNode.GetNodes().Where(n => !n.IsSelected)));
@@ -175,11 +173,20 @@ namespace FourTentacles
 
 		private void OnMouseButtonReleased(object sender, MouseEventArgs e)
 		{
-			if (e.Button == MouseButtons.Left && selectionRectangle != null)
+			if (e.Button == MouseButtons.Left)
 			{
-				SelectObjects();
-				selectionRectangle = null;
-				Render();
+				if (selectionRectangle != null)
+				{
+					SelectObjects();
+					selectionRectangle = null;
+					Render();
+					return;
+				}
+
+				if (mouseOverController != null)
+				{
+					mouseOverController.OnMouseUp();
+				}
 			}
 		}
 
@@ -191,6 +198,7 @@ namespace FourTentacles
 			selectionRectangle.SelectObjects(nodes, new RenderContext(camera, sceneNode.GetNodesPos(), RenderMode.Selection));
 			foreach (int i in selectionRectangle.SelectedIndicies)
 				nodes[i].IsSelected = true;
+			gizmo.SelectedNodes = nodes.Where(n => n.IsSelected).ToList();
 
 			Control control = sceneNode.GetNodeControl();
 			panel1.Controls.Clear();
@@ -274,6 +282,13 @@ namespace FourTentacles
 
 		private void OnPreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
 		{
+			if (e.Control && e.KeyCode == Keys.Z)
+			{
+				if (e.Shift) UndoStack.Redo();
+				else UndoStack.Undo();
+				Render();
+			}
+
 			if (e.KeyCode == Keys.F3)
 			{
 				renderMode++;

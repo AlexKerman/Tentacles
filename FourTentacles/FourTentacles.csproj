@@ -103,6 +103,7 @@
       <DependentUpon>Spline4dControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Geometry\WidthController.cs" />
+    <Compile Include="UndoStack.cs" />
     <EmbeddedResource Include="MainWindow.resx">
       <DependentUpon>MainWindow.cs</DependentUpon>
     </EmbeddedResource>
