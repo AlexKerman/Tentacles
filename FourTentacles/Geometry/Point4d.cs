@@ -18,7 +18,7 @@ namespace FourTentacles
 		private Vector4 point;
 
 		public readonly List<Guide4D> Guides = new List<Guide4D>();
-		private PointWidthController WidthController;
+		private readonly PointWidthController WidthController;
 		public bool Changed;
 
 		public Vector4 Point

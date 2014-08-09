@@ -182,7 +182,5 @@ namespace FourTentacles
 		public Vector3 North;
 		public Vector3 West;
 		public Vector3 Dir;
-
-
 	}
 }
