@@ -159,16 +159,18 @@ namespace FourTentacles
 		{
 			mouseLocation = e.Location;
 
-			if (e.Button == MouseButtons.Left)
-			{
-				if (mouseOverController != null)
-				{
-					mouseOverController.OnMouseDown(e.Location);
-					return;
-				}
+			if (e.Button != MouseButtons.Left) return;
 
-				selectionRectangle = new SelectionRectangle(e.Location, glc.Size);
+			if (mouseOverController != null)
+			{
+				mouseOverController.OnMouseDown(e.Location);
+
+				//if controller handeled mouse down
+				if (!(mouseOverController is SelectNodeController))
+					return;
 			}
+
+			selectionRectangle = new SelectionRectangle(e.Location, glc.Size);
 		}
 
 		private void OnMouseButtonReleased(object sender, MouseEventArgs e)
