@@ -78,8 +78,8 @@ namespace FourTentacles
 
 		public void AddSegment(Vector4 start, Vector4 end, Vector4 startGuide, Vector4 endGuide)
 		{
-			var startPoint = new Point4D(start);
-			var endPoint = new Point4D(end);
+			var startPoint = new Point4D(start, startGuide.Xyz);
+			var endPoint = new Point4D(end, -endGuide.Xyz);
 			var segment = new Segment4D(startPoint, endPoint, new Guide4D(startPoint, startGuide), new Guide4D(endPoint, endGuide));
 			segment.CalculateGeometry(sinCos, lengthSides);
 			segments.Add(segment);

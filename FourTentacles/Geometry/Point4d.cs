@@ -14,7 +14,6 @@ namespace FourTentacles
 		private const int PointSizePx = 4;
 
 		public Windrose WindRose;
-		private SinCosTable table;
 		private Vector4 point;
 
 		public readonly List<Guide4D> Guides = new List<Guide4D>();
@@ -32,10 +31,11 @@ namespace FourTentacles
 			}
 		}
 
-		public Point4D(Vector4 point)
+		public Point4D(Vector4 point, Vector3 direction)
 		{
 			Point = point;
 			WidthController = new PointWidthController(this);
+			WindRose = new Windrose(Vector3.Normalize(direction));
 		}
 
 		public override Vector3 Pos
@@ -101,6 +101,7 @@ namespace FourTentacles
 
 		public void DrawWidthCircle(RenderContext context, Vector3 pos, float width, bool selected)
 		{
+			var table = new SinCosTable(48);
 			pos += Pos;
 			var pixOffset = (float)context.Camera.GetPerspectiveRatio(pos);
 			width += Math.Sign(width)*pixOffset;
@@ -113,12 +114,6 @@ namespace FourTentacles
 				GL.Vertex3(vec * width + pos);
 			GL.Vertex3(WindRose.North * width + pos);
 			GL.End();
-		}
-
-		public void SetRose(Windrose windRose, SinCosTable table)
-		{
-			this.WindRose = windRose;
-			this.table = table;
 		}
 	}
 }

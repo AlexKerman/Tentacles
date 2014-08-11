@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -68,7 +69,7 @@ namespace FourTentacles
 		{
 			CalculateConstants();
 			var tPoints = DivideSpline(lengthSides);
-			var kompass = new Kompass(Vector3.Normalize(GetDirection(0).Xyz), Vector3.Normalize(GetDirection(1).Xyz));
+			var kompass = new Kompass(bp.WindRose, ep.WindRose);
 
 			var points = new Vector3[table.Sides * tPoints.Length];
             var normals = new Vector3[table.Sides * tPoints.Length];
@@ -100,9 +101,6 @@ namespace FourTentacles
 				}
 			}
             Mesh.Init(points, normals, tPoints.Length, table.Sides);
-
-			bp.SetRose(kompass.StartRose, table);
-			ep.SetRose(kompass.EndRose, table);
 		}
 
 		private Vector4 GetPoint(float t)
@@ -123,36 +121,18 @@ namespace FourTentacles
 
 	class Kompass
 	{
-		private static readonly Vector3[] axes = {Vector3.UnitX, Vector3.UnitY, Vector3.UnitZ};
+		private readonly Windrose startRose;
+		private readonly Windrose endRose;
 
-		public readonly Windrose StartRose;
-		public readonly Windrose EndRose;
-
-		public Kompass(Vector3 start, Vector3 end)
+		public Kompass(Windrose start, Windrose end)
 		{
-			StartRose = new Windrose(start, GetTopVector(start));
-			EndRose = new Windrose(end, GetTopVector(end));
-		}
-
-		private Vector3 GetTopVector(Vector3 dir)
-		{
-			Vector3 result = Vector3.Zero;
-			float minDot = 1.0f;
-			foreach (var axis in axes)
-			{
-				var dot = Math.Abs(Vector3.Dot(dir, axis));
-				if (dot < minDot)
-				{
-					minDot = dot;
-					result = axis;
-				}
-			}
-			return result;
+			startRose = start;
+			endRose = end;
 		}
 
 		public Windrose CalcWindrose(float t, Vector3 dir3)
 		{
-			var north = StartRose.North * t + EndRose.North * (1.0f - t);
+			var north = startRose.North * t + endRose.North * (1.0f - t);
 			north.Normalize();
             var west = Vector3.Cross(north, dir3);
             west.Normalize();
@@ -164,6 +144,14 @@ namespace FourTentacles
 
 	class Windrose
 	{
+		//All vectors must be normalized
+
+		private static readonly Vector3[] Axes = { Vector3.UnitX, Vector3.UnitY, Vector3.UnitZ };
+
+		public Vector3 North;
+		public Vector3 West;
+		public Vector3 Dir;
+
 		public Windrose(Vector3 north, Vector3 west, Vector3 dir)
 		{
 			North = north;
@@ -171,16 +159,39 @@ namespace FourTentacles
 			Dir = dir;
 		}
 
-		public Windrose(Vector3 dir, Vector3 top)
+		public Windrose(Vector3 dir)
 		{
-			North = top;
+			Dir = dir;
+			North = GetTopVector(Dir);
+			West = Vector3.Cross(North, Dir);
+			West.Normalize();
+			North = Vector3.Cross(West, Dir);
+			North.Normalize();
+		}
+
+		public void Adjust(Vector3 dir)
+		{
 			Dir = dir;
 			West = Vector3.Cross(North, Dir);
 			West.Normalize();
+			North = Vector3.Cross(West, Dir);
+			North.Normalize();
 		}
 
-		public Vector3 North;
-		public Vector3 West;
-		public Vector3 Dir;
+		private static Vector3 GetTopVector(Vector3 dir)
+		{
+			Vector3 result = Vector3.Zero;
+			float minDot = 1.0f;
+			foreach (var axis in Axes)
+			{
+				var dot = Math.Abs(Vector3.Dot(dir, axis));
+				if (dot < minDot)
+				{
+					minDot = dot;
+					result = axis;
+				}
+			}
+			return result;
+		}
 	}
 }

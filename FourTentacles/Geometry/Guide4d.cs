@@ -21,6 +21,7 @@ namespace FourTentacles
 				if(point == value) return;
 				point = value;
 				BasePoint.Changed = true;
+				BasePoint.WindRose.Adjust(Vector3.Normalize(value.Xyz));
 			}
 		}
 
