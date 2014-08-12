@@ -165,7 +165,7 @@ namespace FourTentacles
 			North = GetTopVector(Dir);
 			West = Vector3.Cross(North, Dir);
 			West.Normalize();
-			North = Vector3.Cross(West, Dir);
+			North = Vector3.Cross(Dir, West);
 			North.Normalize();
 		}
 
@@ -174,7 +174,7 @@ namespace FourTentacles
 			Dir = dir;
 			West = Vector3.Cross(North, Dir);
 			West.Normalize();
-			North = Vector3.Cross(West, Dir);
+			North = Vector3.Cross(Dir, West);
 			North.Normalize();
 		}
 
