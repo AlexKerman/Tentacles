@@ -18,16 +18,12 @@ namespace FourTentacles
 		public override Vector3 Pos
 		{
 			get { return guide.Point.Xyz + guide.BasePoint.Pos; }
-			set
-			{
-				guide.Point = new Vector4(value - guide.BasePoint.Pos, guide.Point.W);
-			}
 		}
 
-		private DoUndoMove doUndoMove;
+		private DoUndoGuideMove doUndoMove;
 		public override void OnMouseDown(Point location)
 		{
-			doUndoMove = new DoUndoMove(new[] {this});
+			doUndoMove = new DoUndoGuideMove(guide);
 			UndoStack.AddAction(doUndoMove);
 		}
 
@@ -73,6 +69,44 @@ namespace FourTentacles
 		public override void OnMouseOver(MouseOverParams mouseOverParams)
 		{
 			mouseOverParams.Cursor = EditorCursors.Move;
+		}
+	}
+
+	class DoUndoGuideMove : IDoUndo
+	{
+		private readonly Guide4D guide;
+		private Vector4 point;
+		private Windrose windRose;
+		private Vector3 move = Vector3.Zero;
+
+		public DoUndoGuideMove(Guide4D guide)
+		{
+			this.guide = guide;
+			point = guide.Point;
+			windRose = guide.BasePoint.WindRose;
+		}
+
+		public void Move(Vector3 delta)
+		{
+			move += delta;
+			guide.Point = point + new Vector4(move);
+			guide.BasePoint.WindRose.Adjust(Vector3.Normalize(guide.Point.Xyz));
+		}
+
+		public void Undo()
+		{
+			var rose = guide.BasePoint.WindRose;
+			guide.Point = point;
+			guide.BasePoint.WindRose = windRose;
+			windRose = rose;
+		}
+
+		public void Redo()
+		{
+			var rose = guide.BasePoint.WindRose;
+			guide.Point = point + new Vector4(move);
+			guide.BasePoint.WindRose = windRose;
+			windRose = rose;
 		}
 	}
 }

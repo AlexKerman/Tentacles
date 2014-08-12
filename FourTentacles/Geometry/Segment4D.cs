@@ -142,7 +142,7 @@ namespace FourTentacles
 		}
 	}
 
-	class Windrose
+	struct Windrose
 	{
 		//All vectors must be normalized
 
