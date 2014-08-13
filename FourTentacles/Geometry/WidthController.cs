@@ -66,7 +66,7 @@ namespace FourTentacles
 			var loc = new Vector2(e.Location.X, e.Location.Y);
 			float baseDist = (prev - circleCenter).Length;
 			float newDist = (loc - circleCenter).Length;
-			float newWidth = prevWidth / baseDist * newDist;
+			float newWidth = prevWidth - baseDist + newDist;
 			newWidth *= Math.Sign(e.Location.X - circleCenter.X) * Math.Sign(mouseDownLocation.X - circleCenter.X)
 			            * Math.Sign(e.Location.Y - circleCenter.Y) * Math.Sign(mouseDownLocation.Y - circleCenter.Y);
 			doUndoWidth.SetWidth(newWidth);
