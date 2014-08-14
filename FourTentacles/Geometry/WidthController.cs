@@ -61,14 +61,13 @@ namespace FourTentacles
 
 		public override void OnMouseDrag(MouseMoveParams e)
 		{
-			//TODO: переписать нахуй
 			var prev = new Vector2(mouseDownLocation.X, mouseDownLocation.Y);
 			var loc = new Vector2(e.Location.X, e.Location.Y);
 			float baseDist = (prev - circleCenter).Length;
 			float newDist = (loc - circleCenter).Length;
-			float newWidth = prevWidth - baseDist + newDist;
-			newWidth *= Math.Sign(e.Location.X - circleCenter.X) * Math.Sign(mouseDownLocation.X - circleCenter.X)
-			            * Math.Sign(e.Location.Y - circleCenter.Y) * Math.Sign(mouseDownLocation.Y - circleCenter.Y);
+			var dot = Vector2.Dot(Vector2.Normalize(prev - circleCenter), Vector2.Normalize(loc - circleCenter));
+
+			float newWidth = prevWidth - baseDist + newDist * dot;
 			doUndoWidth.SetWidth(newWidth);
 		}
 
