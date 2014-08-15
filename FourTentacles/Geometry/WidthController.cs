@@ -52,11 +52,11 @@ namespace FourTentacles
 
 		DoUndoWidth doUndoWidth;
 
-		public override void OnMouseDown(Point location)
+		public override void OnMouseDown(MouseOverParams mouseOverParams)
 		{
 			doUndoWidth = new DoUndoWidth(this);
 			UndoStack.AddAction(doUndoWidth);
-			mouseDownLocation = location;
+			mouseDownLocation = mouseOverParams.Location;
 		}
 
 		public override void OnMouseDrag(MouseMoveParams e)
@@ -81,10 +81,10 @@ namespace FourTentacles
 			BasePoint = point;
 		}
 
-		public override void OnMouseDown(Point location)
+		public override void OnMouseDown(MouseOverParams mouseOverParams)
 		{
 			prevWidth = BasePoint.Point.W;
-			base.OnMouseDown(location);
+			base.OnMouseDown(mouseOverParams);
 		}
 
 		public override void Render(RenderContext context)
@@ -116,10 +116,10 @@ namespace FourTentacles
 			BasePoint.DrawWidthCircle(context, baseGuide.Point.Xyz, baseGuide.Point.W, selected);
 		}
 
-		public override void OnMouseDown(Point location)
+		public override void OnMouseDown(MouseOverParams mouseOverParams)
 		{
 			prevWidth = baseGuide.Point.W;
-			base.OnMouseDown(location);
+			base.OnMouseDown(mouseOverParams);
 		}
 
 		public override float Width

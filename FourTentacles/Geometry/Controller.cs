@@ -50,7 +50,7 @@ namespace FourTentacles
 	{
 		public virtual void OnMouseOver(MouseOverParams mouseOverParams) { }
 		public virtual void OnMouseLeave(MouseOverParams mouseOverParams) { }
-		public virtual void OnMouseDown(Point location) { }
+		public virtual void OnMouseDown(MouseOverParams mouseOverParams) { }
 		public virtual void OnMouseDrag(MouseMoveParams e) { }
 	}
 

@@ -163,7 +163,7 @@ namespace FourTentacles
 
 			if (mouseOverController != null)
 			{
-				mouseOverController.OnMouseDown(e.Location);
+				mouseOverController.OnMouseDown(new MouseOverParams(e.Location));
 
 				//if controller handeled mouse down
 				if (!(mouseOverController is SelectNodeController))

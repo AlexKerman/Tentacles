@@ -21,7 +21,7 @@ namespace FourTentacles
 		}
 
 		private DoUndoGuideMove doUndoMove;
-		public override void OnMouseDown(Point location)
+		public override void OnMouseDown(MouseOverParams mouseOverParams)
 		{
 			doUndoMove = new DoUndoGuideMove(guide);
 			UndoStack.AddAction(doUndoMove);
