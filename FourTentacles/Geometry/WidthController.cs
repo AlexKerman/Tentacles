@@ -20,6 +20,7 @@ namespace FourTentacles
 		protected Vector2 circleCenter;
 		protected Point4D BasePoint;
 		protected float prevWidth;
+		protected RenderContext lastContext;
 
 		protected bool selected;
 
@@ -71,7 +72,15 @@ namespace FourTentacles
 			doUndoWidth.SetWidth(newWidth);
 		}
 
+		public override sealed void Render(RenderContext context)
+		{
+			lastContext = context;
+			circleCenter = context.WorldToScreen(BasePoint.Pos + Offset);
+			BasePoint.DrawWidthCircle(context, Offset, Width, selected);
+		}
+
 		public abstract float Width { get; set; }
+		public abstract Vector3 Offset { get; }
 	}
 
 	class PointWidthController : WidthController
@@ -87,16 +96,15 @@ namespace FourTentacles
 			base.OnMouseDown(mouseOverParams);
 		}
 
-		public override void Render(RenderContext context)
-		{
-			circleCenter = context.WorldToScreen(BasePoint.Point.Xyz);
-			BasePoint.DrawWidthCircle(context, Vector3.Zero, BasePoint.Point.W, selected);
-		}
-
 		public override float Width
 		{
 			set { BasePoint.Point = new Vector4(BasePoint.Point.Xyz, value); }
 			get { return BasePoint.Point.W; }
+		}
+
+		public override Vector3 Offset
+		{
+			get { return Vector3.Zero; }
 		}
 	}
 
@@ -110,12 +118,6 @@ namespace FourTentacles
 			BasePoint = guide.BasePoint;
 		}
 
-		public override void Render(RenderContext context)
-		{
-			circleCenter = context.WorldToScreen(baseGuide.BasePoint.Pos + baseGuide.Point.Xyz);
-			BasePoint.DrawWidthCircle(context, baseGuide.Point.Xyz, baseGuide.Point.W, selected);
-		}
-
 		public override void OnMouseDown(MouseOverParams mouseOverParams)
 		{
 			prevWidth = baseGuide.Point.W;
@@ -126,6 +128,11 @@ namespace FourTentacles
 		{
 			set { baseGuide.Point = new Vector4(baseGuide.Point.Xyz, value); }
 			get { return baseGuide.Point.W; }
+		}
+
+		public override Vector3 Offset
+		{
+			get { return baseGuide.Point.Xyz; }
 		}
 	}
 }
