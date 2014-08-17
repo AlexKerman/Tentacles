@@ -38,7 +38,7 @@ namespace FourTentacles
 			{
 				var p = lastContext.WorldToScreen(segment.GetPoint(t).Xyz);
 				var sqDist = (cursorPoint - p).LengthSquared;
-				if (minDist < sqDist)
+				if (sqDist < minDist)
 				{
 					minDist = sqDist;
 					tt = t;
