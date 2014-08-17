@@ -86,7 +86,15 @@ namespace FourTentacles
 			GL.LightModel(LightModelParameter.LightModelTwoSide, 0.0f);
 		}
 
+		#region mouse events
+
 		private Point mouseLocation;
+
+		private void OnDoubleClick(object sender, EventArgs e)
+		{
+			if (mouseOverController != null)
+				mouseOverController.OnMouseDoubleClick(new MouseOverParams(mouseLocation));
+		}
 
 		private void OnMouseMove(object sender, MouseEventArgs e)
 		{
@@ -139,6 +147,7 @@ namespace FourTentacles
 		{
 			var rect = new SelectionRectangle(mousePosition, glc.Size);
 
+			gizmo.SelectedNodes = sceneNode.GetNodes().Where(n => n.IsSelected).ToList();
 			var controllers = gizmo.GetControllers().ToList();
 
 			controllers.Add(new SelectNodeController(sceneNode.GetNodes().Where(n => !n.IsSelected)));
@@ -182,6 +191,8 @@ namespace FourTentacles
 				Render();
 			}
 		}
+
+		#endregion mouse events
 
 		private void SelectObjects()
 		{

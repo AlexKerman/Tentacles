@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using OpenTK;
+using OpenTK.Graphics.OpenGL;
 
 namespace FourTentacles
 {
@@ -17,8 +19,11 @@ namespace FourTentacles
 
 		public Mesh Mesh = new SmoothMesh();
 
+		public InsertPointController Controller;
+
 		public Segment4D(Point4D start, Point4D end, Guide4D startGuide, Guide4D endGuide)
 		{
+			Controller = new InsertPointController(this);
 			bp = start;
 			ep = end;
 			cpbp = startGuide;
@@ -35,6 +40,8 @@ namespace FourTentacles
 			get { return bp.Changed || ep.Changed; }
 			set { bp.Changed = ep.Changed = value; }
 		}
+
+		
 
 		private Vector4 a, b, c, d;
 
@@ -65,10 +72,12 @@ namespace FourTentacles
 			return t;
 		}
 
+		private float[] tPoints;
+
 		public void CalculateGeometry(SinCosTable table, int lengthSides)
 		{
 			CalculateConstants();
-			var tPoints = DivideSpline(lengthSides);
+			tPoints = DivideSpline(lengthSides);
 			var kompass = new Kompass(bp.WindRose, ep.WindRose);
 
 			var points = new Vector3[table.Sides * tPoints.Length];
@@ -103,7 +112,17 @@ namespace FourTentacles
             Mesh.Init(points, normals, tPoints.Length, table.Sides);
 		}
 
-		private Vector4 GetPoint(float t)
+		public void DrawSpline()
+		{
+			Material.SetLineMaterial(Color.White);
+			GL.Disable(EnableCap.DepthTest);
+			GL.Begin(PrimitiveType.LineStrip);
+			foreach (var t in tPoints)
+				GL.Vertex3(GetPoint(t).Xyz);
+			GL.End();
+		}
+
+		public Vector4 GetPoint(float t)
 		{
 			return (((a * t) + b) * t + c) * t + d;
 		}

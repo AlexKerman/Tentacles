@@ -48,6 +48,7 @@ namespace FourTentacles
 
 	public abstract class Controller : Node
 	{
+		public virtual void OnMouseDoubleClick(MouseOverParams mouseOverParams) { }
 		public virtual void OnMouseOver(MouseOverParams mouseOverParams) { }
 		public virtual void OnMouseLeave(MouseOverParams mouseOverParams) { }
 		public virtual void OnMouseDown(MouseOverParams mouseOverParams) { }

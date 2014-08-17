@@ -33,12 +33,12 @@
 			this.createToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
 			this.glc = new OpenTK.GLControl();
+			this.panel1 = new System.Windows.Forms.Panel();
 			this.statusStrip1 = new System.Windows.Forms.StatusStrip();
 			this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
 			this.lbRenderMode = new System.Windows.Forms.ToolStripStatusLabel();
 			this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
 			this.lbTrianglesCount = new System.Windows.Forms.ToolStripStatusLabel();
-			this.panel1 = new System.Windows.Forms.Panel();
 			this.menuStrip1.SuspendLayout();
 			this.tableLayoutPanel1.SuspendLayout();
 			this.statusStrip1.SuspendLayout();
@@ -93,10 +93,19 @@
 			this.glc.TabIndex = 0;
 			this.glc.VSync = true;
 			this.glc.SizeChanged += new System.EventHandler(this.OnSizeChanged);
+			this.glc.DoubleClick += new System.EventHandler(this.OnDoubleClick);
 			this.glc.MouseDown += new System.Windows.Forms.MouseEventHandler(this.OnMouseButtonPressed);
 			this.glc.MouseMove += new System.Windows.Forms.MouseEventHandler(this.OnMouseMove);
 			this.glc.MouseUp += new System.Windows.Forms.MouseEventHandler(this.OnMouseButtonReleased);
 			this.glc.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.OnPreviewKeyDown);
+			// 
+			// panel1
+			// 
+			this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.panel1.Location = new System.Drawing.Point(563, 3);
+			this.panel1.Name = "panel1";
+			this.panel1.Size = new System.Drawing.Size(164, 415);
+			this.panel1.TabIndex = 1;
 			// 
 			// statusStrip1
 			// 
@@ -136,14 +145,6 @@
 			this.lbTrianglesCount.Name = "lbTrianglesCount";
 			this.lbTrianglesCount.Size = new System.Drawing.Size(98, 17);
 			this.lbTrianglesCount.Text = "lbTrianglesCount";
-			// 
-			// panel1
-			// 
-			this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.panel1.Location = new System.Drawing.Point(563, 3);
-			this.panel1.Name = "panel1";
-			this.panel1.Size = new System.Drawing.Size(164, 415);
-			this.panel1.TabIndex = 1;
 			// 
 			// MainWindow
 			// 

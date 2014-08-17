@@ -68,6 +68,7 @@
     </Compile>
     <Compile Include="Geometry\Guide4DController.cs" />
     <Compile Include="Geometry\Guide4d.cs" />
+    <Compile Include="InsertPointController.cs" />
     <Compile Include="Interpolator.cs" />
     <Compile Include="Geometry\Controller.cs" />
     <Compile Include="Gizmo.cs" />
@@ -142,6 +143,7 @@
     <EmbeddedResource Include="Resources\SelectPlusMinus.cur" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Resources\AddPoint.cur" />
     <Content Include="Resources\Move.cur" />
   </ItemGroup>
   <ItemGroup />

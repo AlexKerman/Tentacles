@@ -130,10 +130,14 @@ namespace FourTentacles
 		public override IEnumerable<Controller> GetControllers()
 		{
 			if(SelectionMode == SelectionModeEnum.Points)
+			{
 				foreach (var point in points)
 					if(point.IsSelected)
 						foreach (var controller in point.GetControllers())
 							yield return controller;
+				foreach (var segment in segments)
+					yield return segment.Controller;
+			}
 		}
 	}
 }

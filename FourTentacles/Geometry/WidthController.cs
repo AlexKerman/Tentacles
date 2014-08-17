@@ -58,6 +58,7 @@ namespace FourTentacles
 			doUndoWidth = new DoUndoWidth(this);
 			UndoStack.AddAction(doUndoWidth);
 			mouseDownLocation = mouseOverParams.Location;
+			//BasePoint.WindRose
 		}
 
 		public override void OnMouseDrag(MouseMoveParams e)
