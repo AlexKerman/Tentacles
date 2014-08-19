@@ -87,6 +87,11 @@ namespace FourTentacles
 			points.Add(endPoint);
 		}
 
+		public void AddSegment(Segment4D segment)
+		{
+			segments.Add(segment);
+		}
+
 		override public BoundingBox GetBoundingBox()
 		{
 			var bb = new BoundingBox();

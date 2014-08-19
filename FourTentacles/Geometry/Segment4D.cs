@@ -12,10 +12,10 @@ namespace FourTentacles
 {
 	class Segment4D : Node
 	{
-		private Point4D bp;
-		private Point4D ep;
-		private readonly Guide4D cpbp;
-		private readonly Guide4D cpep;
+		public Point4D bp;
+		public Point4D ep;
+		public Guide4D cpbp;
+		public Guide4D cpep;
 
 		public Mesh Mesh = new SmoothMesh();
 
@@ -127,7 +127,7 @@ namespace FourTentacles
 			return (((a * t) + b) * t + c) * t + d;
 		}
 
-		private Vector4 GetDirection(float t)
+		public Vector4 GetDirection(float t)
 		{
 			return (a * 3 * t + b * 2) * t + c;
 		}

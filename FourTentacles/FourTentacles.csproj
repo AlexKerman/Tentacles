@@ -68,7 +68,7 @@
     </Compile>
     <Compile Include="Geometry\Guide4DController.cs" />
     <Compile Include="Geometry\Guide4d.cs" />
-    <Compile Include="InsertPointController.cs" />
+    <Compile Include="Geometry\InsertPointController.cs" />
     <Compile Include="Interpolator.cs" />
     <Compile Include="Geometry\Controller.cs" />
     <Compile Include="Gizmo.cs" />

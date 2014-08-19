@@ -30,7 +30,7 @@ namespace FourTentacles
 
 		public override void OnMouseDoubleClick(MouseOverParams mouseOverParams)
 		{
-			float tt;
+			float tt = 0;
 			float minDist = Single.MaxValue;
 
 			var cursorPoint = new Vector2(mouseOverParams.Location.X, mouseOverParams.Location.Y);
@@ -45,7 +45,10 @@ namespace FourTentacles
 				}
 			}
 
+			var midPoint = segment.GetPoint(tt);
+			var midGuide = segment.GetDirection(tt);
 
+			var segemnt2 = new Segment4D();
 		}
 	}
 }
