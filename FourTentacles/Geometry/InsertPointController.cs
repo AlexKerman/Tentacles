@@ -47,10 +47,31 @@ namespace FourTentacles
 				}
 			}
 
-			var midPoint = segment.GetPoint(tt);
 			var midGuide = segment.GetDirection(tt);
+			var midPoint = segment.GetPoint(tt);
+			var midRose = segment.GetWindrose(tt);
 
-			//var segemnt2 = new Segment4D();
+			var p1 = segment.bp;
+			var p2 = new Point4D(midPoint, midRose);
+			var p3 = segment.ep;
+
+			var g1 = segment.cpbp;
+			var g2 = new Guide4D(p2, -midGuide * tt);
+			var g3 = new Guide4D(p2, midGuide * (1.0f - tt));
+			var g4 = segment.cpep;
+
+			//TODO: undo this action
+
+			g1.Point *= tt;
+			g4.Point *= (1.0f - tt);
+
+			segment.ep = p2;
+			segment.cpep = g2;
+
+			var segemnt2 = new Segment4D(p2, p3, g3, g4);
+			spline.AddSegment(segemnt2);
+			segment.Changed = segemnt2.Changed = true;
+			mouseOverParams.Changed = true;
 		}
 	}
 }

@@ -38,8 +38,6 @@ namespace FourTentacles
 			set { bp.Changed = ep.Changed = value; }
 		}
 
-		
-
 		private Vector4 a, b, c, d;
 
 		private void CalculateConstants()
@@ -70,12 +68,13 @@ namespace FourTentacles
 		}
 
 		private float[] tPoints;
+		private Kompass kompass;
 
 		public void CalculateGeometry(SinCosTable table, int lengthSides)
 		{
 			CalculateConstants();
 			tPoints = DivideSpline(lengthSides);
-			var kompass = new Kompass(bp.WindRose, ep.WindRose);
+			kompass = new Kompass(bp.WindRose, ep.WindRose);
 
 			var points = new Vector3[table.Sides * tPoints.Length];
             var normals = new Vector3[table.Sides * tPoints.Length];
@@ -127,6 +126,11 @@ namespace FourTentacles
 		public Vector4 GetDirection(float t)
 		{
 			return (a * 3 * t + b * 2) * t + c;
+		}
+
+		public Windrose GetWindrose(float t)
+		{
+			return kompass.CalcWindrose(t, GetDirection(t).Xyz);
 		}
 
 		public BoundingBox GetBoundingBox()

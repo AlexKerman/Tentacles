@@ -31,6 +31,13 @@ namespace FourTentacles
 			}
 		}
 
+		public Point4D(Vector4 point, Windrose windrose)
+		{
+			WindRose = windrose;
+			Point = point;
+			WidthController = new PointWidthController(this);
+		}
+
 		public Point4D(Vector4 point, Vector3 direction)
 		{
 			Point = point;

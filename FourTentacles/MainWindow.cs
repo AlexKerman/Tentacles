@@ -93,7 +93,11 @@ namespace FourTentacles
 		private void OnDoubleClick(object sender, EventArgs e)
 		{
 			if (mouseOverController != null)
-				mouseOverController.OnMouseDoubleClick(new MouseOverParams(mouseLocation));
+			{
+				var mouseOverParams = new MouseOverParams(mouseLocation);
+				mouseOverController.OnMouseDoubleClick(mouseOverParams);
+				if(mouseOverParams.Changed) Render();
+			}
 		}
 
 		private void OnMouseMove(object sender, MouseEventArgs e)
