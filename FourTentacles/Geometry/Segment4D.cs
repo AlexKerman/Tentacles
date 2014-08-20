@@ -19,11 +19,8 @@ namespace FourTentacles
 
 		public Mesh Mesh = new SmoothMesh();
 
-		public InsertPointController Controller;
-
 		public Segment4D(Point4D start, Point4D end, Guide4D startGuide, Guide4D endGuide)
 		{
-			Controller = new InsertPointController(this);
 			bp = start;
 			ep = end;
 			cpbp = startGuide;

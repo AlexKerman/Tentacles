@@ -10,11 +10,13 @@ namespace FourTentacles
 	class InsertPointController : Controller
 	{
 		private readonly Segment4D segment;
+		private readonly Spline4D spline;
 		private RenderContext lastContext;
 
-		public InsertPointController(Segment4D segment)
+		public InsertPointController(Segment4D segment, Spline4D spline)
 		{
 			this.segment = segment;
+			this.spline = spline;
 		}
 
 		public override void Render(RenderContext context)
@@ -48,7 +50,7 @@ namespace FourTentacles
 			var midPoint = segment.GetPoint(tt);
 			var midGuide = segment.GetDirection(tt);
 
-			var segemnt2 = new Segment4D();
+			//var segemnt2 = new Segment4D();
 		}
 	}
 }

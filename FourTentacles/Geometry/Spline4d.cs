@@ -21,7 +21,6 @@ namespace FourTentacles
 
 		private SinCosTable sinCos;
 		private List<Segment4D> segments = new List<Segment4D>();
-		private List<Point4D> points = new List<Point4D>();
 
 		private bool changed = true;
 
@@ -76,20 +75,10 @@ namespace FourTentacles
 
 		#endregion eometry params
 
-		public void AddSegment(Vector4 start, Vector4 end, Vector4 startGuide, Vector4 endGuide)
-		{
-			var startPoint = new Point4D(start, startGuide.Xyz);
-			var endPoint = new Point4D(end, -endGuide.Xyz);
-			var segment = new Segment4D(startPoint, endPoint, new Guide4D(startPoint, startGuide), new Guide4D(endPoint, endGuide));
-			segment.CalculateGeometry(sinCos, lengthSides);
-			segments.Add(segment);
-			points.Add(startPoint);
-			points.Add(endPoint);
-		}
-
 		public void AddSegment(Segment4D segment)
 		{
 			segments.Add(segment);
+			segment.CalculateGeometry(sinCos, lengthSides);
 		}
 
 		override public BoundingBox GetBoundingBox()
@@ -127,21 +116,32 @@ namespace FourTentacles
 
 		public override IEnumerable<Node> GetNodes()
 		{
-			if (SelectionMode == SelectionModeEnum.Points) return points;
+			if (SelectionMode == SelectionModeEnum.Points) return GetPoints();
 			if (SelectionMode == SelectionModeEnum.Segments) return segments;
 			return new Node[0];
+		}
+
+		private IEnumerable<Point4D> GetPoints()
+		{
+			var points = new HashSet<Point4D>();
+			foreach (var segment in segments)
+			{
+				if (!points.Contains(segment.bp)) points.Add(segment.bp);
+				if (!points.Contains(segment.ep)) points.Add(segment.ep);
+			}
+			return points;
 		}
 
 		public override IEnumerable<Controller> GetControllers()
 		{
 			if(SelectionMode == SelectionModeEnum.Points)
 			{
-				foreach (var point in points)
+				foreach (var point in GetPoints())
 					if(point.IsSelected)
 						foreach (var controller in point.GetControllers())
 							yield return controller;
 				foreach (var segment in segments)
-					yield return segment.Controller;
+					yield return new InsertPointController(segment, this);
 			}
 		}
 	}
