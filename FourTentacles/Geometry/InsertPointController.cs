@@ -32,46 +32,89 @@ namespace FourTentacles
 
 		public override void OnMouseDoubleClick(MouseOverParams mouseOverParams)
 		{
-			float tt = 0;
+			var t = GetTFromLocation(mouseOverParams);
+			var insertPoint = new DoUndoInsertPoint(t, segment, spline);
+			UndoStack.AddAction(insertPoint);
+
+			mouseOverParams.Changed = true;
+		}
+
+		private float GetTFromLocation(MouseOverParams mouseOverParams)
+		{
+			float t = 0;
 			float minDist = Single.MaxValue;
 
 			var cursorPoint = new Vector2(mouseOverParams.Location.X, mouseOverParams.Location.Y);
-			for (float t = 0; t <= 1; t += 0.001f)
+			for (float it = 0; it <= 1; it += 0.001f)
 			{
-				var p = lastContext.WorldToScreen(segment.GetPoint(t).Xyz);
+				var p = lastContext.WorldToScreen(segment.GetPoint(it).Xyz);
 				var sqDist = (cursorPoint - p).LengthSquared;
 				if (sqDist < minDist)
 				{
 					minDist = sqDist;
-					tt = t;
+					t = it;
 				}
 			}
+			return t;
+		}
 
-			var midGuide = segment.GetDirection(tt);
-			var midPoint = segment.GetPoint(tt);
-			var midRose = segment.GetWindrose(tt);
+		class DoUndoInsertPoint :  IDoUndo
+		{
+			private readonly Spline4D spline;
+			private readonly float t;
 
-			var p1 = segment.bp;
-			var p2 = new Point4D(midPoint, midRose);
-			var p3 = segment.ep;
+			//old data
+			private readonly Segment4D segment;
+			private readonly Vector4 startGuide;
+			private readonly Vector4 endGuide;
+			
+			//new data
+			private Segment4D segment2;
 
-			var g1 = segment.cpbp;
-			var g2 = new Guide4D(p2, -midGuide * tt);
-			var g3 = new Guide4D(p2, midGuide * (1.0f - tt));
-			var g4 = segment.cpep;
+			public DoUndoInsertPoint(float t, Segment4D segment, Spline4D spline)
+			{
+				this.t = t;
+				this.segment = segment;
+				this.spline = spline;
+				startGuide = segment.cpbp.Point;
+				endGuide = segment.cpep.Point;
 
-			//TODO: undo this action
+				Redo();
+			}
 
-			g1.Point *= tt;
-			g4.Point *= (1.0f - tt);
+			public void Undo()
+			{
+				spline.RemoveSegment(segment2);
+				segment.ep = segment2.ep;
+				segment.cpbp.Point = startGuide;
+				segment.cpep.Point = endGuide;
+				segment.Changed = true;
+			}
 
-			segment.ep = p2;
-			segment.cpep = g2;
+			public void Redo()
+			{
+				var midGuide = segment.GetDirection(t) / 3.0f;
+				var midPoint = segment.GetPoint(t);
+				var midRose = segment.GetWindrose(t);
 
-			var segemnt2 = new Segment4D(p2, p3, g3, g4);
-			spline.AddSegment(segemnt2);
-			segment.Changed = segemnt2.Changed = true;
-			mouseOverParams.Changed = true;
+				var addedPoint = new Point4D(midPoint, midRose);
+
+				var g1 = segment.cpbp;
+				var g2 = new Guide4D(addedPoint, -midGuide * t);
+				var g3 = new Guide4D(addedPoint, midGuide * (1.0f - t));
+				var g4 = segment.cpep;
+
+				g1.Point *= t;
+				g4.Point *= (1.0f - t);
+
+				addedPoint.Guides.Add(g2);
+
+				segment2 = new Segment4D(addedPoint, segment.ep, g3, g4);
+				spline.AddSegment(segment2);
+				segment.ep = addedPoint;
+				segment.cpep = g2;
+				segment.Changed = segment2.Changed = true;
+			}
 		}
 	}
 }

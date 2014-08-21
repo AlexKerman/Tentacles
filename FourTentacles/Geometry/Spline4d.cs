@@ -81,6 +81,11 @@ namespace FourTentacles
 			segment.CalculateGeometry(sinCos, lengthSides);
 		}
 
+		public void RemoveSegment(Segment4D segment)
+		{
+			segments.Remove(segment);
+		}
+
 		override public BoundingBox GetBoundingBox()
 		{
 			var bb = new BoundingBox();
