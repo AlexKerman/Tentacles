@@ -20,8 +20,26 @@ namespace FourTentacles
 			{
 				if(point == value) return;
 				point = value;
+				AjustSymmetricGuide();
+
+				//todo: make for guide Changed prop
 				BasePoint.Changed = true;
 			}
+		}
+
+		private void AjustSymmetricGuide()
+		{
+			if(BasePoint.SmoothMode == PointSmoothMode.Cusp) return;
+			foreach (var guide in BasePoint.Guides)
+				if (guide != this)
+				{
+					//todo: guide Changed prop On
+					if (BasePoint.SmoothMode == PointSmoothMode.Symmetrical) guide.point = -point;
+					if (BasePoint.SmoothMode == PointSmoothMode.Smooth)
+					{
+						guide.point.Xyz = Vector3.Normalize(-point.Xyz)*guide.point.Length;
+					}
+				}
 		}
 
 		public Guide4D(Point4D basePoint, Vector4 point)

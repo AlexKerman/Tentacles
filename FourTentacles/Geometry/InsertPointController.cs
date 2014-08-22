@@ -98,6 +98,7 @@ namespace FourTentacles
 				var midRose = segment.GetWindrose(t);
 
 				var addedPoint = new Point4D(midPoint, midRose);
+				addedPoint.SmoothMode = PointSmoothMode.Smooth;
 
 				var g1 = segment.cpbp;
 				var g2 = new Guide4D(addedPoint, -midGuide * t);

@@ -9,6 +9,13 @@ using OpenTK.Graphics.OpenGL;
 
 namespace FourTentacles
 {
+	enum PointSmoothMode
+	{
+		Cusp,
+		Smooth,
+		Symmetrical
+	}
+
 	class Point4D : Node
 	{
 		private const int PointSizePx = 4;
@@ -30,6 +37,8 @@ namespace FourTentacles
 				point = value;
 			}
 		}
+
+		public PointSmoothMode SmoothMode;
 
 		public Point4D(Vector4 point, Windrose windrose)
 		{
