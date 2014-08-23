@@ -17,7 +17,7 @@ namespace FourTentacles
 		public Guide4D cpbp;
 		public Guide4D cpep;
 
-		public Mesh Mesh = new SmoothMesh();
+		private Mesh mesh = new SmoothMesh();
 
 		public Segment4D(Point4D start, Point4D end, Guide4D startGuide, Guide4D endGuide)
 		{
@@ -51,12 +51,12 @@ namespace FourTentacles
 
 		public override void Render(RenderContext context)
 		{
-			Mesh.Render(context.Mode);
+			mesh.Render(context.Mode);
 		}
 
 		public int GetTrianglesCount()
 		{
-			return Mesh.GetTrianglesCount();
+			return mesh.GetTrianglesCount();
 		}
 
 		private float[] DivideSpline(int lengthSides)
@@ -70,8 +70,9 @@ namespace FourTentacles
 		private float[] tPoints;
 		private Kompass kompass;
 
-		public void CalculateGeometry(SinCosTable table, int lengthSides)
+		public void CalculateGeometry(Mesh smoothAlgorithm, SinCosTable table, int lengthSides)
 		{
+			mesh = smoothAlgorithm;
 			CalculateConstants();
 			tPoints = DivideSpline(lengthSides);
 			kompass = new Kompass(bp.WindRose, ep.WindRose);
@@ -105,7 +106,7 @@ namespace FourTentacles
                     pos++;
 				}
 			}
-            Mesh.Init(points, normals, tPoints.Length, table.Sides);
+            mesh.Init(points, normals, tPoints.Length, table.Sides);
 		}
 
 		public void DrawSpline()
@@ -135,7 +136,7 @@ namespace FourTentacles
 
 		public BoundingBox GetBoundingBox()
 		{
-			return Mesh.GetBoundingBox();
+			return mesh.GetBoundingBox();
 		}
 	}
 

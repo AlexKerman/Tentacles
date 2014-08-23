@@ -67,8 +67,6 @@ namespace FourTentacles
 			{
 				if(lengthSmooth == value) return;
 				lengthSmooth = value;
-				foreach (var segment in segments)
-					segment.Mesh = lengthSmooth ? (Mesh)new SmoothMesh() : new SmoothLengthMesh();
 				changed = true;
 			}
 		}
@@ -78,7 +76,7 @@ namespace FourTentacles
 		public void AddSegment(Segment4D segment)
 		{
 			segments.Add(segment);
-			segment.CalculateGeometry(sinCos, lengthSides);
+			segment.CalculateGeometry(SmoothAlgorithm(), sinCos, lengthSides);
 		}
 
 		public void RemoveSegment(Segment4D segment)
@@ -94,11 +92,16 @@ namespace FourTentacles
 			return bb.Translate(Pos);
 		}
 
+		private Mesh SmoothAlgorithm()
+		{
+			return lengthSmooth ? (Mesh) new SmoothMesh() : new SmoothLengthMesh();
+		}
+
 		override public void Render(RenderContext context)
 		{
 			foreach (var segment in segments)
 			{
-				if(changed || segment.Changed) segment.CalculateGeometry(sinCos, lengthSides);
+				if(changed || segment.Changed) segment.CalculateGeometry(SmoothAlgorithm(), sinCos, lengthSides);
 				segment.Render(context);
 			}
 			foreach (var node in GetNodes()) node.Render(context);
