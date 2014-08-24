@@ -82,14 +82,14 @@ namespace FourTentacles
 
 	class DoUndoWidth : IDoUndo
 	{
-		private readonly WidthController controller;
+		private readonly Point4D point;
 		private readonly float oldValue;
 		private float newValue;
 
-		public DoUndoWidth(WidthController controller)
+		public DoUndoWidth(Point4D point)
 		{
-			this.controller = controller;
-			oldValue = controller.Width;
+			this.point = point;
+			oldValue = point.Point.W;
 		}
 
 		public void SetWidth(float value)
@@ -100,12 +100,12 @@ namespace FourTentacles
 
 		public void Undo()
 		{
-			controller.Width = oldValue;
+			point.Point = new Vector4(point.Point.Xyz, oldValue);
 		}
 
 		public void Redo()
 		{
-			controller.Width = newValue;
+			point.Point = new Vector4(point.Point.Xyz, newValue);
 		}
 	}
 }

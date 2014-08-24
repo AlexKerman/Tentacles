@@ -14,26 +14,28 @@ namespace FourTentacles
 {
 	abstract class WidthController : Controller
 	{
-		private static int centerZone = 5;
+		private const int CenterZone = 5;
 
-		private Point mouseDownLocation;
-		protected Vector2 circleCenter;
+		protected Point mouseDownLocation;
+		private Vector2 circleCenter;
+
 		protected Point4D BasePoint;
 		protected float prevWidth;
-		protected RenderContext lastContext;
 
-		protected bool selected;
+		private RenderContext lastContext;
+		private bool selected;
 
 		public override void OnMouseOver(MouseOverParams mouseOverParams)
 		{
+			//todo: replace with projection to north-west windrose plane
 			int dx = (int) Math.Abs(mouseOverParams.Location.X - circleCenter.X);
 			int dy = (int) Math.Abs(mouseOverParams.Location.Y - circleCenter.Y);
-			if (dx <= centerZone && dy > centerZone)
+			if (dx <= CenterZone && dy > CenterZone)
 			{
 				mouseOverParams.Cursor = Cursors.SizeNS;
 				return;
 			}
-			if (dy <= centerZone && dx > centerZone)
+			if (dy <= CenterZone && dx > CenterZone)
 			{
 				mouseOverParams.Cursor = Cursors.SizeWE;
 				return;
@@ -51,16 +53,6 @@ namespace FourTentacles
 			mouseOverParams.Changed = true;
 		}
 
-		DoUndoWidth doUndoWidth;
-
-		public override void OnMouseDown(MouseOverParams mouseOverParams)
-		{
-			doUndoWidth = new DoUndoWidth(this);
-			UndoStack.AddAction(doUndoWidth);
-			mouseDownLocation = mouseOverParams.Location;
-			//BasePoint.WindRose
-		}
-
 		public override void OnMouseDrag(MouseMoveParams e)
 		{
 			var prev = new Vector2(mouseDownLocation.X, mouseDownLocation.Y);
@@ -70,7 +62,7 @@ namespace FourTentacles
 			var dot = Vector2.Dot(Vector2.Normalize(prev - circleCenter), Vector2.Normalize(loc - circleCenter));
 
 			float newWidth = prevWidth - baseDist + newDist * dot;
-			doUndoWidth.SetWidth(newWidth);
+			Width = newWidth;
 		}
 
 		public override sealed void Render(RenderContext context)
@@ -91,15 +83,19 @@ namespace FourTentacles
 			BasePoint = point;
 		}
 
+		DoUndoWidth doUndoWidth;
+
 		public override void OnMouseDown(MouseOverParams mouseOverParams)
 		{
 			prevWidth = BasePoint.Point.W;
-			base.OnMouseDown(mouseOverParams);
+			doUndoWidth = new DoUndoWidth(BasePoint);
+			UndoStack.AddAction(doUndoWidth);
+			mouseDownLocation = mouseOverParams.Location;
 		}
 
 		public override float Width
 		{
-			set { BasePoint.Point = new Vector4(BasePoint.Point.Xyz, value); }
+			set { doUndoWidth.SetWidth(value); }
 			get { return BasePoint.Point.W; }
 		}
 
@@ -119,16 +115,20 @@ namespace FourTentacles
 			BasePoint = guide.BasePoint;
 		}
 
+		private DoUndoGuideMove moveGuide;
+
 		public override void OnMouseDown(MouseOverParams mouseOverParams)
 		{
 			prevWidth = baseGuide.Point.W;
-			base.OnMouseDown(mouseOverParams);
+			moveGuide = new DoUndoGuideMove(baseGuide);
+			UndoStack.AddAction(moveGuide);
+			mouseDownLocation = mouseOverParams.Location;
 		}
 
 		public override float Width
 		{
-			set { baseGuide.Point = new Vector4(baseGuide.Point.Xyz, value); }
-			get { return baseGuide.Point.W; }
+			set { moveGuide.Move(new Vector4(Vector3.Zero, value - baseGuide.Point.W)); }
+			get { return baseGuide.Point.W + baseGuide.BasePoint.Point.W; }
 		}
 
 		public override Vector3 Offset

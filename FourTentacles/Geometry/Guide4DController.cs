@@ -29,7 +29,7 @@ namespace FourTentacles
 
 		public override void OnMouseDrag(MouseMoveParams e)
 		{
-			doUndoMove.Move(e.Constrained);
+			doUndoMove.Move(new Vector4(e.Constrained));
 		}
 
 		public override void Render(RenderContext context)
@@ -46,10 +46,10 @@ namespace FourTentacles
 				guideSide.Normalize();
 				Vector3 pointSide = Vector3.Cross(guide.BasePoint.WindRose.Dir, context.Camera.VectorToCam(guide.BasePoint.Pos + context.AbsolutePosition));
 				pointSide.Normalize();
-				guideSide *= guide.Point.W;
+				guideSide *= guide.Point.W + guide.BasePoint.Point.W;
 				pointSide *= guide.BasePoint.Point.W;
 
-				GL.Color3(Color.LightYellow);
+				GL.Color3(Color.DarkGray);
 				GL.Begin(PrimitiveType.Lines);
 				
 				GL.Vertex3(guide.BasePoint.Pos);
@@ -75,22 +75,29 @@ namespace FourTentacles
 	class DoUndoGuideMove : IDoUndo
 	{
 		private readonly Guide4D guide;
-		private Vector4 point;
+		private readonly Vector4 point;
 		private Windrose windRose;
-		private Vector3 move = Vector3.Zero;
+		private Vector4 move = Vector4.Zero;
+
+		private readonly Guide4D symGuide;
+		private readonly Vector4 symGuidePoint;
 
 		public DoUndoGuideMove(Guide4D guide)
 		{
 			this.guide = guide;
 			point = guide.Point;
 			windRose = guide.BasePoint.WindRose;
+
+			symGuide = guide.GetSymmetricGuide();
+			if (symGuide != null) symGuidePoint = symGuide.Point;
 		}
 
-		public void Move(Vector3 delta)
+		public void Move(Vector4 delta)
 		{
 			move += delta;
-			guide.Point = point + new Vector4(move);
+			guide.Point = point + move;
 			guide.BasePoint.WindRose.Adjust(Vector3.Normalize(guide.Point.Xyz));
+			AjustSymmetricGuide();
 		}
 
 		public void Undo()
@@ -99,14 +106,29 @@ namespace FourTentacles
 			guide.Point = point;
 			guide.BasePoint.WindRose = windRose;
 			windRose = rose;
+
+			if (symGuide != null) symGuide.Point = symGuidePoint;
 		}
 
 		public void Redo()
 		{
 			var rose = guide.BasePoint.WindRose;
-			guide.Point = point + new Vector4(move);
+			guide.Point = point + move;
 			guide.BasePoint.WindRose = windRose;
 			windRose = rose;
+		}
+
+		private void AjustSymmetricGuide()
+		{
+			if (guide.BasePoint.SmoothMode == PointSmoothMode.Cusp) return;
+			if (symGuide == null) return;
+
+			//todo: guide Changed prop On
+			if (guide.BasePoint.SmoothMode == PointSmoothMode.Symmetrical) symGuide.Point = -guide.Point;
+			if (guide.BasePoint.SmoothMode == PointSmoothMode.Smooth)
+			{
+				symGuide.Point = -guide.Point * (symGuidePoint.Xyz.Length / guide.Point.Xyz.Length);
+			}
 		}
 	}
 }
