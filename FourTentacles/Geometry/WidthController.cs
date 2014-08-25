@@ -20,6 +20,7 @@ namespace FourTentacles
 		private Vector2 circleCenter;
 
 		protected Point4D BasePoint;
+		protected Guide4D baseGuide;
 		protected float prevWidth;
 
 		private RenderContext lastContext;
@@ -69,7 +70,7 @@ namespace FourTentacles
 		{
 			lastContext = context;
 			circleCenter = context.WorldToScreen(BasePoint.Pos + Offset);
-			BasePoint.DrawWidthCircle(context, Offset, Width, selected);
+			baseGuide.DrawWidthCircle(context, BasePoint.Pos + Offset, Width, selected);
 		}
 
 		public abstract float Width { get; set; }
@@ -78,9 +79,10 @@ namespace FourTentacles
 
 	class PointWidthController : WidthController
 	{
-		public PointWidthController(Point4D point)
+		public PointWidthController(Guide4D guide)
 		{
-			BasePoint = point;
+			baseGuide = guide;
+			BasePoint = guide.BasePoint;
 		}
 
 		DoUndoWidth doUndoWidth;
@@ -107,8 +109,6 @@ namespace FourTentacles
 
 	class GuideWidthController : WidthController
 	{
-		private Guide4D baseGuide = null;
-
 		public GuideWidthController(Guide4D guide)
 		{
 			baseGuide = guide;

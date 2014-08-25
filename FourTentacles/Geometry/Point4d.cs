@@ -20,11 +20,9 @@ namespace FourTentacles
 	{
 		private const int PointSizePx = 4;
 
-		public Windrose WindRose;
 		private Vector4 point;
 
 		public readonly List<Guide4D> Guides = new List<Guide4D>();
-		private readonly PointWidthController WidthController;
 		public bool Changed;
 
 		public Vector4 Point
@@ -40,18 +38,9 @@ namespace FourTentacles
 
 		public PointSmoothMode SmoothMode;
 
-		public Point4D(Vector4 point, Windrose windrose)
-		{
-			WindRose = windrose;
-			Point = point;
-			WidthController = new PointWidthController(this);
-		}
-
-		public Point4D(Vector4 point, Vector3 direction)
+		public Point4D(Vector4 point)
 		{
 			Point = point;
-			WidthController = new PointWidthController(this);
-			WindRose = new Windrose(Vector3.Normalize(direction));
 		}
 
 		public override Vector3 Pos
@@ -103,33 +92,6 @@ namespace FourTentacles
 			GL.MatrixMode(MatrixMode.Projection);
 			GL.PopMatrix();
 			GL.MatrixMode(MatrixMode.Modelview);
-		}
-
-		public IEnumerable<Controller> GetControllers()
-		{
-			yield return WidthController;
-			foreach (var guide in Guides)
-			{
-				yield return guide.GuideController;
-				yield return guide.WidthController;
-			}
-		}
-
-		public void DrawWidthCircle(RenderContext context, Vector3 pos, float width, bool selected)
-		{
-			var table = new SinCosTable(48);
-			pos += Pos;
-			var pixOffset = (float)context.Camera.GetPerspectiveRatio(pos);
-			width += Math.Sign(width)*pixOffset;
-
-			Material.SetLineMaterial(selected ? Color.Red : Color.White);
-			GL.Disable(EnableCap.DepthTest);
-			GL.Begin(PrimitiveType.LineStrip);
-			GL.Vertex3(WindRose.North * (pixOffset * 5 + width) + pos);
-			foreach (Vector3 vec in table.Points(WindRose.North, WindRose.West))
-				GL.Vertex3(vec * width + pos);
-			GL.Vertex3(WindRose.North * width + pos);
-			GL.End();
 		}
 	}
 }

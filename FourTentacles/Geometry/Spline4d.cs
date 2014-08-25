@@ -146,8 +146,9 @@ namespace FourTentacles
 			{
 				foreach (var point in GetPoints())
 					if(point.IsSelected)
-						foreach (var controller in point.GetControllers())
-							yield return controller;
+						foreach (var guide in point.Guides)
+							foreach (var controller in guide.GetControllers())
+								yield return controller;
 				foreach (var segment in segments)
 					yield return new InsertPointController(segment, this);
 			}

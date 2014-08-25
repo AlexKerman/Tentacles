@@ -75,7 +75,7 @@ namespace FourTentacles
 			mesh = smoothAlgorithm;
 			CalculateConstants();
 			tPoints = DivideSpline(lengthSides);
-			kompass = new Kompass(bp.WindRose, ep.WindRose);
+			kompass = new Kompass(cpbp.WindRose, cpep.WindRose);
 
 			var points = new Vector3[table.Sides * tPoints.Length];
             var normals = new Vector3[table.Sides * tPoints.Length];

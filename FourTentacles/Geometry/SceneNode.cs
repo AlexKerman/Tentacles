@@ -22,11 +22,13 @@ namespace FourTentacles
 		public SceneNode()
 		{
 			var spline = new Spline4D(6, 96);
-			Vector4 startGuide = new Vector4(0.0f, 800.0f, 0.0f, -150.0f);
-			Vector4 endGuide = new Vector4(0.0f, 600.0f, 800.0f, 200.0f);
-			var startPoint = new Point4D(new Vector4(0.0f, 200.0f, 0.0f, 50.0f), startGuide.Xyz);
-			var endPoint = new Point4D(new Vector4(0.0f, 1200.0f, -200.0f, 0.0f), -endGuide.Xyz);
-			var segment = new Segment4D(startPoint, endPoint, new Guide4D(startPoint, startGuide), new Guide4D(endPoint, endGuide));
+			var startPoint = new Point4D(new Vector4(0.0f, 200.0f, 0.0f, 50.0f));
+			var endPoint = new Point4D(new Vector4(0.0f, 1200.0f, -200.0f, 0.0f));
+
+			var startGuide = new Guide4D(startPoint, new Vector4(0.0f, 800.0f, 0.0f, -150.0f));
+			var endGuide =new Guide4D(endPoint, new Vector4(0.0f, 600.0f, 800.0f, 200.0f));
+
+			var segment = new Segment4D(startPoint, endPoint, startGuide, endGuide);
 			spline.AddSegment(segment);
 			geometrys.Add(spline);
 		}

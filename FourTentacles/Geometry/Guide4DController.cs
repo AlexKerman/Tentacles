@@ -42,9 +42,9 @@ namespace FourTentacles
 			}
 			else
 			{
-				Vector3 guideSide = Vector3.Cross(guide.BasePoint.WindRose.Dir, context.Camera.VectorToCam(Pos + context.AbsolutePosition));
+				Vector3 guideSide = Vector3.Cross(guide.WindRose.Dir, context.Camera.VectorToCam(Pos + context.AbsolutePosition));
 				guideSide.Normalize();
-				Vector3 pointSide = Vector3.Cross(guide.BasePoint.WindRose.Dir, context.Camera.VectorToCam(guide.BasePoint.Pos + context.AbsolutePosition));
+				Vector3 pointSide = Vector3.Cross(guide.WindRose.Dir, context.Camera.VectorToCam(guide.BasePoint.Pos + context.AbsolutePosition));
 				pointSide.Normalize();
 				guideSide *= guide.Point.W + guide.BasePoint.Point.W;
 				pointSide *= guide.BasePoint.Point.W;
@@ -86,7 +86,7 @@ namespace FourTentacles
 		{
 			this.guide = guide;
 			point = guide.Point;
-			windRose = guide.BasePoint.WindRose;
+			windRose = guide.WindRose;
 
 			symGuide = guide.GetSymmetricGuide();
 			if (symGuide != null) symGuidePoint = symGuide.Point;
@@ -96,15 +96,15 @@ namespace FourTentacles
 		{
 			move += delta;
 			guide.Point = point + move;
-			guide.BasePoint.WindRose.Adjust(Vector3.Normalize(guide.Point.Xyz));
+			guide.WindRose.Adjust(Vector3.Normalize(guide.Point.Xyz));
 			AjustSymmetricGuide();
 		}
 
 		public void Undo()
 		{
-			var rose = guide.BasePoint.WindRose;
+			var rose = guide.WindRose;
 			guide.Point = point;
-			guide.BasePoint.WindRose = windRose;
+			guide.WindRose = windRose;
 			windRose = rose;
 
 			if (symGuide != null) symGuide.Point = symGuidePoint;
@@ -112,9 +112,9 @@ namespace FourTentacles
 
 		public void Redo()
 		{
-			var rose = guide.BasePoint.WindRose;
+			var rose = guide.WindRose;
 			guide.Point = point + move;
-			guide.BasePoint.WindRose = windRose;
+			guide.WindRose = windRose;
 			windRose = rose;
 		}
 
@@ -123,12 +123,14 @@ namespace FourTentacles
 			if (guide.BasePoint.SmoothMode == PointSmoothMode.Cusp) return;
 			if (symGuide == null) return;
 
-			//todo: guide Changed prop On
 			if (guide.BasePoint.SmoothMode == PointSmoothMode.Symmetrical) symGuide.Point = -guide.Point;
 			if (guide.BasePoint.SmoothMode == PointSmoothMode.Smooth)
-			{
 				symGuide.Point = -guide.Point * (symGuidePoint.Xyz.Length / guide.Point.Xyz.Length);
-			}
+
+			symGuide.WindRose = guide.WindRose;
+
+			//todo: use this prop
+			symGuide.Changed = true;
 		}
 	}
 }
