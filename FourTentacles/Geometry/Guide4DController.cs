@@ -123,7 +123,7 @@ namespace FourTentacles
 			if (guide.BasePoint.SmoothMode == PointSmoothMode.Cusp) return;
 			if (symGuide == null) return;
 
-			if (guide.BasePoint.SmoothMode == PointSmoothMode.Symmetrical) symGuide.Point = -guide.Point;
+			if (guide.BasePoint.SmoothMode == PointSmoothMode.Symmetric) symGuide.Point = -guide.Point;
 			if (guide.BasePoint.SmoothMode == PointSmoothMode.Smooth)
 				symGuide.Point = -guide.Point * (symGuidePoint.Xyz.Length / guide.Point.Xyz.Length);
 

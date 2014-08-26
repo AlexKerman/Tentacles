@@ -13,7 +13,7 @@ namespace FourTentacles
 	{
 		Cusp,
 		Smooth,
-		Symmetrical
+		Symmetric
 	}
 
 	class Point4D : Node

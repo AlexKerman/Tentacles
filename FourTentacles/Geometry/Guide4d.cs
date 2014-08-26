@@ -27,11 +27,12 @@ namespace FourTentacles
 				if(point == value) return;
 				point = value;
 
-				//todo: make for guide Changed prop
+				//todo: make guide Changed prop
 				BasePoint.Changed = true;
 			}
 		}
 
+		//todo: use it for recalculate geometry, motherfucker
 		public bool Changed { get; set; }
 
 		public Guide4D(Point4D basePoint, Vector4 point)
