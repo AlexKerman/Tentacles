@@ -39,6 +39,7 @@
 			this.lbRenderMode = new System.Windows.Forms.ToolStripStatusLabel();
 			this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
 			this.lbTrianglesCount = new System.Windows.Forms.ToolStripStatusLabel();
+			this.toolStrip1 = new System.Windows.Forms.ToolStrip();
 			this.menuStrip1.SuspendLayout();
 			this.tableLayoutPanel1.SuspendLayout();
 			this.statusStrip1.SuspendLayout();
@@ -75,12 +76,12 @@
 			this.tableLayoutPanel1.Controls.Add(this.glc, 0, 0);
 			this.tableLayoutPanel1.Controls.Add(this.panel1, 1, 0);
 			this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 24);
+			this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 49);
 			this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
 			this.tableLayoutPanel1.Name = "tableLayoutPanel1";
 			this.tableLayoutPanel1.RowCount = 1;
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this.tableLayoutPanel1.Size = new System.Drawing.Size(730, 421);
+			this.tableLayoutPanel1.Size = new System.Drawing.Size(730, 396);
 			this.tableLayoutPanel1.TabIndex = 1;
 			// 
 			// glc
@@ -89,7 +90,7 @@
 			this.glc.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.glc.Location = new System.Drawing.Point(3, 3);
 			this.glc.Name = "glc";
-			this.glc.Size = new System.Drawing.Size(554, 415);
+			this.glc.Size = new System.Drawing.Size(554, 390);
 			this.glc.TabIndex = 0;
 			this.glc.VSync = true;
 			this.glc.SizeChanged += new System.EventHandler(this.OnSizeChanged);
@@ -104,7 +105,7 @@
 			this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.panel1.Location = new System.Drawing.Point(563, 3);
 			this.panel1.Name = "panel1";
-			this.panel1.Size = new System.Drawing.Size(164, 415);
+			this.panel1.Size = new System.Drawing.Size(164, 390);
 			this.panel1.TabIndex = 1;
 			// 
 			// statusStrip1
@@ -146,14 +147,23 @@
 			this.lbTrianglesCount.Size = new System.Drawing.Size(98, 17);
 			this.lbTrianglesCount.Text = "lbTrianglesCount";
 			// 
+			// toolStrip1
+			// 
+			this.toolStrip1.Location = new System.Drawing.Point(0, 24);
+			this.toolStrip1.Name = "toolStrip1";
+			this.toolStrip1.Size = new System.Drawing.Size(730, 25);
+			this.toolStrip1.TabIndex = 3;
+			this.toolStrip1.Text = "toolStrip1";
+			// 
 			// MainWindow
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(730, 467);
 			this.Controls.Add(this.tableLayoutPanel1);
-			this.Controls.Add(this.menuStrip1);
 			this.Controls.Add(this.statusStrip1);
+			this.Controls.Add(this.toolStrip1);
+			this.Controls.Add(this.menuStrip1);
 			this.MainMenuStrip = this.menuStrip1;
 			this.Name = "MainWindow";
 			this.Text = "Form1";
@@ -181,6 +191,7 @@
 		private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel2;
 		private System.Windows.Forms.ToolStripStatusLabel lbTrianglesCount;
 		private System.Windows.Forms.Panel panel1;
+		private System.Windows.Forms.ToolStrip toolStrip1;
 	}
 }
 

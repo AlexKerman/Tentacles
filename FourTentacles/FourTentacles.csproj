@@ -82,6 +82,10 @@
     <Compile Include="Geometry\Mesh.cs" />
     <Compile Include="Geometry\Node.cs" />
     <Compile Include="Geometry\Point4d.cs" />
+    <Compile Include="NodeActions.cs" />
+    <Compile Include="NodeActionsToolstrip.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

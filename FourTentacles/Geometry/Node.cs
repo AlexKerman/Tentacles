@@ -19,6 +19,11 @@ namespace FourTentacles
 		public virtual Vector3 Pos { get; set; }
 		public virtual bool IsSelected { get; set; }
 
+		public virtual IEnumerable<NodeAction> GetActions(IEnumerable<Node> selectedNodes)
+		{
+			yield break;
+		}
+		
 		[CanBeNull]
 		public virtual GeometryControl GetNodeControl()
 		{
