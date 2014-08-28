@@ -74,5 +74,21 @@ namespace FourTentacles
 		{
 			return BasePoint.Guides.FirstOrDefault(g => g != this);
 		}
+
+		public void AjustSymmetricGuide()
+		{
+			if (BasePoint.SmoothMode == PointSmoothMode.Cusp) return;
+			var symGuide = GetSymmetricGuide();
+			if (symGuide == null) return;
+
+			if (BasePoint.SmoothMode == PointSmoothMode.Symmetrical) symGuide.Point = -Point;
+			if (BasePoint.SmoothMode == PointSmoothMode.Smooth)
+				symGuide.Point = -Point * (symGuide.Point.Xyz.Length / Point.Xyz.Length);
+
+			symGuide.WindRose = WindRose;
+
+			//todo: use this prop
+			symGuide.Changed = true;
+		}
 	}
 }

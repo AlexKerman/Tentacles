@@ -39,7 +39,7 @@
 			this.lbRenderMode = new System.Windows.Forms.ToolStripStatusLabel();
 			this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
 			this.lbTrianglesCount = new System.Windows.Forms.ToolStripStatusLabel();
-			this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+			this.nodeActionsToolStrip = new FourTentacles.NodeActionsToolstrip();
 			this.menuStrip1.SuspendLayout();
 			this.tableLayoutPanel1.SuspendLayout();
 			this.statusStrip1.SuspendLayout();
@@ -147,13 +147,14 @@
 			this.lbTrianglesCount.Size = new System.Drawing.Size(98, 17);
 			this.lbTrianglesCount.Text = "lbTrianglesCount";
 			// 
-			// toolStrip1
+			// nodeActionsToolStrip
 			// 
-			this.toolStrip1.Location = new System.Drawing.Point(0, 24);
-			this.toolStrip1.Name = "toolStrip1";
-			this.toolStrip1.Size = new System.Drawing.Size(730, 25);
-			this.toolStrip1.TabIndex = 3;
-			this.toolStrip1.Text = "toolStrip1";
+			this.nodeActionsToolStrip.Location = new System.Drawing.Point(0, 24);
+			this.nodeActionsToolStrip.Name = "nodeActionsToolStrip";
+			this.nodeActionsToolStrip.Size = new System.Drawing.Size(730, 25);
+			this.nodeActionsToolStrip.TabIndex = 3;
+			this.nodeActionsToolStrip.Text = "toolStrip1";
+			this.nodeActionsToolStrip.RenderRequested += new System.EventHandler(this.OnRenderRequested);
 			// 
 			// MainWindow
 			// 
@@ -162,7 +163,7 @@
 			this.ClientSize = new System.Drawing.Size(730, 467);
 			this.Controls.Add(this.tableLayoutPanel1);
 			this.Controls.Add(this.statusStrip1);
-			this.Controls.Add(this.toolStrip1);
+			this.Controls.Add(this.nodeActionsToolStrip);
 			this.Controls.Add(this.menuStrip1);
 			this.MainMenuStrip = this.menuStrip1;
 			this.Name = "MainWindow";
@@ -191,7 +192,7 @@
 		private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel2;
 		private System.Windows.Forms.ToolStripStatusLabel lbTrianglesCount;
 		private System.Windows.Forms.Panel panel1;
-		private System.Windows.Forms.ToolStrip toolStrip1;
+		private NodeActionsToolstrip nodeActionsToolStrip;
 	}
 }
 

@@ -97,7 +97,7 @@ namespace FourTentacles
 			move += delta;
 			guide.Point = point + move;
 			guide.WindRose.Adjust(Vector3.Normalize(guide.Point.Xyz));
-			AjustSymmetricGuide();
+			guide.AjustSymmetricGuide();
 		}
 
 		public void Undo()
@@ -116,21 +116,6 @@ namespace FourTentacles
 			guide.Point = point + move;
 			guide.WindRose = windRose;
 			windRose = rose;
-		}
-
-		private void AjustSymmetricGuide()
-		{
-			if (guide.BasePoint.SmoothMode == PointSmoothMode.Cusp) return;
-			if (symGuide == null) return;
-
-			if (guide.BasePoint.SmoothMode == PointSmoothMode.Symmetric) symGuide.Point = -guide.Point;
-			if (guide.BasePoint.SmoothMode == PointSmoothMode.Smooth)
-				symGuide.Point = -guide.Point * (symGuidePoint.Xyz.Length / guide.Point.Xyz.Length);
-
-			symGuide.WindRose = guide.WindRose;
-
-			//todo: use this prop
-			symGuide.Changed = true;
 		}
 	}
 }

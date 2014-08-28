@@ -69,6 +69,11 @@
     <Compile Include="Geometry\Guide4DController.cs" />
     <Compile Include="Geometry\Guide4d.cs" />
     <Compile Include="Geometry\InsertPointController.cs" />
+    <Compile Include="Icons.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Icons.resx</DependentUpon>
+    </Compile>
     <Compile Include="Interpolator.cs" />
     <Compile Include="Geometry\Controller.cs" />
     <Compile Include="Gizmo.cs" />
@@ -109,6 +114,10 @@
     </Compile>
     <Compile Include="Geometry\WidthController.cs" />
     <Compile Include="UndoStack.cs" />
+    <EmbeddedResource Include="Icons.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Icons.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="MainWindow.resx">
       <DependentUpon>MainWindow.cs</DependentUpon>
     </EmbeddedResource>
@@ -147,6 +156,9 @@
     <EmbeddedResource Include="Resources\SelectPlusMinus.cur" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Images\NodeCusp.png" />
+    <Content Include="Images\NodeSmooth.png" />
+    <Content Include="Images\NodeSymmetrical.png" />
     <Content Include="Resources\AddPoint.cur" />
     <Content Include="Resources\Move.cur" />
   </ItemGroup>

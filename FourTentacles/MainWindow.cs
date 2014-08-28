@@ -46,7 +46,7 @@ namespace FourTentacles
 			InitializeComponent();
 			glc.MouseWheel += OnMouseWheel;
 
-			sceneNode.RedrawRequired += SceneNodeOnRedrawRequested;
+			sceneNode.RedrawRequired += OnRenderRequested;
 			UndoStack.StackChanged += UndoStackOnStackChanged;
 
 			//switch Optimus graphics card to NVIDIA
@@ -59,7 +59,7 @@ namespace FourTentacles
 			//todo: update undo/redo buttons
 		}
 
-		private void SceneNodeOnRedrawRequested(object sender, EventArgs eventArgs)
+		private void OnRenderRequested(object sender, EventArgs eventArgs)
 		{
 			Render();
 		}
@@ -212,6 +212,8 @@ namespace FourTentacles
 			panel1.Controls.Clear();
 			if(control != null)
 				panel1.Controls.Add(control);
+
+			nodeActionsToolStrip.SetActions(gizmo.SelectedNodes);
 		}
 
 		private void OnSizeChanged(object sender, EventArgs e)

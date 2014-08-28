@@ -37,7 +37,7 @@ namespace FourTentacles
 		private void SetJointType()
 		{
 			rbPointCusp.Checked = selectedPoints.All(p => p.SmoothMode == PointSmoothMode.Cusp);
-			rbPointSymmetric.Checked = selectedPoints.All(p => p.SmoothMode == PointSmoothMode.Symmetric);
+			rbPointSymmetric.Checked = selectedPoints.All(p => p.SmoothMode == PointSmoothMode.Symmetrical);
 			rbPointSmooth.Checked = selectedPoints.All(p => p.SmoothMode == PointSmoothMode.Smooth);
 		}
 
