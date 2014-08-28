@@ -28,17 +28,6 @@ namespace FourTentacles
 			numLengthSubdivide.Value = spline4D.LengthSides;
 			numRoundSubdivide.Value = spline4D.RoundSides;
 			cbLengthSmooth.Checked = spline4D.LengthSmooth;
-
-			selectedPoints = spline4D.GetNodes().OfType<Point4D>().Where(p => p.IsSelected).ToList();
-			if (selectedPoints.Count > 0 && spline4D.SelectionMode == Spline4D.SelectionModeEnum.Points)
-				SetJointType();
-		}
-
-		private void SetJointType()
-		{
-			rbPointCusp.Checked = selectedPoints.All(p => p.SmoothMode == PointSmoothMode.Cusp);
-			rbPointSymmetric.Checked = selectedPoints.All(p => p.SmoothMode == PointSmoothMode.Symmetrical);
-			rbPointSmooth.Checked = selectedPoints.All(p => p.SmoothMode == PointSmoothMode.Smooth);
 		}
 
 		private void EditPointsClick(object sender, EventArgs e)

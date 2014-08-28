@@ -35,13 +35,8 @@
 			this.label2 = new System.Windows.Forms.Label();
 			this.numRoundSubdivide = new System.Windows.Forms.NumericUpDown();
 			this.cbLengthSmooth = new System.Windows.Forms.CheckBox();
-			this.groupJointType = new System.Windows.Forms.GroupBox();
-			this.rbPointSymmetric = new System.Windows.Forms.RadioButton();
-			this.rbPointSmooth = new System.Windows.Forms.RadioButton();
-			this.rbPointCusp = new System.Windows.Forms.RadioButton();
 			((System.ComponentModel.ISupportInitialize)(this.numLengthSubdivide)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.numRoundSubdivide)).BeginInit();
-			this.groupJointType.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// cbEditPoints
@@ -115,60 +110,10 @@
 			this.cbLengthSmooth.UseVisualStyleBackColor = true;
 			this.cbLengthSmooth.Click += new System.EventHandler(this.cbLengthSmooth_Click);
 			// 
-			// groupJointType
-			// 
-			this.groupJointType.Controls.Add(this.rbPointSymmetric);
-			this.groupJointType.Controls.Add(this.rbPointSmooth);
-			this.groupJointType.Controls.Add(this.rbPointCusp);
-			this.groupJointType.Enabled = false;
-			this.groupJointType.Location = new System.Drawing.Point(3, 111);
-			this.groupJointType.Name = "groupJointType";
-			this.groupJointType.Size = new System.Drawing.Size(154, 51);
-			this.groupJointType.TabIndex = 4;
-			this.groupJointType.TabStop = false;
-			this.groupJointType.Text = "Joint type";
-			// 
-			// rbPointSymmetric
-			// 
-			this.rbPointSymmetric.Appearance = System.Windows.Forms.Appearance.Button;
-			this.rbPointSymmetric.AutoSize = true;
-			this.rbPointSymmetric.Location = new System.Drawing.Point(107, 20);
-			this.rbPointSymmetric.Name = "rbPointSymmetric";
-			this.rbPointSymmetric.Size = new System.Drawing.Size(37, 23);
-			this.rbPointSymmetric.TabIndex = 0;
-			this.rbPointSymmetric.TabStop = true;
-			this.rbPointSymmetric.Text = "Sym";
-			this.rbPointSymmetric.UseVisualStyleBackColor = true;
-			// 
-			// rbPointSmooth
-			// 
-			this.rbPointSmooth.Appearance = System.Windows.Forms.Appearance.Button;
-			this.rbPointSmooth.AutoSize = true;
-			this.rbPointSmooth.Location = new System.Drawing.Point(49, 20);
-			this.rbPointSmooth.Name = "rbPointSmooth";
-			this.rbPointSmooth.Size = new System.Drawing.Size(53, 23);
-			this.rbPointSmooth.TabIndex = 0;
-			this.rbPointSmooth.TabStop = true;
-			this.rbPointSmooth.Text = "Smooth";
-			this.rbPointSmooth.UseVisualStyleBackColor = true;
-			// 
-			// rbPointCusp
-			// 
-			this.rbPointCusp.Appearance = System.Windows.Forms.Appearance.Button;
-			this.rbPointCusp.AutoSize = true;
-			this.rbPointCusp.Location = new System.Drawing.Point(6, 20);
-			this.rbPointCusp.Name = "rbPointCusp";
-			this.rbPointCusp.Size = new System.Drawing.Size(41, 23);
-			this.rbPointCusp.TabIndex = 0;
-			this.rbPointCusp.TabStop = true;
-			this.rbPointCusp.Text = "Cusp";
-			this.rbPointCusp.UseVisualStyleBackColor = true;
-			// 
 			// Spline4dControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.Controls.Add(this.groupJointType);
 			this.Controls.Add(this.cbLengthSmooth);
 			this.Controls.Add(this.label2);
 			this.Controls.Add(this.label1);
@@ -180,8 +125,6 @@
 			this.Size = new System.Drawing.Size(162, 309);
 			((System.ComponentModel.ISupportInitialize)(this.numLengthSubdivide)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.numRoundSubdivide)).EndInit();
-			this.groupJointType.ResumeLayout(false);
-			this.groupJointType.PerformLayout();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -196,10 +139,6 @@
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.NumericUpDown numRoundSubdivide;
 		private System.Windows.Forms.CheckBox cbLengthSmooth;
-		private System.Windows.Forms.GroupBox groupJointType;
-		private System.Windows.Forms.RadioButton rbPointSymmetric;
-		private System.Windows.Forms.RadioButton rbPointSmooth;
-		private System.Windows.Forms.RadioButton rbPointCusp;
 
 	}
 }
