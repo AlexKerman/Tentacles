@@ -144,22 +144,32 @@ namespace FourTentacles
 	{
 		private readonly Windrose startRose;
 		private readonly Windrose endRose;
+		private readonly Quaternion rosesDirAngle;
+		private readonly Quaternion rosesNorthAngle;
 
 		public Kompass(Windrose start, Windrose end)
 		{
 			startRose = start;
 			endRose = end;
+			rosesDirAngle = Angle(start.Dir, end.Dir);
+			var rotatedNorth = Vector3.Transform(start.North, rosesDirAngle);
+			rosesNorthAngle = Angle(rotatedNorth, end.North);
+		}
+
+		//http://stackoverflow.com/questions/1171849/finding-quaternion-representing-the-rotation-from-one-vector-to-another
+		private Quaternion Angle(Vector3 a, Vector3 b)
+		{
+			var cross = Vector3.Cross(a, b);
+			var w = (float) (Math.Sqrt(a.LengthSquared * b.LengthSquared) + Vector3.Dot(a, b));
+			return new Quaternion(cross, w).Normalized();
 		}
 
 		public Windrose CalcWindrose(float t, Vector3 dir3)
 		{
-			var north = startRose.North * t + endRose.North * (1.0f - t);
-			north.Normalize();
-            var west = Vector3.Cross(north, dir3);
-            west.Normalize();
-            north = Vector3.Cross(dir3, west);
-            north.Normalize();
-			return new Windrose(north, west, dir3);
+			dir3.Normalize();
+			var q = Angle(startRose.Dir, dir3);
+			q = rosesNorthAngle.Inverted() * t;
+			return new Windrose(Vector3.Transform(startRose.North, q), Vector3.Transform(startRose.West, q), dir3);
 		}
 	}
 
