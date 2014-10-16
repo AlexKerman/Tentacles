@@ -168,7 +168,6 @@ namespace FourTentacles
 		{
 			dir3.Normalize();
 			var q = Angle(startRose.Dir, dir3);
-			q = rosesNorthAngle.Inverted() * t;
 			return new Windrose(Vector3.Transform(startRose.North, q), Vector3.Transform(startRose.West, q), dir3);
 		}
 	}
