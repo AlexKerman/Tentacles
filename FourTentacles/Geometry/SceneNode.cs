@@ -21,16 +21,16 @@ namespace FourTentacles
 
 		public SceneNode()
 		{
-			var spline = new Spline4D(6, 96);
-			var startPoint = new Point4D(new Vector4(0.0f, 200.0f, 0.0f, 50.0f));
-			var endPoint = new Point4D(new Vector4(0.0f, 1200.0f, -200.0f, 0.0f));
+			//var spline = new Spline4D(6, 96);
+			//var startPoint = new Point4D(new Vector4(0.0f, 200.0f, 0.0f, 50.0f));
+			//var endPoint = new Point4D(new Vector4(0.0f, 1200.0f, -200.0f, 0.0f));
 
-			var startGuide = new Guide4D(startPoint, new Vector4(0.0f, 800.0f, 0.0f, -150.0f));
-			var endGuide =new Guide4D(endPoint, new Vector4(0.0f, 600.0f, 800.0f, 200.0f));
+			//var startGuide = new Guide4D(startPoint, new Vector4(0.0f, 800.0f, 0.0f, -150.0f));
+			//var endGuide =new Guide4D(endPoint, new Vector4(0.0f, 600.0f, 800.0f, 200.0f));
 
-			var segment = new Segment4D(startPoint, endPoint, startGuide, endGuide);
-			spline.AddSegment(segment);
-			geometrys.Add(spline);
+			//var segment = new Segment4D(startPoint, endPoint, startGuide, endGuide);
+			//spline.AddSegment(segment);
+			//geometrys.Add(spline);
 		}
 		
 		public override GeometryControl GetNodeControl()
@@ -50,6 +50,11 @@ namespace FourTentacles
 				}
 			}
 			return null;
+		}
+
+		public void AddGeometry(Geometry geom)
+		{
+			geometrys.Add(geom);
 		}
 
 		private void LockedControlOnRedrawRequired(object sender, EventArgs eventArgs)

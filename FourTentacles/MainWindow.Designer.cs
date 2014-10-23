@@ -40,6 +40,8 @@
 			this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
 			this.lbTrianglesCount = new System.Windows.Forms.ToolStripStatusLabel();
 			this.nodeActionsToolStrip = new FourTentacles.NodeActionsToolstrip();
+			this.importToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.fromOSMToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.menuStrip1.SuspendLayout();
 			this.tableLayoutPanel1.SuspendLayout();
 			this.statusStrip1.SuspendLayout();
@@ -58,6 +60,8 @@
 			// 
 			// fileToolStripMenuItem
 			// 
+			this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.importToolStripMenuItem});
 			this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
 			this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
 			this.fileToolStripMenuItem.Text = "File";
@@ -156,6 +160,21 @@
 			this.nodeActionsToolStrip.Text = "toolStrip1";
 			this.nodeActionsToolStrip.RenderRequested += new System.EventHandler(this.OnRenderRequested);
 			// 
+			// importToolStripMenuItem
+			// 
+			this.importToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.fromOSMToolStripMenuItem});
+			this.importToolStripMenuItem.Name = "importToolStripMenuItem";
+			this.importToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.importToolStripMenuItem.Text = "Import";
+			// 
+			// fromOSMToolStripMenuItem
+			// 
+			this.fromOSMToolStripMenuItem.Name = "fromOSMToolStripMenuItem";
+			this.fromOSMToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.fromOSMToolStripMenuItem.Text = "From OSM";
+			this.fromOSMToolStripMenuItem.Click += new System.EventHandler(this.fromOSMToolStripMenuItem_Click);
+			// 
 			// MainWindow
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -193,6 +212,8 @@
 		private System.Windows.Forms.ToolStripStatusLabel lbTrianglesCount;
 		private System.Windows.Forms.Panel panel1;
 		private NodeActionsToolstrip nodeActionsToolStrip;
+		private System.Windows.Forms.ToolStripMenuItem importToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem fromOSMToolStripMenuItem;
 	}
 }
 

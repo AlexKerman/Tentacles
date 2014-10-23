@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using FourTentacles.Map;
 using OpenCLNet;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
@@ -318,6 +319,16 @@ namespace FourTentacles
 		private void UpdateSelectionModeLabel()
 		{
 			lbRenderMode.Text = renderMode.ToString();
+		}
+
+		private void fromOSMToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			var importForm = new ImportOsmFile();
+			if (importForm.ShowDialog() == DialogResult.OK)
+			{
+				sceneNode.AddGeometry(importForm.Map);
+				Render();
+			}
 		}
 	}
 }

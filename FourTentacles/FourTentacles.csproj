@@ -83,6 +83,13 @@
     <Compile Include="MainWindow.Designer.cs">
       <DependentUpon>MainWindow.cs</DependentUpon>
     </Compile>
+    <Compile Include="Map\ImportOsmFile.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Map\ImportOsmFile.Designer.cs">
+      <DependentUpon>ImportOsmFile.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Map\MapModel.cs" />
     <Compile Include="Material\Material.cs" />
     <Compile Include="Geometry\Mesh.cs" />
     <Compile Include="Geometry\Node.cs" />
@@ -120,6 +127,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="MainWindow.resx">
       <DependentUpon>MainWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Map\ImportOsmFile.resx">
+      <DependentUpon>ImportOsmFile.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
